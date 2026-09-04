@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#18345B">
+<meta name="description" content="Alfalah Control Panel UI Preview">
+<title>Alfalah Control Panel — Preview</title>
+<style>
+:root{
+  --navy:#07182d; --navy2:#0d2542; --blue:#2463d4; --gold:#E8B343;
+  --bg:#f5f7fb; --card:#fff; --text:#12233d; --muted:#718096; --line:#e7ebf2;
+  --green:#1f9d67; --orange:#e99a27; --purple:#7055d6; --red:#d94b58;
+}
+*{box-sizing:border-box}
+body{margin:0;font-family:Inter,ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;background:var(--bg);color:var(--text)}
+button,input,select{font:inherit}
+button{cursor:pointer}
+.app{display:flex;min-height:100vh}
+.sidebar{width:245px;background:linear-gradient(180deg,var(--navy),#061326);color:#fff;position:fixed;inset:0 auto 0 0;z-index:10;padding:18px 12px;overflow:auto}
+.brand{display:flex;gap:11px;align-items:center;padding:8px 12px 24px}
+.logo{width:38px;height:38px;border:1px solid rgba(232,179,67,.6);border-radius:11px;display:grid;place-items:center;color:var(--gold);font-weight:800}
+.brand strong{font-size:17px;display:block}.brand span{font-size:11px;color:#aebbd0}
+.section{font-size:10px;letter-spacing:.12em;color:#71829a;margin:18px 12px 7px;text-transform:uppercase}
+.nav{display:flex;align-items:center;gap:12px;padding:10px 12px;margin:3px 0;border-radius:9px;color:#c7d2e2;font-size:13px;border:0;background:transparent;width:100%;text-align:left}
+.nav:hover{background:rgba(255,255,255,.07);color:#fff}
+.nav.active{background:#1e5bc4;color:#fff;box-shadow:0 8px 20px rgba(30,91,196,.24)}
+.icon{width:20px;text-align:center;opacity:.95}
+.main{margin-left:245px;width:calc(100% - 245px)}
+.topbar{height:68px;background:#fff;border-bottom:1px solid var(--line);display:flex;align-items:center;gap:18px;padding:0 28px;position:sticky;top:0;z-index:5}
+.search{width:300px;border:1px solid var(--line);border-radius:9px;padding:10px 14px;outline:none;background:#fbfcfe}
+.spacer{flex:1}.topitem{color:#66758a;font-size:13px}.avatar{width:34px;height:34px;border-radius:50%;background:#d9e3f2;display:grid;place-items:center;font-size:12px;font-weight:700}
+.content{padding:27px;max-width:1600px;margin:auto}
+.pagehead{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px}
+.pagehead h1{margin:0;font-size:23px}.pagehead p{margin:4px 0 0;color:var(--muted);font-size:12px}
+.date{border:1px solid var(--line);background:#fff;border-radius:8px;padding:9px 13px;font-size:12px;color:#506078}
+.grid5{display:grid;grid-template-columns:repeat(5,1fr);gap:12px}
+.metric{background:#fff;border:1px solid var(--line);border-radius:12px;padding:17px;min-height:112px}
+.metric .micon{width:36px;height:36px;border-radius:10px;display:grid;place-items:center;float:left;margin-right:11px;background:#edf3ff}
+.metric:nth-child(2) .micon{background:#edf9f1}.metric:nth-child(3) .micon{background:#fff5e8}.metric:nth-child(4) .micon{background:#f2efff}.metric:nth-child(5) .micon{background:#eef9f5}
+.metric .label{font-size:11px;color:var(--muted);margin-top:2px}.metric .num{font-size:20px;font-weight:750;margin-top:5px}.metric small{display:block;clear:both;padding-top:13px;color:#8491a4;font-size:10px}
+.row{display:grid;grid-template-columns:1.35fr 1fr .8fr;gap:12px;margin-top:12px}
+.row2{display:grid;grid-template-columns:1fr 1.25fr .85fr;gap:12px;margin-top:12px}
+.card{background:#fff;border:1px solid var(--line);border-radius:12px;padding:17px}
+.cardhead{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}.cardhead h3{margin:0;font-size:13px}.select{border:1px solid var(--line);background:#fff;border-radius:7px;padding:6px 9px;font-size:10px;color:#607086}
+.donutwrap{display:flex;align-items:center;gap:25px;min-height:190px}
+.donut{width:145px;height:145px;border-radius:50%;background:conic-gradient(#28a76f 0 51%,#f0a035 51% 76%,#7357d7 76% 100%);position:relative;flex:none}
+.donut:after{content:"";position:absolute;inset:30px;background:#fff;border-radius:50%}
+.donutcenter{position:absolute;z-index:2;inset:0;display:grid;place-content:center;text-align:center}.donutcenter b{font-size:23px}.donutcenter span{font-size:9px;color:var(--muted)}
+.legend{font-size:11px;line-height:2.1}.dot{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:7px}
+.chart{height:190px;display:flex;align-items:end;gap:9px;padding:10px 5px 5px;border-bottom:1px solid var(--line);background:linear-gradient(to top,rgba(31,65,120,.04) 1px,transparent 1px);background-size:100% 32px}
+.bar{flex:1;border-radius:5px 5px 0 0;background:#3974dc;min-width:10px}.bar:nth-child(2n){height:68%}.bar:nth-child(3n){height:84%}.bar:nth-child(4n){height:52%}
+.activity{display:flex;gap:9px;padding:9px 0;border-bottom:1px solid #f0f2f6;font-size:10px}.activity:last-child{border:0}.actdot{width:25px;height:25px;border-radius:8px;background:#eef3ff;display:grid;place-items:center;flex:none}.activity b{display:block;font-size:10px}.activity span{color:#8894a6;font-size:9px}
+.finance li{list-style:none;display:flex;justify-content:space-between;padding:9px 0;border-bottom:1px solid #f0f2f6;font-size:11px}.finance ul{padding:0;margin:0}.finance li:last-child{border:0}.positive{color:var(--green)}.negative{color:var(--red)}
+table{width:100%;border-collapse:collapse;font-size:11px}th,td{text-align:left;padding:11px;border-bottom:1px solid #edf0f5}th{color:#7a8798;font-size:10px;text-transform:uppercase;letter-spacing:.04em}
+.badge{display:inline-block;border-radius:20px;padding:4px 8px;font-size:9px;font-weight:700}.activeb{background:#eaf8f1;color:#19875a}.pendingb{background:#fff5e5;color:#b87415}.completeb{background:#eeeafd;color:#644bc7}
+.progress{height:7px;background:#edf0f5;border-radius:10px;overflow:hidden;width:100%}.progress i{display:block;height:100%;background:#2d6cdf;border-radius:10px}
+.page{display:none}.page.active{display:block}
+.toolbar{display:flex;gap:8px;align-items:center;margin-bottom:15px}.btn{background:#1e5bc4;color:#fff;border:0;border-radius:8px;padding:9px 13px;font-size:11px}.btn.secondary{background:#fff;color:#34445a;border:1px solid var(--line)}
+.input{background:#fff;border:1px solid var(--line);border-radius:8px;padding:9px 11px;outline:none;font-size:11px;flex:1}
+.cards3{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}.mini{background:#fff;border:1px solid var(--line);border-radius:12px;padding:16px}.mini h4{margin:0 0 7px;font-size:12px}.mini p{margin:0;color:var(--muted);font-size:10px}
+.workflow{display:flex;gap:7px;align-items:center;flex-wrap:wrap}.step{border:1px solid var(--line);background:#fafbfd;border-radius:9px;padding:10px 12px;font-size:10px}.step.done{border-color:#bce7d3;background:#f1fbf6}.arrow{color:#98a5b5}
+.settings{display:grid;grid-template-columns:220px 1fr;gap:12px}.settingsmenu{background:#fff;border:1px solid var(--line);border-radius:12px;padding:10px;height:max-content}.settingsmenu div{padding:10px;border-radius:7px;font-size:11px}.settingsmenu div.active{background:#eef4ff;color:#1e5bc4;font-weight:700}
+.formgrid{display:grid;grid-template-columns:1fr 1fr;gap:12px}.field label{display:block;font-size:10px;color:#738095;margin-bottom:5px}.field input,.field select{width:100%;padding:10px;border:1px solid var(--line);border-radius:8px;background:#fff;font-size:11px}
+.permissions{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.perm{border:1px solid var(--line);border-radius:8px;padding:10px;font-size:10px;display:flex;justify-content:space-between}.switch{width:30px;height:17px;border-radius:20px;background:#1e5bc4;position:relative}.switch:after{content:"";position:absolute;width:13px;height:13px;background:#fff;border-radius:50%;right:2px;top:2px}
+.mobilebar{display:none}
+@media(max-width:1050px){.grid5{grid-template-columns:repeat(3,1fr)}.row,.row2{grid-template-columns:1fr}.cards3{grid-template-columns:1fr}.permissions{grid-template-columns:1fr 1fr}}
+@media(max-width:760px){
+.sidebar{display:none}.main{margin-left:0;width:100%}.topbar{padding:0 14px}.search{width:180px}.content{padding:15px}.grid5{grid-template-columns:1fr 1fr}.metric{min-height:105px}.settings{grid-template-columns:1fr}.formgrid{grid-template-columns:1fr}.mobilebar{display:flex;position:fixed;bottom:0;left:0;right:0;background:#fff;border-top:1px solid var(--line);height:60px;z-index:20;justify-content:space-around}.mobilebar button{background:none;border:0;color:#66758a;font-size:9px}.mobilebar button.active{color:#1e5bc4;font-weight:700}.mobilebar span{display:block;font-size:17px;margin-bottom:2px}.content{padding-bottom:75px}.donutwrap{flex-direction:column;align-items:flex-start}.donut{width:125px;height:125px}.chart{height:150px}}
+
+/* Theme switch */
+body.dark{--bg:#07111f;--card:#0d1b2d;--text:#edf3fb;--muted:#91a0b5;--line:#1e3047}
+body.dark .topbar, body.dark .metric, body.dark .card, body.dark .mini,
+body.dark .settingsmenu, body.dark .date, body.dark .select, body.dark .input,
+body.dark .field input, body.dark .field select, body.dark .step,
+body.dark .btn.secondary, body.dark .search{background:#0d1b2d;color:var(--text);border-color:#1e3047}
+body.dark .topitem, body.dark .pagehead p, body.dark th, body.dark .label,
+body.dark .metric .label, body.dark .metric small, body.dark .mini p{color:#91a0b5}
+body.dark .metric .micon{background:#142a43}
+body.dark .metric:nth-child(2) .micon{background:#123326}
+body.dark .metric:nth-child(3) .micon{background:#352812}
+body.dark .metric:nth-child(4) .micon{background:#28213f}
+body.dark .metric:nth-child(5) .micon{background:#12342a}
+body.dark .donut:after{background:#0d1b2d}
+body.dark .mobilebar{background:#0d1b2d;border-color:#1e3047}
+body.dark .activity{border-color:#1e3047}
+body.dark .finance li, body.dark td, body.dark th{border-color:#1e3047}
+body.dark .settingsmenu div.active{background:#132b4d}
+body.dark .formgrid .field label{color:#91a0b5}
+.theme-toggle{border:1px solid var(--line);background:#fff;border-radius:8px;padding:8px 10px;font-size:11px;color:#53647a}
+body.dark .theme-toggle{background:#0d1b2d;color:#edf3fb}
+.quick-add{position:relative}
+.quick-menu{display:none;position:absolute;right:0;top:44px;width:205px;background:#fff;border:1px solid var(--line);
+border-radius:11px;padding:7px;box-shadow:0 18px 45px rgba(20,35,60,.16);z-index:30}
+body.dark .quick-menu{background:#0d1b2d;border-color:#1e3047}
+.quick-menu.open{display:block}
+.quick-menu button{display:block;width:100%;border:0;background:transparent;text-align:left;padding:10px;border-radius:7px;font-size:11px;color:var(--text)}
+.quick-menu button:hover{background:#f0f4fa}
+body.dark .quick-menu button:hover{background:#142a43}
+.demo-note{font-size:10px;color:var(--muted);margin-top:10px}
+.modal{display:none;position:fixed;inset:0;background:rgba(3,12,25,.55);z-index:50;align-items:center;justify-content:center;padding:18px}
+.modal.open{display:flex}
+.modalbox{width:min(650px,100%);background:#fff;border-radius:14px;padding:20px;box-shadow:0 25px 70px rgba(0,0,0,.25)}
+body.dark .modalbox{background:#0d1b2d;color:#edf3fb}
+.modalhead{display:flex;justify-content:space-between;align-items:center;margin-bottom:15px}
+.modalhead h3{margin:0;font-size:16px}
+.close{border:0;background:transparent;font-size:20px;color:#8190a5}
+.toast{position:fixed;right:22px;bottom:22px;background:#0d1b2d;color:#fff;padding:11px 14px;border-radius:9px;font-size:11px;display:none;z-index:60;box-shadow:0 12px 30px rgba(0,0,0,.2)}
+.toast.show{display:block}
+@media(max-width:760px){.theme-toggle{padding:7px 8px}.quick-menu{right:-5px}}
+</style>
+</head>
+<body>
+<div class="app">
+<aside class="sidebar">
+  <div class="brand"><div class="logo">A</div><div><strong>Alfalah</strong><span>Control Panel</span></div></div>
+  <button class="nav active" data-page="dashboard"><span class="icon">▦</span>Dashboard</button>
+  <div class="section">Management</div>
+  <button class="nav" data-page="clients"><span class="icon">♙</span>Clients</button>
+  <button class="nav" data-page="services"><span class="icon">◫</span>Services</button>
+  <button class="nav" data-page="tasks"><span class="icon">☑</span>Tasks / Projects</button>
+  <button class="nav" data-page="employees"><span class="icon">♧</span>Employees</button>
+  <button class="nav" data-page="departments"><span class="icon">⌘</span>Departments</button>
+  <div class="section">Finance</div>
+  <button class="nav" data-page="payments"><span class="icon">৳</span>Payments</button>
+  <button class="nav" data-page="expenses"><span class="icon">▣</span>Expenses</button>
+  <button class="nav" data-page="salary"><span class="icon">◉</span>Salary</button>
+  <button class="nav" data-page="reports"><span class="icon">▤</span>Financial Reports</button>
+  <div class="section">Settings</div>
+  <button class="nav" data-page="permissions"><span class="icon">⚙</span>Roles & Permissions</button>
+  <button class="nav" data-page="workflow"><span class="icon">⌁</span>Workflow Management</button>
+  <button class="nav" data-page="settings"><span class="icon">◌</span>System Settings</button>
+  <button class="nav" data-page="logs"><span class="icon">◷</span>Activity Logs</button>
+</aside>
+
+<main class="main">
+<header class="topbar">
+  <div style="font-size:18px">☰</div><input class="search" placeholder="Search anything...">
+  <div class="spacer"></div>
+<button class="theme-toggle" id="themeToggle">☾ Dark</button>
+<div class="quick-add">
+  <button class="btn" id="quickAdd">+ Add ▾</button>
+  <div class="quick-menu" id="quickMenu">
+    <button data-add="client">＋ Add Client</button>
+    <button data-add="employee">＋ Add Employee</button>
+    <button data-add="payment">＋ Add Payment</button>
+    <button data-add="expense">＋ Add Expense</button>
+    <button data-add="task">＋ Add Task / Project</button>
+  </div>
+</div>
+<div class="topitem">●</div><div class="topitem">◷</div>
+  <div class="avatar">AT</div><div class="topitem"><b style="color:#1c2d45">Abu Tawfiq</b><br><small>Super Admin⌄</small></div>
+</header>
+
+<section class="content">
+<div id="dashboard" class="page active">
+  <div class="pagehead"><div><h1>Dashboard</h1><p>Welcome back, Abu Tawfiq</p></div><button class="date">01 Sep 2026 – 04 Sep 2026 ▾</button></div>
+  <div class="grid5">
+    <div class="metric"><div class="micon">♙</div><div class="label">Total Clients</div><div class="num">1,248</div><small>All time clients</small></div>
+    <div class="metric"><div class="micon">◉</div><div class="label">Active Clients</div><div class="num">642</div><small>Ongoing projects</small></div>
+    <div class="metric"><div class="micon">⌛</div><div class="label">Pending Clients</div><div class="num">312</div><small>Waiting for update</small></div>
+    <div class="metric"><div class="micon">✓</div><div class="label">Completed</div><div class="num">294</div><small>Successfully done</small></div>
+    <div class="metric"><div class="micon">৳</div><div class="label">Total Revenue</div><div class="num">৳ 8,45,230</div><small>This month</small></div>
+  </div>
+  <div class="row">
+    <div class="card"><div class="cardhead"><h3>Project Overview</h3><select class="select"><option>This Month</option></select></div>
+      <div class="donutwrap"><div class="donut"><div class="donutcenter"><b>1,248</b><span>Total</span></div></div><div class="legend">
+        <div><i class="dot" style="background:#28a76f"></i>Active Projects <b>642 (51%)</b></div>
+        <div><i class="dot" style="background:#f0a035"></i>Pending Projects <b>312 (25%)</b></div>
+        <div><i class="dot" style="background:#7357d7"></i>Completed Projects <b>294 (24%)</b></div>
+      </div></div>
+    </div>
+    <div class="card"><div class="cardhead"><h3>Project Progress</h3><select class="select"><option>This Month</option></select></div>
+      <div class="chart"><div class="bar" style="height:45%"></div><div class="bar" style="height:54%"></div><div class="bar" style="height:61%"></div><div class="bar" style="height:49%"></div><div class="bar" style="height:70%"></div><div class="bar" style="height:77%"></div><div class="bar" style="height:73%"></div><div class="bar" style="height:88%"></div><div class="bar" style="height:91%"></div><div class="bar" style="height:97%"></div></div>
+      <div style="font-size:9px;color:#8b96a7;margin-top:8px;display:flex;justify-content:space-between"><span>01 Sep</span><span>15 Sep</span><span>30 Sep</span></div>
+    </div>
+    <div class="card"><div class="cardhead"><h3>Recent Activities</h3></div>
+      <div class="activity"><div class="actdot">♙</div><div><b>New client Akram Hossain added</b><span>10 minutes ago</span></div></div>
+      <div class="activity"><div class="actdot">✓</div><div><b>Logo design completed</b><span>25 minutes ago</span></div></div>
+      <div class="activity"><div class="actdot">৳</div><div><b>Payment received from Farhana Islam</b><span>1 hour ago</span></div></div>
+      <div class="activity"><div class="actdot">▶</div><div><b>Video editing completed</b><span>2 hours ago</span></div></div>
+      <div class="activity"><div class="actdot">▣</div><div><b>Expense added for Office Rent</b><span>3 hours ago</span></div></div>
+    </div>
+  </div>
+  <div class="row2">
+    <div class="card"><div class="cardhead"><h3>Top Services</h3></div>
+      <div class="legend" style="line-height:2.4">
+        <div><i class="dot" style="background:#6e83ed"></i>Social Media Marketing <b style="float:right">35%</b></div>
+        <div><i class="dot" style="background:#7c5ed4"></i>Video Editing <b style="float:right">25%</b></div>
+        <div><i class="dot" style="background:#ee9b2e"></i>Graphic Design <b style="float:right">20%</b></div>
+        <div><i class="dot" style="background:#9aa4b2"></i>Website Development <b style="float:right">10%</b></div>
+        <div><i class="dot" style="background:#18345b"></i>Others <b style="float:right">10%</b></div>
+      </div>
+    </div>
+    <div class="card"><div class="cardhead"><h3>Revenue Overview</h3><select class="select"><option>This Month</option></select></div>
+      <div class="chart" style="height:170px"><div class="bar" style="height:58%"></div><div class="bar" style="height:85%"></div><div class="bar" style="height:62%"></div><div class="bar" style="height:92%"></div><div class="bar" style="height:75%"></div><div class="bar" style="height:96%"></div><div class="bar" style="height:68%"></div></div>
+    </div>
+    <div class="card"><div class="cardhead"><h3>Finance Summary</h3></div><ul class="finance">
+      <li><span>Total Revenue</span><b>৳ 8,45,230</b></li><li><span>Total Received</span><b class="positive">৳ 6,45,230</b></li><li><span>Total Due</span><b class="negative">৳ 2,00,000</b></li><li><span>Total Expenses</span><b>৳ 2,35,450</b></li><li><span>Net Result</span><b class="positive">৳ 4,09,780</b></li>
+    </ul></div>
+  </div>
+</div>
+
+<div id="clients" class="page">
+  <div class="pagehead"><div><h1>Clients</h1><p>Manage clients, services, payments and progress</p></div><button class="btn" onclick="alert('Add Client form would open here')">+ Add Client</button></div>
+  <div class="toolbar"><input class="input" placeholder="Search clients..."><button class="btn secondary">Filter ▾</button></div>
+  <div class="card"><table><thead><tr><th>Client</th><th>Service</th><th>Payment</th><th>Progress</th><th>Status</th><th>Action</th></tr></thead><tbody>
+    <tr><td><b>Akram Hossain</b><br><small>WhatsApp: +880 1712-345678</small></td><td>Social Media Marketing</td><td>bKash<br>৳25,000</td><td><div class="progress"><i style="width:60%"></i></div><small>60%</small></td><td><span class="badge activeb">Active</span></td><td>•••</td></tr>
+    <tr><td><b>Farhana Islam</b><br><small>WhatsApp: +880 1876-654321</small></td><td>Video Editing</td><td>Nagad<br>৳18,000</td><td><div class="progress"><i style="width:35%"></i></div><small>35%</small></td><td><span class="badge pendingb">Pending</span></td><td>•••</td></tr>
+    <tr><td><b>Tech World</b><br><small>WhatsApp: +880 1912-123456</small></td><td>Graphic Design</td><td>Rocket<br>৳15,000</td><td><div class="progress"><i style="width:100%"></i></div><small>100%</small></td><td><span class="badge completeb">Completed</span></td><td>•••</td></tr>
+  </tbody></table></div>
+</div>
+
+<div id="tasks" class="page">
+  <div class="pagehead"><div><h1>Tasks / Projects</h1><p>Track every workflow stage and assigned employee</p></div><button class="btn">+ Create Task</button></div>
+  <div class="cards3"><div class="mini"><h4>Tech World — Graphic Design</h4><p>Assigned: Graphic Designer</p><div style="margin:12px 0" class="progress"><i style="width:100%"></i></div><span class="badge completeb">Completed • 10%</span></div>
+  <div class="mini"><h4>Tech World — Video Editing</h4><p>Assigned: Video Editor</p><div style="margin:12px 0" class="progress"><i style="width:55%"></i></div><span class="badge activeb">In Progress • 10%</span></div>
+  <div class="mini"><h4>Farhana — Review Video</h4><p>Assigned: Review Team</p><div style="margin:12px 0" class="progress"><i style="width:0%"></i></div><span class="badge pendingb">Pending • 10%</span></div></div>
+  <div class="card" style="margin-top:12px"><div class="cardhead"><h3>Example Workflow</h3></div><div class="workflow"><div class="step done">✓ Logo — 10%</div><span class="arrow">→</span><div class="step done">✓ Graphics — 10%</div><span class="arrow">→</span><div class="step">Video — 10%</div><span class="arrow">→</span><div class="step">Editing — 10%</div><span class="arrow">→</span><div class="step">Review — 10%</div><span class="arrow">→</span><div class="step">Final — 50%</div></div></div>
+</div>
+
+<div id="employees" class="page">
+  <div class="pagehead"><div><h1>Employees</h1><p>Create accounts and control access</p></div><button class="btn">+ Add Employee</button></div>
+  <div class="card"><table><thead><tr><th>Employee</th><th>Email</th><th>Department</th><th>Role</th><th>Status</th><th>Access</th></tr></thead><tbody>
+  <tr><td><b>Abu Tawfiq</b></td><td>admin@example.com</td><td>Management</td><td>Super Admin</td><td><span class="badge activeb">Active</span></td><td>Full Access</td></tr>
+  <tr><td><b>Rahim Designer</b></td><td>designer@example.com</td><td>Design</td><td>Graphic Designer</td><td><span class="badge activeb">Active</span></td><td>3 Modules</td></tr>
+  <tr><td><b>Karim Finance</b></td><td>finance@example.com</td><td>Finance</td><td>Finance Staff</td><td><span class="badge activeb">Active</span></td><td>Finance Only</td></tr>
+  </tbody></table></div>
+</div>
+
+<div id="permissions" class="page">
+  <div class="pagehead"><div><h1>Roles & Permissions</h1><p>Give each employee only the access they need</p></div><button class="btn">+ Create Role</button></div>
+  <div class="settings"><div class="settingsmenu"><div class="active">Graphic Designer</div><div>Video Editor</div><div>Finance Staff</div><div>Project Manager</div><div>Custom Role</div></div>
+  <div class="card"><div class="cardhead"><h3>Graphic Designer — Permissions</h3><button class="btn secondary">Save Changes</button></div><div class="permissions">
+    <div class="perm">View Dashboard <span class="switch"></span></div><div class="perm">View Clients <span class="switch"></span></div><div class="perm">Edit Clients <span class="switch" style="background:#ccd3de"></span></div>
+    <div class="perm">View Assigned Tasks <span class="switch"></span></div><div class="perm">Complete Tasks <span class="switch"></span></div><div class="perm">Manage Finance <span class="switch" style="background:#ccd3de"></span></div>
+    <div class="perm">View Employees <span class="switch" style="background:#ccd3de"></span></div><div class="perm">System Settings <span class="switch" style="background:#ccd3de"></span></div><div class="perm">Upload Deliverables <span class="switch"></span></div>
+  </div></div></div>
+</div>
+
+<div id="finance" class="page">
+  <div class="pagehead"><div><h1>Finance</h1><p>Payments, expenses and financial overview</p></div></div>
+  <div class="grid5">
+    <div class="metric"><div class="label">Total Revenue</div><div class="num">৳ 8,45,230</div></div>
+    <div class="metric"><div class="label">Received</div><div class="num positive">৳ 6,45,230</div></div>
+    <div class="metric"><div class="label">Total Due</div><div class="num negative">৳ 2,00,000</div></div>
+    <div class="metric"><div class="label">Expenses</div><div class="num">৳ 2,35,450</div></div>
+    <div class="metric"><div class="label">Net Result</div><div class="num positive">৳ 4,09,780</div></div>
+  </div>
+  <div class="row2"><div class="card"><div class="cardhead"><h3>Payment Channels</h3></div><ul class="finance"><li><span>bKash</span><b>৳ 3,20,000</b></li><li><span>Nagad</span><b>৳ 1,85,000</b></li><li><span>Rocket</span><b>৳ 95,230</b></li><li><span>Other</span><b>৳ 45,000</b></li></ul></div>
+  <div class="card"><div class="cardhead"><h3>Expense Categories</h3></div><ul class="finance"><li><span>Salary</span><b>৳ 1,25,000</b></li><li><span>Software</span><b>৳ 28,000</b></li><li><span>Products</span><b>৳ 42,450</b></li><li><span>Marketing</span><b>৳ 20,000</b></li><li><span>Other</span><b>৳ 20,000</b></li></ul></div>
+  <div class="card"><div class="cardhead"><h3>Quick Actions</h3></div><button class="btn" style="width:100%;margin-bottom:8px">+ Add Payment</button><button class="btn secondary" style="width:100%;margin-bottom:8px">+ Add Expense</button><button class="btn secondary" style="width:100%">Financial Report</button></div></div>
+</div>
+
+<div id="services" class="page"><div class="pagehead"><div><h1>Services</h1><p>Manage services and their workflows</p></div><button class="btn">+ Add Service</button></div><div class="cards3"><div class="mini"><h4>Social Media Marketing</h4><p>6 workflow stages • Configurable percentages</p></div><div class="mini"><h4>Video Editing</h4><p>5 workflow stages • Configurable percentages</p></div><div class="mini"><h4>Graphic Design</h4><p>4 workflow stages • Configurable percentages</p></div></div></div>
+<div id="departments" class="page"><div class="pagehead"><div><h1>Departments</h1><p>Organize employees and workflows</p></div><button class="btn">+ Add Department</button></div><div class="cards3"><div class="mini"><h4>Design Team</h4><p>4 employees</p></div><div class="mini"><h4>Video Team</h4><p>3 employees</p></div><div class="mini"><h4>Finance</h4><p>2 employees • Restricted access</p></div></div></div>
+<div id="payments" class="page"><div class="pagehead"><div><h1>Payments</h1><p>Client payment records</p></div><button class="btn">+ Add Payment</button></div><div class="card"><table><thead><tr><th>Client</th><th>Method</th><th>Amount</th><th>Date</th><th>Status</th></tr></thead><tbody><tr><td>Akram Hossain</td><td>bKash</td><td>৳25,000</td><td>04 Sep 2026</td><td><span class="badge activeb">Paid</span></td></tr><tr><td>Farhana Islam</td><td>Nagad</td><td>৳18,000</td><td>03 Sep 2026</td><td><span class="badge activeb">Paid</span></td></tr></tbody></table></div></div>
+<div id="expenses" class="page"><div class="pagehead"><div><h1>Expenses</h1><p>Category-wise business expenses</p></div><button class="btn">+ Add Expense</button></div><div class="card"><table><thead><tr><th>Category</th><th>Description</th><th>Amount</th><th>Date</th></tr></thead><tbody><tr><td>Salary</td><td>September salary</td><td>৳85,000</td><td>01 Sep 2026</td></tr><tr><td>Software</td><td>Design subscription</td><td>৳4,200</td><td>02 Sep 2026</td></tr><tr><td>Product Purchase</td><td>Office equipment</td><td>৳18,500</td><td>03 Sep 2026</td></tr></tbody></table></div></div>
+<div id="salary" class="page"><div class="pagehead"><div><h1>Salary</h1><p>Employee salary records</p></div><button class="btn">+ Add Salary</button></div><div class="card"><table><thead><tr><th>Employee</th><th>Month</th><th>Amount</th><th>Status</th></tr></thead><tbody><tr><td>Rahim Designer</td><td>September 2026</td><td>৳30,000</td><td><span class="badge activeb">Paid</span></td></tr><tr><td>Karim Finance</td><td>September 2026</td><td>৳35,000</td><td><span class="badge pendingb">Pending</span></td></tr></tbody></table></div></div>
+<div id="reports" class="page"><div class="pagehead"><div><h1>Financial Reports</h1><p>Revenue, expenses and net result</p></div><button class="btn">Export Report</button></div><div class="card"><div class="chart" style="height:300px"><div class="bar" style="height:38%"></div><div class="bar" style="height:55%"></div><div class="bar" style="height:48%"></div><div class="bar" style="height:70%"></div><div class="bar" style="height:82%"></div><div class="bar" style="height:92%"></div><div class="bar" style="height:75%"></div><div class="bar" style="height:100%"></div></div></div></div>
+<div id="workflow" class="page"><div class="pagehead"><div><h1>Workflow Management</h1><p>Configure service stages and percentage completion</p></div><button class="btn">+ Add Workflow</button></div><div class="card"><div class="cardhead"><h3>Social Media Marketing</h3><button class="btn secondary">Edit</button></div><div class="workflow"><div class="step done">Logo 10%</div><span class="arrow">→</span><div class="step done">Graphics 10%</div><span class="arrow">→</span><div class="step">Video 10%</div><span class="arrow">→</span><div class="step">Editing 10%</div><span class="arrow">→</span><div class="step">Review 10%</div><span class="arrow">→</span><div class="step">Final 50%</div></div></div></div>
+<div id="settings" class="page"><div class="pagehead"><div><h1>System Settings</h1><p>Manage global system configuration</p></div><button class="btn">Save Changes</button></div><div class="settings"><div class="settingsmenu"><div class="active">General</div><div>Business Info</div><div>Payment Methods</div><div>Expense Categories</div><div>Notifications</div><div>Security</div></div><div class="card"><div class="formgrid"><div class="field"><label>Business Name</label><input value="Alfalah Online Quran Institute"></div><div class="field"><label>Backend Domain</label><input value="admin.example.com"></div><div class="field"><label>Default Currency</label><select><option>BDT — ৳</option></select></div><div class="field"><label>Timezone</label><select><option>Asia/Dhaka</option></select></div></div></div></div></div>
+<div id="logs" class="page"><div class="pagehead"><div><h1>Activity Logs</h1><p>Track important account and system actions</p></div></div><div class="card"><table><thead><tr><th>Time</th><th>User</th><th>Action</th><th>Module</th></tr></thead><tbody><tr><td>04:32 AM</td><td>Abu Tawfiq</td><td>Created employee account</td><td>Employees</td></tr><tr><td>04:18 AM</td><td>Rahim Designer</td><td>Completed Logo task</td><td>Tasks</td></tr><tr><td>03:51 AM</td><td>Karim Finance</td><td>Added expense ৳4,200</td><td>Finance</td></tr></tbody></table></div></div>
+
+</section>
+</main>
+</div>
+<div class="mobilebar">
+<button class="active" data-page="dashboard"><span>▦</span>Home</button><button data-page="clients"><span>♙</span>Clients</button><button data-page="tasks"><span>☑</span>Tasks</button><button data-page="payments"><span>৳</span>Finance</button><button data-page="settings"><span>☰</span>More</button>
+</div>
+<script>
+const navs=document.querySelectorAll('[data-page]');
+navs.forEach(n=>n.addEventListener('click',()=>{
+  const page=n.dataset.page;
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  const target=document.getElementById(page);
+  if(target) target.classList.add('active');
+  document.querySelectorAll('.nav,.mobilebar button').forEach(x=>x.classList.remove('active'));
+  document.querySelectorAll('[data-page="'+page+'"]').forEach(x=>x.classList.add('active'));
+  window.scrollTo({top:0,behavior:'smooth'});
+}));
+
+const themeToggle=document.getElementById('themeToggle');
+function applyTheme(dark){
+  document.body.classList.toggle('dark',dark);
+  themeToggle.textContent=dark?'☀ Light':'☾ Dark';
+  localStorage.setItem('alfalah-theme',dark?'dark':'light');
+}
+applyTheme(localStorage.getItem('alfalah-theme')==='dark');
+themeToggle.addEventListener('click',()=>applyTheme(!document.body.classList.contains('dark')));
+
+const quickAdd=document.getElementById('quickAdd');
+const quickMenu=document.getElementById('quickMenu');
+quickAdd.addEventListener('click',e=>{e.stopPropagation();quickMenu.classList.toggle('open')});
+document.addEventListener('click',()=>quickMenu.classList.remove('open'));
+
+const modal=document.getElementById('demoModal');
+const modalTitle=document.getElementById('modalTitle');
+const demoName=document.getElementById('demoName');
+const toast=document.getElementById('toast');
+document.querySelectorAll('[data-add]').forEach(btn=>{
+  btn.addEventListener('click',e=>{
+    e.stopPropagation();
+    const labels={client:'Add Client',employee:'Add Employee',payment:'Add Payment',expense:'Add Expense',task:'Add Task / Project'};
+    modalTitle.textContent=labels[btn.dataset.add];
+    demoName.placeholder='Enter '+btn.dataset.add+' name';
+    modal.classList.add('open');
+    quickMenu.classList.remove('open');
+  });
+});
+document.getElementById('closeModal').onclick=()=>modal.classList.remove('open');
+document.getElementById('cancelModal').onclick=()=>modal.classList.remove('open');
+document.getElementById('saveDemo').onclick=()=>{
+  modal.classList.remove('open');
+  toast.classList.add('show');
+  setTimeout(()=>toast.classList.remove('show'),2200);
+};
+modal.addEventListener('click',e=>{if(e.target===modal)modal.classList.remove('open')});
+</script>
+
+<div class="modal" id="demoModal">
+  <div class="modalbox">
+    <div class="modalhead"><h3 id="modalTitle">Quick Add</h3><button class="close" id="closeModal">×</button></div>
+    <div class="formgrid">
+      <div class="field"><label>Name / Title</label><input id="demoName" placeholder="Enter name"></div>
+      <div class="field"><label>Type / Service</label><select id="demoType"><option>Social Media Marketing</option><option>Graphic Design</option><option>Video Editing</option><option>Website Development</option></select></div>
+      <div class="field"><label>WhatsApp / Reference</label><input placeholder="+880 1XXXXXXXXX"></div>
+      <div class="field"><label>Payment Channel</label><select><option>bKash</option><option>Nagad</option><option>Rocket</option><option>Other</option></select></div>
+    </div>
+    <p class="demo-note">Preview mode: this form demonstrates the combined Add flow. No real data is saved.</p>
+    <div style="display:flex;justify-content:flex-end;gap:8px;margin-top:17px">
+      <button class="btn secondary" id="cancelModal">Cancel</button>
+      <button class="btn" id="saveDemo">Save Demo</button>
+    </div>
+  </div>
+</div>
+<div class="toast" id="toast">Demo item added successfully.</div>
+
+</body>
+</html>

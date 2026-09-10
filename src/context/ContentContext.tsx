@@ -64,11 +64,21 @@ interface ContentContextType {
   addEmployee: (employee: Omit<EmployeeRecord, "id">) => void;
   updateEmployee: (id: string, fields: Partial<EmployeeRecord>) => void;
   deleteEmployee: (id: string) => void;
+  deactivateEmployee: (id: string, reason?: string) => void;
+  reactivateEmployee: (id: string) => void;
 
   addPayment: (payment: Omit<PaymentRecord, "id" | "date"> & { date?: string }) => void;
   addExpense: (expense: Omit<ExpenseRecord, "id" | "date"> & { date?: string }) => void;
   addSalary: (salary: Omit<SalaryRecord, "id">) => void;
   markSalaryPaid: (id: string) => void;
+  disburseSalary: (payload: {
+    employeeId: string;
+    month: string;
+    amount: number;
+    paymentMethod: string;
+    paidDate?: string;
+    notes?: string;
+  }) => void;
 
   addActivityLog: (log: Omit<ActivityLog, "id" | "time">) => void;
   addLeadFromContactForm: (leadData: {
@@ -529,6 +539,67 @@ export function ContentProvider({ children }: { children: React.ReactNode }) {
     });
   };
 
+  const deactivateEmployee = (id: string, reason?: string) => {
+    const today = new Date().toLocaleDateString("en-GB", { day: "2-digit", month: "short", year: "numeric" });
+    setEmployees((prev) => {
+      const target = prev.find((e) => e.id === id);
+      const updated = prev.map((e) =>
+        e.id === id
+          ? {
+              ...e,
+              status: "inactive" as const,
+              deactivatedAt: today,
+              deactivationReason: reason || "Administrative deactivation",
+            }
+          : e
+      );
+      try {
+        localStorage.setItem(STORAGE_KEY_EMPLOYEES, JSON.stringify(updated));
+      } catch (e) {
+        console.error(e);
+      }
+      if (target) {
+        addActivityLog({
+          user: "Super Admin",
+          action: `Deactivated employee ${target.name} (work & salary history preserved)`,
+          module: "Employees",
+          type: "client",
+        });
+      }
+      return updated;
+    });
+  };
+
+  const reactivateEmployee = (id: string) => {
+    setEmployees((prev) => {
+      const target = prev.find((e) => e.id === id);
+      const updated = prev.map((e) =>
+        e.id === id
+          ? {
+              ...e,
+              status: "active" as const,
+              deactivatedAt: undefined,
+              deactivationReason: undefined,
+            }
+          : e
+      );
+      try {
+        localStorage.setItem(STORAGE_KEY_EMPLOYEES, JSON.stringify(updated));
+      } catch (e) {
+        console.error(e);
+      }
+      if (target) {
+        addActivityLog({
+          user: "Super Admin",
+          action: `Reactivated employee ${target.name}`,
+          module: "Employees",
+          type: "client",
+        });
+      }
+      return updated;
+    });
+  };
+
   const addPayment = (paymentData: Omit<PaymentRecord, "id" | "date"> & { date?: string }) => {
     const newPay: PaymentRecord = {
       ...paymentData,
@@ -592,14 +663,101 @@ export function ContentProvider({ children }: { children: React.ReactNode }) {
   };
 
   const markSalaryPaid = (id: string) => {
+    const today = new Date().toLocaleDateString("en-GB", { day: "2-digit", month: "short", year: "numeric" });
     setSalaries((prev) => {
-      const updated = prev.map((s) => (s.id === id ? { ...s, status: "Paid" as const } : s));
+      const target = prev.find((s) => s.id === id);
+      const updated = prev.map((s) => (s.id === id ? { ...s, status: "Paid" as const, paidDate: today } : s));
+      try {
+        localStorage.setItem(STORAGE_KEY_SALARIES, JSON.stringify(updated));
+      } catch (e) {
+        console.error(e);
+      }
+      if (target && target.status !== "Paid") {
+        addExpense({
+          category: "Salary",
+          description: `${target.employeeName} - ${target.month} বেতন ও পারিশ্রমিক`,
+          amount: target.amount,
+          paymentMethod: target.paymentMethod || "Bank Wire",
+          date: today,
+        });
+      }
+      return updated;
+    });
+  };
+
+  const disburseSalary = (payload: {
+    employeeId: string;
+    month: string;
+    amount: number;
+    paymentMethod: string;
+    paidDate?: string;
+    notes?: string;
+  }) => {
+    const today = payload.paidDate || new Date().toLocaleDateString("en-GB", { day: "2-digit", month: "short", year: "numeric" });
+    const emp = employees.find((e) => e.id === payload.employeeId);
+    const empName = emp ? emp.name : "Staff Member";
+    const empDept = emp ? emp.department : "Agency";
+
+    // 1. Update or prepend Salary Record
+    setSalaries((prev) => {
+      const existingIdx = prev.findIndex(
+        (s) =>
+          (s.employeeId === payload.employeeId || s.employeeName.trim().toLowerCase() === empName.trim().toLowerCase()) &&
+          s.month.trim().toLowerCase() === payload.month.trim().toLowerCase()
+      );
+
+      let updated: SalaryRecord[];
+      if (existingIdx >= 0) {
+        updated = prev.map((s, idx) =>
+          idx === existingIdx
+            ? {
+                ...s,
+                amount: payload.amount,
+                status: "Paid" as const,
+                paidDate: today,
+                paymentMethod: payload.paymentMethod,
+                notes: payload.notes,
+              }
+            : s
+        );
+      } else {
+        const newRecord: SalaryRecord = {
+          id: `sal-${Date.now().toString().slice(-4)}`,
+          employeeId: payload.employeeId,
+          employeeName: empName,
+          department: empDept,
+          month: payload.month,
+          amount: payload.amount,
+          status: "Paid",
+          paidDate: today,
+          paymentMethod: payload.paymentMethod,
+          notes: payload.notes,
+        };
+        updated = [newRecord, ...prev];
+      }
+
       try {
         localStorage.setItem(STORAGE_KEY_SALARIES, JSON.stringify(updated));
       } catch (e) {
         console.error(e);
       }
       return updated;
+    });
+
+    // 2. Automatically sync to Expenses
+    addExpense({
+      category: "Salary",
+      description: `${empName} - ${payload.month} বেতন ও পারিশ্রমিক`,
+      amount: payload.amount,
+      paymentMethod: payload.paymentMethod,
+      date: today,
+    });
+
+    addActivityLog({
+      user: "Super Admin",
+      action: `Disbursed salary ৳${payload.amount.toLocaleString()} for ${payload.month} to ${empName}`,
+      module: "Finance",
+      type: "expense",
     });
   };
 
@@ -752,10 +910,13 @@ export function ContentProvider({ children }: { children: React.ReactNode }) {
         addEmployee,
         updateEmployee,
         deleteEmployee,
+        deactivateEmployee,
+        reactivateEmployee,
         addPayment,
         addExpense,
         addSalary,
         markSalaryPaid,
+        disburseSalary,
         addActivityLog,
         addLeadFromContactForm,
       }}

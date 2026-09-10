@@ -207,10 +207,12 @@ export interface EmployeeRecord {
   department: string;
   role: string;
   salary: number;
-  status: "active" | "on_leave";
+  status: "active" | "inactive" | "on_leave";
   accessModules: string[];
   notes?: string;
   joinDate?: string; // e.g. "01 Jan 2024" or "2024-01-01"
+  deactivatedAt?: string;
+  deactivationReason?: string;
 }
 
 export interface PaymentRecord {
@@ -242,6 +244,9 @@ export interface SalaryRecord {
   amount: number;
   status: "Paid" | "Pending";
   paidDate?: string;
+  paymentMethod?: string;
+  reference?: string;
+  notes?: string;
 }
 
 export interface ActivityLog {

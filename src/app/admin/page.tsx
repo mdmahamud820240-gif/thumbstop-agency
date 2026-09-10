@@ -72,6 +72,8 @@ import {
   TrendingDown,
   AlertTriangle,
   User,
+  UserX,
+  Archive,
   Volume2,
   VolumeX,
   ChevronDown,
@@ -586,9 +588,12 @@ export default function AdminControlPanel() {
     addEmployee,
     updateEmployee,
     deleteEmployee,
+    deactivateEmployee,
+    reactivateEmployee,
     addPayment,
     addExpense,
     markSalaryPaid,
+    disburseSalary,
     resetToDefaults,
     exportData,
     importData,
@@ -975,6 +980,23 @@ export default function AdminControlPanel() {
   const [financeSectorFilter, setFinanceSectorFilter] = useState<string>("all");
   const [financeGatewayFilter, setFinanceGatewayFilter] = useState<string>("all");
   const [financeExpenseCategoryFilter, setFinanceExpenseCategoryFilter] = useState<string>("all");
+
+  // 👥 Employee Lifecycle & History States (Active/Inactive, Deactivation, Work Dossier)
+  const [employeeStatusFilter, setEmployeeStatusFilter] = useState<"all" | "active" | "inactive">("all");
+  const [deactivatingEmp, setDeactivatingEmp] = useState<EmployeeRecord | null>(null);
+  const [deactivationReasonInput, setDeactivationReasonInput] = useState<string>("");
+  const [viewingEmployeeWorkHistory, setViewingEmployeeWorkHistory] = useState<EmployeeRecord | null>(null);
+
+  // 💸 Month-Specific Salary Disbursal Modal State
+  const [disburseSalaryModalEmp, setDisburseSalaryModalEmp] = useState<EmployeeRecord | null>(null);
+  const [disburseSalaryMonth, setDisburseSalaryMonth] = useState<string>("Sep 2026");
+  const [disburseSalaryAmount, setDisburseSalaryAmount] = useState<string>("");
+  const [disburseSalaryMethod, setDisburseSalaryMethod] = useState<string>("Bank Wire");
+  const [disburseSalaryDate, setDisburseSalaryDate] = useState<string>("");
+  const [disburseSalaryNotes, setDisburseSalaryNotes] = useState<string>("");
+
+  // 📊 Payroll Budget & Fixed Commitments State
+  const [payrollBudgetMonth, setPayrollBudgetMonth] = useState<string>("Sep 2026");
 
   // Client Progress & Deliverables Checklist Modal State
   const [selectedClientForProgress, setSelectedClientForProgress] = useState<ClientRecord | null>(null);
@@ -1648,6 +1670,53 @@ export default function AdminControlPanel() {
     if (months > 0) return `${months} মাস`;
     return "নতুন যুক্ত (< ১ মাস)";
   };
+
+  // 👥 Active vs Inactive Employee Segregation & Payroll Commitments
+  const activeEmployees = useMemo(() => employees.filter((e) => e.status !== "inactive"), [employees]);
+  const inactiveEmployees = useMemo(() => employees.filter((e) => e.status === "inactive"), [employees]);
+
+  const filteredEmployeesList = useMemo(() => {
+    if (employeeStatusFilter === "active") return activeEmployees;
+    if (employeeStatusFilter === "inactive") return inactiveEmployees;
+    return employees;
+  }, [employees, employeeStatusFilter, activeEmployees, inactiveEmployees]);
+
+  // Total active monthly salary obligation (বাধ্যতামূলক মাসিক পে-রোল দায়)
+  const totalActiveMonthlySalaryCommitment = useMemo(() => {
+    return activeEmployees.reduce((sum, e) => sum + (e.salary || 0), 0);
+  }, [activeEmployees]);
+
+  // Check an employee's salary payout status for a specific month
+  const getEmployeeMonthSalaryStatus = (emp: EmployeeRecord, targetMonth: string) => {
+    const record = salaries.find(
+      (s) =>
+        (s.employeeId === emp.id || s.employeeName.trim().toLowerCase() === emp.name.trim().toLowerCase()) &&
+        s.month.trim().toLowerCase() === targetMonth.trim().toLowerCase()
+    );
+    if (!record) return { isPaid: false, record: undefined, amount: emp.salary };
+    return { isPaid: record.status === "Paid", record, paidDate: record.paidDate, amount: record.amount };
+  };
+
+  // Monthly Payroll Budget Calculations for selected budget month
+  const payrollBudgetMetrics = useMemo(() => {
+    const paidForMonth = salaries
+      .filter((s) => s.month.trim().toLowerCase() === payrollBudgetMonth.trim().toLowerCase() && s.status === "Paid")
+      .reduce((sum, s) => sum + s.amount, 0);
+
+    const pendingForMonth = Math.max(0, totalActiveMonthlySalaryCommitment - paidForMonth);
+    const progressPercent =
+      totalActiveMonthlySalaryCommitment > 0
+        ? Math.min(100, Math.round((paidForMonth / totalActiveMonthlySalaryCommitment) * 100))
+        : 0;
+
+    return {
+      totalDue: totalActiveMonthlySalaryCommitment,
+      paidAmount: paidForMonth,
+      pendingAmount: pendingForMonth,
+      percent: progressPercent,
+      isFullyDisbursed: paidForMonth >= totalActiveMonthlySalaryCommitment && totalActiveMonthlySalaryCommitment > 0,
+    };
+  }, [salaries, payrollBudgetMonth, totalActiveMonthlySalaryCommitment]);
 
   // 📊 Available Months, Sectors, Gateways for Dynamic Multi-Filters
   const availableFinanceMonths = useMemo(() => {
@@ -3985,6 +4054,58 @@ export default function AdminControlPanel() {
                       </button>
                     </div>
 
+                    {/* 👥 Employee Filters, Active/Inactive Tabs & Monthly Payroll Commitment */}
+                    <div className="grid grid-cols-1 lg:grid-cols-3 gap-3 items-center">
+                      <div className="lg:col-span-2 flex flex-wrap items-center gap-2">
+                        <button
+                          onClick={() => setEmployeeStatusFilter("all")}
+                          className={`px-3 py-1.5 rounded-xl text-xs font-semibold flex items-center gap-1.5 transition-all ${
+                            employeeStatusFilter === "all"
+                              ? "bg-cyan-500 text-slate-950 font-bold shadow-lg shadow-cyan-500/20"
+                              : isDark ? "bg-white/5 text-slate-400 hover:text-white" : "bg-slate-100 text-slate-600 hover:text-slate-900"
+                          }`}
+                        >
+                          <Users className="w-3.5 h-3.5" />
+                          <span>সকল সদস্য ({employees.length})</span>
+                        </button>
+
+                        <button
+                          onClick={() => setEmployeeStatusFilter("active")}
+                          className={`px-3 py-1.5 rounded-xl text-xs font-semibold flex items-center gap-1.5 transition-all ${
+                            employeeStatusFilter === "active"
+                              ? "bg-emerald-500 text-slate-950 font-bold shadow-lg shadow-emerald-500/20"
+                              : isDark ? "bg-white/5 text-slate-400 hover:text-emerald-400" : "bg-slate-100 text-slate-600 hover:text-emerald-600"
+                          }`}
+                        >
+                          <UserCheck className="w-3.5 h-3.5" />
+                          <span>সক্রিয় কর্মী ({activeEmployees.length})</span>
+                        </button>
+
+                        <button
+                          onClick={() => setEmployeeStatusFilter("inactive")}
+                          className={`px-3 py-1.5 rounded-xl text-xs font-semibold flex items-center gap-1.5 transition-all ${
+                            employeeStatusFilter === "inactive"
+                              ? "bg-rose-500 text-white font-bold shadow-lg shadow-rose-500/20"
+                              : isDark ? "bg-white/5 text-slate-400 hover:text-rose-400" : "bg-slate-100 text-slate-600 hover:text-rose-600"
+                          }`}
+                        >
+                          <UserX className="w-3.5 h-3.5" />
+                          <span>ডিঅ্যাক্টিভ / সাবেক ({inactiveEmployees.length})</span>
+                        </button>
+                      </div>
+
+                      {/* Fixed Active Payroll Commitment Pill */}
+                      <div className="flex items-center justify-start lg:justify-end">
+                        <div className="px-3.5 py-1.5 rounded-xl bg-cyan-500/10 border border-cyan-500/30 flex items-center gap-2">
+                          <Coins className="w-3.5 h-3.5 text-cyan-400 shrink-0" />
+                          <div className="text-[11px]">
+                            <span className="text-slate-400">সক্রিয় মাসিক দায়:</span>{" "}
+                            <span className="font-mono font-bold text-cyan-300">৳ {totalActiveMonthlySalaryCommitment.toLocaleString()}</span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
                     <div className={`rounded-2xl border overflow-hidden ${theme.cardBg} ${theme.cardBorder} shadow-sm`}>
                       <div className="overflow-x-auto">
                         <table className="w-full text-left border-collapse text-xs">
@@ -3996,6 +4117,7 @@ export default function AdminControlPanel() {
                               <th className="p-3.5">যোগদানের তারিখ ও স্থায়িত্ব</th>
                               <th className="p-3.5">মাসিক বেতন (Salary)</th>
                               <th className="p-3.5">আজীবনের মোট স্যালারি</th>
+                              <th className="p-3.5">চলতি মাসের পে-রোল ({disburseSalaryMonth})</th>
                               <th className="p-3.5">লগইন ক্রেডেনশিয়াল (Login)</th>
                               <th className="p-3.5">অনুমোদিত মডিউল</th>
                               <th className="p-3.5">Status</th>
@@ -4003,22 +4125,47 @@ export default function AdminControlPanel() {
                             </tr>
                           </thead>
                           <tbody className={`divide-y ${isDark ? "divide-white/5" : "divide-slate-200"}`}>
-                            {employees.map((emp) => {
+                            {filteredEmployeesList.length === 0 ? (
+                              <tr>
+                                <td colSpan={11} className="p-8 text-center text-slate-500">
+                                  এই ক্যাটাগরিতে কোনো কর্মী পাওয়া যায়নি।
+                                </td>
+                              </tr>
+                            ) : filteredEmployeesList.map((emp) => {
                               const empUser = emp.username || emp.email.split("@")[0] || "staff";
                               const empPass = emp.password || "thumbstop2026";
                               const lifetimeSalary = getEmployeeLifetimeSalary(emp);
                               const empTenure = getEmployeeTenure(emp.joinDate);
+                              const monthSalaryStatus = getEmployeeMonthSalaryStatus(emp, disburseSalaryMonth);
 
                               return (
-                                <tr key={emp.id} className={`transition-colors ${theme.rowHover}`}>
+                                <tr key={emp.id} className={`transition-colors ${theme.rowHover} ${emp.status === "inactive" ? "opacity-75 bg-rose-950/5" : ""}`}>
                                   <td className="p-3.5">
-                                    <div className={`font-bold ${isDark ? "text-white" : "text-slate-900"}`}>{emp.name}</div>
-                                    <div className="text-[10px] text-slate-400 font-mono">{emp.email}</div>
-                                    {emp.notes && (
-                                      <div className="text-[10px] text-amber-400/90 mt-0.5 flex items-center gap-1 font-sans">
-                                        <span className="flex items-center gap-1"><FileText className="w-3 h-3 text-amber-400" /><span>নোট: {emp.notes}</span></span>
+                                    <div className="flex items-center gap-2">
+                                      <div className={`w-8 h-8 rounded-full flex items-center justify-center font-bold text-xs shrink-0 ${
+                                        emp.status === "inactive"
+                                          ? "bg-rose-500/20 text-rose-300 border border-rose-500/30"
+                                          : "bg-cyan-500/20 text-cyan-300 border border-cyan-500/30"
+                                      }`}>
+                                        {emp.name.charAt(0)}
                                       </div>
-                                    )}
+                                      <div>
+                                        <div className={`font-bold flex items-center gap-1.5 ${isDark ? "text-white" : "text-slate-900"}`}>
+                                          <span>{emp.name}</span>
+                                          {emp.status === "inactive" && (
+                                            <span className="text-[9px] px-1.5 py-0.2 rounded bg-rose-500/20 text-rose-400 font-semibold border border-rose-500/30">
+                                              স্থগিত
+                                            </span>
+                                          )}
+                                        </div>
+                                        <div className="text-[10px] text-slate-400 font-mono">{emp.email}</div>
+                                        {emp.notes && (
+                                          <div className="text-[10px] text-amber-400/90 mt-0.5 flex items-center gap-1 font-sans">
+                                            <span className="flex items-center gap-1"><FileText className="w-3 h-3 text-amber-400" /><span>নোট: {emp.notes}</span></span>
+                                          </div>
+                                        )}
+                                      </div>
+                                    </div>
                                   </td>
                                   <td className="p-3.5">
                                     <span className="px-2 py-0.5 rounded bg-blue-500/10 text-blue-400 text-[10px] font-medium">
@@ -4041,6 +4188,9 @@ export default function AdminControlPanel() {
                                   {/* Monthly Salary Column */}
                                   <td className="p-3.5 font-mono font-bold text-emerald-400">
                                     ৳ {emp.salary.toLocaleString()}
+                                    {emp.status === "inactive" && (
+                                      <div className="text-[9px] text-slate-500 font-sans font-normal">বাজেট বহির্ভূত</div>
+                                    )}
                                   </td>
 
                                   {/* 💰 Lifetime Total Salary Paid Column */}
@@ -4057,6 +4207,44 @@ export default function AdminControlPanel() {
                                       <Receipt className="w-3 h-3" />
                                       <span>হিস্ট্রি দেখুন</span>
                                     </button>
+                                  </td>
+
+                                  {/* 💸 Current Month Salary Disbursal Status */}
+                                  <td className="p-3.5">
+                                    {emp.status === "inactive" ? (
+                                      <span className="text-[10px] text-slate-500 italic">অব্যাহতিপ্রাপ্ত (প্রযোজ্য নয়)</span>
+                                    ) : monthSalaryStatus.isPaid ? (
+                                      <div>
+                                        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-emerald-500/15 border border-emerald-500/30 text-emerald-400 text-[10px] font-bold">
+                                          <Check className="w-3 h-3" />
+                                          <span>পেইড ✓</span>
+                                        </span>
+                                        <div className="text-[9px] text-slate-400 font-mono mt-0.5">
+                                          {monthSalaryStatus.paidDate || "পরিশোধিত"}
+                                        </div>
+                                      </div>
+                                    ) : (
+                                      <button
+                                        type="button"
+                                        onClick={() => {
+                                          setDisburseSalaryModalEmp(emp);
+                                          setDisburseSalaryAmount(String(emp.salary));
+                                          setDisburseSalaryDate(
+                                            new Date().toLocaleDateString("en-GB", {
+                                              day: "2-digit",
+                                              month: "short",
+                                              year: "numeric",
+                                            })
+                                          );
+                                          setDisburseSalaryNotes(`${emp.name}-এর ${disburseSalaryMonth} মাসের নিয়মিত পারিশ্রমিক`);
+                                        }}
+                                        className="px-2.5 py-1 rounded-lg bg-amber-500/15 hover:bg-amber-500/25 text-amber-300 border border-amber-500/30 flex items-center gap-1 text-[10px] font-bold transition-colors shadow-sm"
+                                        title={`${disburseSalaryMonth} মাসের বেতন প্রদান করুন`}
+                                      >
+                                        <Coins className="w-3 h-3 text-amber-400" />
+                                        <span>বকেয়া ⏳ বেতন দিন</span>
+                                      </button>
+                                    )}
                                   </td>
 
                                   {/* Login Credentials Column */}
@@ -4107,13 +4295,65 @@ export default function AdminControlPanel() {
                                     )}
                                   </td>
 
+                                  {/* Status Column */}
                                   <td className="p-3.5">
-                                    <span className="px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 text-[10px] font-bold border border-emerald-500/20">
-                                      ACTIVE
-                                    </span>
+                                    {emp.status === "inactive" ? (
+                                      <div>
+                                        <span className="px-2 py-0.5 rounded-full bg-rose-500/15 text-rose-400 text-[10px] font-bold border border-rose-500/30 inline-flex items-center gap-1">
+                                          <UserX className="w-3 h-3" />
+                                          <span>ডিঅ্যাক্টিভ</span>
+                                        </span>
+                                        {emp.deactivationReason && (
+                                          <div className="text-[9px] text-slate-400 max-w-[120px] truncate mt-0.5" title={emp.deactivationReason}>
+                                            {emp.deactivationReason}
+                                          </div>
+                                        )}
+                                      </div>
+                                    ) : (
+                                      <span className="px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 text-[10px] font-bold border border-emerald-500/20">
+                                        ACTIVE
+                                      </span>
+                                    )}
                                   </td>
+
+                                  {/* Actions Column */}
                                   <td className="p-3.5 text-right">
                                     <div className="flex items-center justify-end gap-1.5">
+                                      {/* Disburse Salary Button */}
+                                      {emp.status !== "inactive" && (
+                                        <button
+                                          type="button"
+                                          onClick={() => {
+                                            setDisburseSalaryModalEmp(emp);
+                                            setDisburseSalaryAmount(String(emp.salary));
+                                            setDisburseSalaryDate(
+                                              new Date().toLocaleDateString("en-GB", {
+                                                day: "2-digit",
+                                                month: "short",
+                                                year: "numeric",
+                                              })
+                                            );
+                                            setDisburseSalaryNotes(`${emp.name}-এর ${disburseSalaryMonth} মাসের নিয়মিত পারিশ্রমিক`);
+                                          }}
+                                          className="px-2 py-1 rounded-lg bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 flex items-center gap-1 text-[10px] font-semibold transition-colors"
+                                          title="মাসিক বেতন প্রদান করুন"
+                                        >
+                                          <Coins className="w-3 h-3" />
+                                          <span>বেতন দিন</span>
+                                        </button>
+                                      )}
+
+                                      {/* Work Dossier History Button */}
+                                      <button
+                                        type="button"
+                                        onClick={() => setViewingEmployeeWorkHistory(emp)}
+                                        className="px-2 py-1 rounded-lg bg-purple-500/10 hover:bg-purple-500/20 text-purple-300 border border-purple-500/30 flex items-center gap-1 text-[10px] font-semibold transition-colors"
+                                        title={`${emp.name}-এর কাজের হিস্ট্রি ও ক্লায়েন্ট টাস্ক রেকর্ড`}
+                                      >
+                                        <Archive className="w-3 h-3" />
+                                        <span>কাজের হিস্ট্রি</span>
+                                      </button>
+
                                       <button
                                         onClick={() => {
                                           setEditingEmployeeCreds(emp);
@@ -4124,25 +4364,41 @@ export default function AdminControlPanel() {
                                           setEditCredAccessModules(emp.accessModules && emp.accessModules.length > 0 ? [...emp.accessModules] : ["Dashboard", "Tasks", "Clients"]);
                                           setEditCredPermissionPreset("custom");
                                         }}
-                                        className="px-2.5 py-1 rounded-lg bg-cyan-500/10 hover:bg-cyan-500/20 text-cyan-400 border border-cyan-500/30 flex items-center gap-1 text-[10px] font-semibold transition-colors"
+                                        className="px-2 py-1 rounded-lg bg-cyan-500/10 hover:bg-cyan-500/20 text-cyan-400 border border-cyan-500/30 flex items-center gap-1 text-[10px] font-semibold transition-colors"
                                         title="ইউজারনেম, পাসওয়ার্ড, বেতন ও যোগদানের তারিখ পরিবর্তন"
                                       >
                                         <ShieldCheck className="w-3 h-3" />
-                                        <span>প্রোফাইল ও পারমিশন</span>
+                                        <span>প্রোফাইল</span>
                                       </button>
+
+                                      {/* Soft Deactivation / One-Click Reactivation */}
                                       {emp.id !== "emp-01" && (
-                                        <button
-                                          onClick={() => {
-                                            if (confirm(`Remove ${emp.name}?`)) {
-                                              deleteEmployee(emp.id);
-                                              showToast(`Employee ${emp.name} removed.`);
-                                            }
-                                          }}
-                                          className="p-1.5 rounded text-slate-500 hover:text-rose-400 hover:bg-rose-500/10 transition-colors"
-                                          title="রিমুভ করুন"
-                                        >
-                                          <Trash2 className="w-3.5 h-3.5" />
-                                        </button>
+                                        emp.status === "inactive" ? (
+                                          <button
+                                            type="button"
+                                            onClick={() => {
+                                              reactivateEmployee(emp.id);
+                                              showToast(`${emp.name}-কে পুনরায় সক্রিয় করা হয়েছে!`);
+                                            }}
+                                            className="px-2 py-1 rounded-lg bg-emerald-500/15 hover:bg-emerald-500/25 text-emerald-300 border border-emerald-500/30 flex items-center gap-1 text-[10px] font-bold transition-colors"
+                                            title="পুনরায় সক্রিয় করুন"
+                                          >
+                                            <RotateCcw className="w-3 h-3" />
+                                            <span>সক্রিয় করুন</span>
+                                          </button>
+                                        ) : (
+                                          <button
+                                            type="button"
+                                            onClick={() => {
+                                              setDeactivatingEmp(emp);
+                                              setDeactivationReasonInput("");
+                                            }}
+                                            className="p-1.5 rounded text-slate-500 hover:text-rose-400 hover:bg-rose-500/10 transition-colors"
+                                            title="ডিঅ্যাক্টিভ করুন (হিস্ট্রি সংরক্ষিত থাকবে)"
+                                          >
+                                            <UserX className="w-3.5 h-3.5" />
+                                          </button>
+                                        )
                                       )}
                                     </div>
                                   </td>
@@ -4521,6 +4777,508 @@ export default function AdminControlPanel() {
                             <button
                               type="button"
                               onClick={() => setViewingSalaryHistoryEmp(null)}
+                              className="px-4 py-2 rounded-xl text-xs font-semibold text-slate-300 hover:text-white bg-white/10 hover:bg-white/15 transition-colors"
+                            >
+                              বন্ধ করুন
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    )}
+
+                    {/* 💸 1. Month-Specific Salary Disbursal Modal */}
+                    {disburseSalaryModalEmp && (
+                      <div className="fixed inset-0 z-50 overflow-y-auto flex items-center justify-center p-4">
+                        <div
+                          onClick={() => setDisburseSalaryModalEmp(null)}
+                          className="fixed inset-0 bg-black/80 backdrop-blur-sm animate-in fade-in duration-200"
+                        />
+                        <div className="relative z-10 w-full max-w-lg bg-[#070E1E] border border-emerald-500/30 rounded-2xl p-5 sm:p-6 shadow-2xl text-white animate-in zoom-in-95 duration-200">
+                          <div className="flex items-center justify-between pb-3 border-b border-white/10">
+                            <div className="flex items-center gap-2.5">
+                              <div className="w-9 h-9 rounded-xl bg-emerald-500/20 border border-emerald-500/40 flex items-center justify-center text-emerald-300">
+                                <Coins className="w-5 h-5" />
+                              </div>
+                              <div>
+                                <h3 className="font-bold text-sm text-white">মাসিক বেতন ও পারিশ্রমিক বিতরণ ভাউচার</h3>
+                                <p className="text-[11px] text-slate-400">নির্দিষ্ট মাসের বেতন প্রদান ও ফাইন্যান্স এক্সপেন্স সিঙ্ক</p>
+                              </div>
+                            </div>
+                            <button
+                              onClick={() => setDisburseSalaryModalEmp(null)}
+                              className="p-1.5 rounded-lg bg-white/5 hover:bg-white/10 text-slate-400 hover:text-white"
+                            >
+                              <X className="w-4 h-4" />
+                            </button>
+                          </div>
+
+                          {/* Employee Highlight Header */}
+                          <div className="my-4 p-3.5 rounded-xl bg-white/[0.03] border border-white/10 flex items-center justify-between">
+                            <div className="flex items-center gap-2.5">
+                              <div className="w-9 h-9 rounded-full bg-cyan-500/20 text-cyan-300 font-bold flex items-center justify-center text-sm border border-cyan-500/30">
+                                {disburseSalaryModalEmp.name.charAt(0)}
+                              </div>
+                              <div>
+                                <div className="font-bold text-white text-xs">{disburseSalaryModalEmp.name}</div>
+                                <div className="text-[10px] text-slate-400">{disburseSalaryModalEmp.role} • {disburseSalaryModalEmp.department}</div>
+                              </div>
+                            </div>
+                            <div className="text-right">
+                              <div className="text-[10px] text-slate-400 uppercase font-semibold">চুক্তিবদ্ধ মূল বেতন</div>
+                              <div className="font-mono font-bold text-emerald-400 text-sm">৳ {disburseSalaryModalEmp.salary.toLocaleString()}</div>
+                            </div>
+                          </div>
+
+                          <form
+                            onSubmit={(e) => {
+                              e.preventDefault();
+                              const amt = Number(disburseSalaryAmount) || disburseSalaryModalEmp.salary;
+                              const pDate = disburseSalaryDate || new Date().toLocaleDateString("en-GB", { day: "2-digit", month: "short", year: "numeric" });
+                              disburseSalary({
+                                employeeId: disburseSalaryModalEmp.id,
+                                month: disburseSalaryMonth,
+                                amount: amt,
+                                paymentMethod: disburseSalaryMethod,
+                                paidDate: pDate,
+                                notes: disburseSalaryNotes,
+                              });
+                              showToast(`${disburseSalaryModalEmp.name}-এর ${disburseSalaryMonth} মাসের বেতন (৳${amt.toLocaleString()}) পরিশোধ সম্পন্ন ও ফাইন্যান্সে যুক্ত হয়েছে!`);
+                              setDisburseSalaryModalEmp(null);
+                            }}
+                            className="space-y-4"
+                          >
+                            {/* Target Month Selection */}
+                            <div>
+                              <div className="flex items-center justify-between mb-1.5">
+                                <label className="text-xs font-semibold text-slate-300">কোন মাসের বেতন প্রদান করা হচ্ছে? (Target Month)</label>
+                                <span className="text-[10px] text-cyan-400 font-medium">মাস নির্বাচন আবশ্যক</span>
+                              </div>
+                              <div className="grid grid-cols-3 sm:grid-cols-4 gap-1.5 mb-2">
+                                {["Sep 2026", "Oct 2026", "Nov 2026", "Dec 2026", "Aug 2026", "Jul 2026", "Jun 2026", "May 2026"].map((m) => (
+                                  <button
+                                    key={m}
+                                    type="button"
+                                    onClick={() => setDisburseSalaryMonth(m)}
+                                    className={`py-1.5 px-2 rounded-lg text-xs font-mono font-semibold transition-colors border ${
+                                      disburseSalaryMonth === m
+                                        ? "bg-emerald-500/20 text-emerald-300 border-emerald-500/50 shadow-sm shadow-emerald-500/10"
+                                        : "bg-white/5 text-slate-400 border-white/5 hover:bg-white/10 hover:text-white"
+                                    }`}
+                                  >
+                                    {m}
+                                  </button>
+                                ))}
+                              </div>
+                              <input
+                                type="text"
+                                value={disburseSalaryMonth}
+                                onChange={(e) => setDisburseSalaryMonth(e.target.value)}
+                                placeholder="উদাঃ Sep 2026 বা নিজের মতো লিখুন"
+                                required
+                                className="w-full px-3 py-2 rounded-xl bg-black/40 border border-white/10 text-white text-xs focus:outline-none focus:border-emerald-500 font-mono"
+                              />
+                            </div>
+
+                            {/* Salary Amount & Quick Reset */}
+                            <div>
+                              <div className="flex items-center justify-between mb-1.5">
+                                <label className="text-xs font-semibold text-slate-300">পরিশোধের পরিমাণ (Amount in BDT)</label>
+                                <button
+                                  type="button"
+                                  onClick={() => setDisburseSalaryAmount(String(disburseSalaryModalEmp.salary))}
+                                  className="text-[10px] text-emerald-400 hover:text-emerald-300 underline"
+                                >
+                                  মূল বেতন সেট করুন (৳{disburseSalaryModalEmp.salary.toLocaleString()})
+                                </button>
+                              </div>
+                              <div className="relative">
+                                <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 font-bold text-xs">৳</span>
+                                <input
+                                  type="number"
+                                  value={disburseSalaryAmount}
+                                  onChange={(e) => setDisburseSalaryAmount(e.target.value)}
+                                  placeholder={String(disburseSalaryModalEmp.salary)}
+                                  required
+                                  className="w-full pl-8 pr-3 py-2 rounded-xl bg-black/40 border border-white/10 text-emerald-400 text-xs font-mono font-bold focus:outline-none focus:border-emerald-500"
+                                />
+                              </div>
+                            </div>
+
+                            {/* Payment Gateway & Date */}
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                              <div>
+                                <label className="block text-xs font-semibold text-slate-300 mb-1.5">পেমেন্ট মেথড (Payment Gateway)</label>
+                                <select
+                                  value={disburseSalaryMethod}
+                                  onChange={(e) => setDisburseSalaryMethod(e.target.value)}
+                                  className="w-full px-3 py-2 rounded-xl bg-black/40 border border-white/10 text-white text-xs focus:outline-none focus:border-emerald-500"
+                                >
+                                  <option value="Bank Wire (City Bank)">Bank Wire (City Bank)</option>
+                                  <option value="bKash Merchant">bKash Merchant</option>
+                                  <option value="Nagad Enterprise">Nagad Enterprise</option>
+                                  <option value="Cash Handover">Cash Handover (ক্যাশ)</option>
+                                  <option value="Rocket Enterprise">Rocket Enterprise</option>
+                                </select>
+                              </div>
+
+                              <div>
+                                <label className="block text-xs font-semibold text-slate-300 mb-1.5">প্রদানের তারিখ (Date)</label>
+                                <input
+                                  type="text"
+                                  value={disburseSalaryDate}
+                                  onChange={(e) => setDisburseSalaryDate(e.target.value)}
+                                  placeholder="10 Sep 2026"
+                                  className="w-full px-3 py-2 rounded-xl bg-black/40 border border-white/10 text-white text-xs font-mono focus:outline-none focus:border-emerald-500"
+                                />
+                              </div>
+                            </div>
+
+                            {/* Notes / Reference */}
+                            <div>
+                              <label className="block text-xs font-semibold text-slate-300 mb-1.5">ট্রানজেকশন রেফারেন্স / নোট (ঐচ্ছিক)</label>
+                              <input
+                                type="text"
+                                value={disburseSalaryNotes}
+                                onChange={(e) => setDisburseSalaryNotes(e.target.value)}
+                                placeholder="উদাঃ City Bank Ref #TX99102 বা বোনাস সহ নিয়মিত বেতন"
+                                className="w-full px-3 py-2 rounded-xl bg-black/40 border border-white/10 text-white text-xs focus:outline-none focus:border-emerald-500"
+                              />
+                            </div>
+
+                            {/* Auto Sync Callout */}
+                            <div className="p-3 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-[11px] text-emerald-300 flex items-start gap-2 leading-relaxed">
+                              <Sparkles className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
+                              <div>
+                                <strong>স্বয়ংক্রিয় ফাইন্যান্স সিঙ্ক:</strong> এই বেতন নিশ্চিত করার সাথে সাথে ফাইন্যান্স এক্সপেন্সের <em>'Salary'</em> খাতে এন্ট্রি যুক্ত হবে এবং লাইভ ক্যাশ ব্যালেন্স ও পিএন্ডএল অটোমেটিকভাবে আপডেট হবে।
+                              </div>
+                            </div>
+
+                            <div className="flex justify-end gap-2 pt-3 border-t border-white/10">
+                              <button
+                                type="button"
+                                onClick={() => setDisburseSalaryModalEmp(null)}
+                                className="px-4 py-2 rounded-xl text-xs text-slate-400 hover:text-white bg-white/5 hover:bg-white/10 transition-colors"
+                              >
+                                বাতিল
+                              </button>
+                              <button
+                                type="submit"
+                                className="px-5 py-2 rounded-xl text-xs font-bold bg-emerald-500 text-slate-950 hover:bg-emerald-400 transition-colors shadow-lg shadow-emerald-500/20 flex items-center gap-1.5"
+                              >
+                                <CheckCircle2 className="w-4 h-4" />
+                                <span>বেতন প্রদান নিশ্চিত করুন</span>
+                              </button>
+                            </div>
+                          </form>
+                        </div>
+                      </div>
+                    )}
+
+                    {/* 🚫 2. Staff Soft Deactivation Modal (100% History Preservation) */}
+                    {deactivatingEmp && (
+                      <div className="fixed inset-0 z-50 overflow-y-auto flex items-center justify-center p-4">
+                        <div
+                          onClick={() => setDeactivatingEmp(null)}
+                          className="fixed inset-0 bg-black/80 backdrop-blur-sm animate-in fade-in duration-200"
+                        />
+                        <div className="relative z-10 w-full max-w-md bg-[#070E1E] border border-rose-500/30 rounded-2xl p-5 sm:p-6 shadow-2xl text-white animate-in zoom-in-95 duration-200">
+                          <div className="flex items-center justify-between pb-3 border-b border-white/10">
+                            <div className="flex items-center gap-2.5">
+                              <div className="w-9 h-9 rounded-xl bg-rose-500/20 border border-rose-500/40 flex items-center justify-center text-rose-400">
+                                <UserX className="w-5 h-5" />
+                              </div>
+                              <div>
+                                <h3 className="font-bold text-sm text-white">কর্মী অ্যাকাউন্ট স্থগিতকরণ / ডিঅ্যাক্টিভ</h3>
+                                <p className="text-[11px] text-slate-400">হিস্ট্রি ১০০% সংরক্ষিত রেখে অ্যাকাউন্ট স্থগিত</p>
+                              </div>
+                            </div>
+                            <button
+                              onClick={() => setDeactivatingEmp(null)}
+                              className="p-1.5 rounded-lg bg-white/5 hover:bg-white/10 text-slate-400 hover:text-white"
+                            >
+                              <X className="w-4 h-4" />
+                            </button>
+                          </div>
+
+                          <div className="my-4 space-y-3">
+                            <div className="p-3 rounded-xl bg-white/[0.03] border border-white/10 flex items-center justify-between">
+                              <div>
+                                <div className="font-bold text-sm text-white">{deactivatingEmp.name}</div>
+                                <div className="text-xs text-slate-400">{deactivatingEmp.role} • {deactivatingEmp.department}</div>
+                              </div>
+                              <span className="px-2 py-0.5 rounded bg-rose-500/20 text-rose-300 text-[10px] font-bold border border-rose-500/30">
+                                ডিঅ্যাক্টিভ হবে
+                              </span>
+                            </div>
+
+                            <div className="p-3.5 rounded-xl bg-rose-500/10 border border-rose-500/25 text-xs text-slate-300 space-y-2 leading-relaxed">
+                              <div className="flex items-center gap-1.5 font-bold text-rose-300">
+                                <AlertCircle className="w-4 h-4" />
+                                <span>অ্যাকাউন্ট স্থগিতকরণের নিয়ম ও গ্যারান্টি:</span>
+                              </div>
+                              <ul className="list-disc pl-4 space-y-1 text-[11px] text-slate-300">
+                                <li>লগইন অ্যাক্সেস সাময়িকভাবে বন্ধ হবে।</li>
+                                <li>
+                                  <strong>মাসিক পে-রোল কমিটমেন্ট:</strong> সক্রিয় মাসিক পে-রোল ও বাজেট হিসাব থেকে তার বেতন <strong>বাদ পড়বে</strong> (খরচ বাড়বে না)।
+                                </li>
+                                <li>
+                                  <strong>হিস্ট্রি সংরক্ষণ:</strong> তার পূর্বের সকল কাজ, সম্পন্নকৃত টাস্ক, ক্লায়েন্ট ডেলিভারেবলস ও আজীবনের বেতন রেকর্ড সম্পূর্ণ সুরক্ষিত থাকবে।
+                                </li>
+                                <li>যেকোনো সময় &lsquo;সক্রিয় করুন&rsquo; বাটনে ক্লিক করে তাকে পুনরায় রিস্টোর করা যাবে।</li>
+                              </ul>
+                            </div>
+
+                            <div>
+                              <label className="block text-xs font-semibold text-slate-300 mb-1.5">
+                                অব্যাহতির কারণ / মন্তব্য (ঐচ্ছিক):
+                              </label>
+                              <input
+                                type="text"
+                                value={deactivationReasonInput}
+                                onChange={(e) => setDeactivationReasonInput(e.target.value)}
+                                placeholder="উদাঃ প্রজেক্ট চুক্তি সমাপ্ত / উচ্চশিক্ষা / অন্য সংস্থায় যোগদান"
+                                className="w-full px-3 py-2 rounded-xl bg-black/40 border border-white/10 text-white text-xs focus:outline-none focus:border-rose-500"
+                              />
+                            </div>
+                          </div>
+
+                          <div className="flex justify-end gap-2 pt-3 border-t border-white/10">
+                            <button
+                              type="button"
+                              onClick={() => setDeactivatingEmp(null)}
+                              className="px-4 py-2 rounded-xl text-xs text-slate-400 hover:text-white bg-white/5 hover:bg-white/10 transition-colors"
+                            >
+                              বাতিল
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => {
+                                deactivateEmployee(deactivatingEmp.id, deactivationReasonInput || undefined);
+                                showToast(`${deactivatingEmp.name}-এর অ্যাকাউন্ট স্থগিত করা হয়েছে। পূর্ববর্তী সকল হিস্ট্রি সংরক্ষিত আছে।`);
+                                setDeactivatingEmp(null);
+                              }}
+                              className="px-4 py-2 rounded-xl text-xs font-bold bg-rose-500 text-white hover:bg-rose-600 transition-colors shadow-lg shadow-rose-500/20 flex items-center gap-1.5"
+                            >
+                              <UserX className="w-4 h-4" />
+                              <span>স্থগিত নিশ্চিত করুন</span>
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    )}
+
+                    {/* 🗂️ 3. Comprehensive Employee Work History & Dossier Modal */}
+                    {viewingEmployeeWorkHistory && (
+                      <div className="fixed inset-0 z-50 overflow-y-auto flex items-center justify-center p-4">
+                        <div
+                          onClick={() => setViewingEmployeeWorkHistory(null)}
+                          className="fixed inset-0 bg-black/80 backdrop-blur-sm animate-in fade-in duration-200"
+                        />
+                        <div className="relative z-10 w-full max-w-3xl bg-[#070E1E] border border-purple-500/30 rounded-2xl p-5 sm:p-6 shadow-2xl text-white animate-in zoom-in-95 duration-200 max-h-[90vh] flex flex-col">
+                          <div className="flex items-center justify-between pb-3 border-b border-white/10 shrink-0">
+                            <div className="flex items-center gap-2.5">
+                              <div className="w-9 h-9 rounded-xl bg-purple-500/20 border border-purple-500/40 flex items-center justify-center text-purple-300">
+                                <Archive className="w-5 h-5" />
+                              </div>
+                              <div>
+                                <h3 className="font-bold text-sm text-white flex items-center gap-2">
+                                  <span>{viewingEmployeeWorkHistory.name}</span>
+                                  <span className={`text-[10px] px-2 py-0.5 rounded-full font-normal border ${
+                                    viewingEmployeeWorkHistory.status === "inactive"
+                                      ? "bg-rose-500/10 text-rose-300 border-rose-500/20"
+                                      : "bg-emerald-500/10 text-emerald-300 border-emerald-500/20"
+                                  }`}>
+                                    {viewingEmployeeWorkHistory.status === "inactive" ? "ডিঅ্যাক্টিভ / সাবেক কর্মী" : "সক্রিয় কর্মী"}
+                                  </span>
+                                </h3>
+                                <p className="text-[11px] text-slate-400">
+                                  কর্মীর আজীবনের কাজের রেকর্ড, সম্পন্নকৃত টাস্ক ও লাইফটাইম পে-রোল আর্কাইভ
+                                </p>
+                              </div>
+                            </div>
+                            <button
+                              onClick={() => setViewingEmployeeWorkHistory(null)}
+                              className="p-1.5 rounded-lg bg-white/5 hover:bg-white/10 text-slate-400 hover:text-white"
+                            >
+                              <X className="w-4 h-4" />
+                            </button>
+                          </div>
+
+                          {/* Top Metric Cards */}
+                          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 my-3 shrink-0">
+                            <div className="p-3 rounded-xl bg-white/[0.03] border border-white/10">
+                              <div className="text-[10px] text-slate-400 uppercase font-semibold">বিভাগ ও রোল</div>
+                              <div className="text-xs font-bold text-white mt-0.5 truncate">{viewingEmployeeWorkHistory.role}</div>
+                              <div className="text-[10px] text-purple-400">{viewingEmployeeWorkHistory.department}</div>
+                            </div>
+
+                            <div className="p-3 rounded-xl bg-white/[0.03] border border-white/10">
+                              <div className="text-[10px] text-slate-400 uppercase font-semibold">যোগদান ও স্থায়িত্ব</div>
+                              <div className="text-xs font-bold text-cyan-300 mt-0.5">{viewingEmployeeWorkHistory.joinDate || "01 Jan 2024"}</div>
+                              <div className="text-[10px] text-slate-400">{getEmployeeTenure(viewingEmployeeWorkHistory.joinDate)}</div>
+                            </div>
+
+                            <div className="p-3 rounded-xl bg-white/[0.03] border border-white/10">
+                              <div className="text-[10px] text-slate-400 uppercase font-semibold">লাইফটাইম বেতন পরিশোধ</div>
+                              <div className="text-xs font-mono font-bold text-emerald-400 mt-0.5">
+                                ৳ {getEmployeeLifetimeSalary(viewingEmployeeWorkHistory).toLocaleString()}
+                              </div>
+                              <div className="text-[10px] text-slate-400">
+                                {salaries.filter((s) => s.employeeId === viewingEmployeeWorkHistory.id || s.employeeName.toLowerCase() === viewingEmployeeWorkHistory.name.toLowerCase()).length} টি পেমেন্ট
+                              </div>
+                            </div>
+
+                            <div className="p-3 rounded-xl bg-white/[0.03] border border-white/10">
+                              <div className="text-[10px] text-slate-400 uppercase font-semibold">সম্পন্ন কাজের রেকর্ড</div>
+                              <div className="text-xs font-mono font-bold text-purple-300 mt-0.5">
+                                {tasks.filter((t) => t.assignedTo?.toLowerCase().includes(viewingEmployeeWorkHistory.name.toLowerCase())).length} টি টাস্ক
+                              </div>
+                              <div className="text-[10px] text-emerald-400">স্থায়ী আর্কাইভে সংরক্ষিত</div>
+                            </div>
+                          </div>
+
+                          {/* Deactivation Info (If applicable) */}
+                          {viewingEmployeeWorkHistory.status === "inactive" && (
+                            <div className="mb-3 p-2.5 rounded-xl bg-rose-500/10 border border-rose-500/20 text-xs text-rose-300 flex items-center justify-between shrink-0">
+                              <div>
+                                <span className="font-bold">অব্যাহতির বিবরণ:</span> {viewingEmployeeWorkHistory.deactivationReason || "প্রজেক্ট সম্পন্ন / পারস্পরিক সম্মতি"}
+                                {viewingEmployeeWorkHistory.deactivatedAt && (
+                                  <span className="text-[11px] text-slate-400 ml-2">({viewingEmployeeWorkHistory.deactivatedAt})</span>
+                                )}
+                              </div>
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  reactivateEmployee(viewingEmployeeWorkHistory.id);
+                                  showToast(`${viewingEmployeeWorkHistory.name}-কে পুনরায় সক্রিয় করা হয়েছে!`);
+                                  setViewingEmployeeWorkHistory(null);
+                                }}
+                                className="px-2.5 py-1 rounded-lg bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-300 border border-emerald-500/40 text-[10px] font-bold transition-colors"
+                              >
+                                পুনরায় সক্রিয় করুন
+                              </button>
+                            </div>
+                          )}
+
+                          {/* Scrollable Work & History Breakdown */}
+                          <div className="overflow-y-auto space-y-4 pr-1 flex-1">
+                            {/* 1. Tasks & Deliverables Section */}
+                            <div>
+                              <div className="text-xs font-bold text-white mb-2 flex items-center gap-1.5">
+                                <CheckSquare className="w-3.5 h-3.5 text-cyan-400" />
+                                <span>অ্যাসাইনকৃত টাস্ক ও প্রজেক্ট ডেলিভারেবলস:</span>
+                              </div>
+                              <div className="rounded-xl border border-white/10 overflow-hidden">
+                                <table className="w-full text-left text-xs">
+                                  <thead className="bg-white/5 text-[10px] uppercase font-semibold text-slate-400">
+                                    <tr>
+                                      <th className="p-2.5">Task Title</th>
+                                      <th className="p-2.5">Client / Project</th>
+                                      <th className="p-2.5">Progress</th>
+                                      <th className="p-2.5">Deadline</th>
+                                      <th className="p-2.5 text-right">Status</th>
+                                    </tr>
+                                  </thead>
+                                  <tbody className="divide-y divide-white/5 font-sans">
+                                    {tasks
+                                      .filter((t) => t.assignedTo?.toLowerCase().includes(viewingEmployeeWorkHistory.name.toLowerCase()))
+                                      .map((t) => (
+                                        <tr key={t.id} className="hover:bg-white/[0.02]">
+                                          <td className="p-2.5 font-medium text-white">{t.title}</td>
+                                          <td className="p-2.5 text-cyan-300">{t.clientName || "Agency Internal"}</td>
+                                          <td className="p-2.5">
+                                            <div className="flex items-center gap-1.5">
+                                              <div className="w-12 bg-white/10 rounded-full h-1.5 overflow-hidden">
+                                                <div
+                                                  className="bg-cyan-400 h-full rounded-full"
+                                                  style={{ width: `${t.progress}%` }}
+                                                />
+                                              </div>
+                                              <span className="font-mono text-[10px] text-slate-400">{t.progress}%</span>
+                                            </div>
+                                          </td>
+                                          <td className="p-2.5 text-slate-400 font-mono text-[11px]">{t.deadline}</td>
+                                          <td className="p-2.5 text-right">
+                                            <span className={`px-2 py-0.5 rounded text-[10px] font-bold ${
+                                              t.status === "completed"
+                                                ? "bg-emerald-500/15 text-emerald-400"
+                                                : "bg-amber-500/15 text-amber-400"
+                                            }`}>
+                                              {t.status === "completed" ? "Completed" : t.status === "in_progress" ? "In Progress" : "Pending"}
+                                            </span>
+                                          </td>
+                                        </tr>
+                                      ))}
+                                    {tasks.filter((t) => t.assignedTo?.toLowerCase().includes(viewingEmployeeWorkHistory.name.toLowerCase())).length === 0 && (
+                                      <tr>
+                                        <td colSpan={5} className="p-4 text-center text-slate-500 text-xs">
+                                          এই কর্মীর নামে কোনো সরাসরি টাস্ক রেকর্ড পাওয়া যায়নি।
+                                        </td>
+                                      </tr>
+                                    )}
+                                  </tbody>
+                                </table>
+                              </div>
+                            </div>
+
+                            {/* 2. Lifetime Salary & Disbursement Records */}
+                            <div>
+                              <div className="text-xs font-bold text-white mb-2 flex items-center gap-1.5">
+                                <Receipt className="w-3.5 h-3.5 text-emerald-400" />
+                                <span>লাইফটাইম পে-রোল ও বেতন বিতরণ রেকর্ড:</span>
+                              </div>
+                              <div className="rounded-xl border border-white/10 overflow-hidden">
+                                <table className="w-full text-left text-xs">
+                                  <thead className="bg-white/5 text-[10px] uppercase font-semibold text-slate-400">
+                                    <tr>
+                                      <th className="p-2.5">Month</th>
+                                      <th className="p-2.5">Amount</th>
+                                      <th className="p-2.5">Paid Date</th>
+                                      <th className="p-2.5">Method</th>
+                                      <th className="p-2.5 text-right">Status</th>
+                                    </tr>
+                                  </thead>
+                                  <tbody className="divide-y divide-white/5 font-sans">
+                                    {salaries
+                                      .filter(
+                                        (s) =>
+                                          s.employeeId === viewingEmployeeWorkHistory.id ||
+                                          s.employeeName.toLowerCase() === viewingEmployeeWorkHistory.name.toLowerCase()
+                                      )
+                                      .map((s) => (
+                                        <tr key={s.id} className="hover:bg-white/[0.02]">
+                                          <td className="p-2.5 font-mono font-bold text-white">{s.month}</td>
+                                          <td className="p-2.5 font-mono font-bold text-emerald-400">৳ {s.amount.toLocaleString()}</td>
+                                          <td className="p-2.5 font-mono text-[11px] text-slate-400">{s.paidDate || s.month}</td>
+                                          <td className="p-2.5 text-[11px] text-slate-300">{s.paymentMethod || "Bank Wire"}</td>
+                                          <td className="p-2.5 text-right">
+                                            <span className="px-2 py-0.5 rounded-full text-[9px] font-bold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+                                              ✓ PAID
+                                            </span>
+                                          </td>
+                                        </tr>
+                                      ))}
+                                    {salaries.filter(
+                                      (s) =>
+                                        s.employeeId === viewingEmployeeWorkHistory.id ||
+                                        s.employeeName.toLowerCase() === viewingEmployeeWorkHistory.name.toLowerCase()
+                                    ).length === 0 && (
+                                      <tr>
+                                        <td colSpan={5} className="p-4 text-center text-slate-500 text-xs">
+                                          কোনো বেতনের রেকর্ড পাওয়া যায়নি।
+                                        </td>
+                                      </tr>
+                                    )}
+                                  </tbody>
+                                </table>
+                              </div>
+                            </div>
+                          </div>
+
+                          <div className="flex justify-end gap-2 pt-3 mt-3 border-t border-white/10 shrink-0">
+                            <button
+                              type="button"
+                              onClick={() => setViewingEmployeeWorkHistory(null)}
                               className="px-4 py-2 rounded-xl text-xs font-semibold text-slate-300 hover:text-white bg-white/10 hover:bg-white/15 transition-colors"
                             >
                               বন্ধ করুন
@@ -5002,6 +5760,121 @@ export default function AdminControlPanel() {
                           </div>
                           <div className={`text-[11px] ${isDark ? "text-slate-400" : "text-slate-500"} mt-1.5 flex items-center gap-1 font-medium`}>
                             <span>bKash, Nagad, Rocket ও ব্যাংক ট্রান্সফার</span>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* 🏢 Fixed Commitments & Monthly Payroll Budget Widget (মাসিক অপরিহার্য খরচ ও পে-রোল দায়বদ্ধতা) */}
+                      <div className={`p-5 rounded-2xl border ${theme.cardBg} border-cyan-500/30 shadow-lg relative overflow-hidden space-y-4`}>
+                        <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 border-b border-white/5 pb-3">
+                          <div className="flex items-center gap-2.5">
+                            <div className="w-8 h-8 rounded-xl bg-cyan-500/20 border border-cyan-500/40 flex items-center justify-center text-cyan-300">
+                              <Building className="w-4 h-4" />
+                            </div>
+                            <div>
+                              <h3 className="text-xs sm:text-sm font-bold text-white flex items-center gap-2">
+                                <span>মাসিক অপরিহার্য খরচ ও পে-রোল বাজেট (Fixed Commitments & Payroll Burn)</span>
+                                <span className="px-2 py-0.5 rounded-full bg-cyan-500/15 text-cyan-300 text-[10px] font-mono border border-cyan-500/20">
+                                  প্যাসিভ খরচ
+                                </span>
+                              </h3>
+                              <p className="text-[11px] text-slate-400">
+                                যে খরচগুলো প্রতি মাসে নিশ্চিতভাবে হবেই — সক্রিয় টিম বেতন ও স্থায়ী পরিচালন ব্যয়
+                              </p>
+                            </div>
+                          </div>
+
+                          {/* Target Month Selector for Payroll Budget */}
+                          <div className="flex items-center gap-2">
+                            <span className="text-xs text-slate-400 font-semibold">বাজেট মাস:</span>
+                            <select
+                              value={payrollBudgetMonth}
+                              onChange={(e) => setPayrollBudgetMonth(e.target.value)}
+                              className={`px-3 py-1.5 rounded-xl text-xs font-bold ${isDark ? "bg-[#0A162B] border-cyan-500/30 text-cyan-200" : "bg-slate-50 border-slate-300 text-slate-800"} border focus:outline-none cursor-pointer`}
+                            >
+                              {availableFinanceMonths.map((m) => (
+                                <option key={m} value={m} className="bg-slate-900 text-white">
+                                  {m}
+                                </option>
+                              ))}
+                            </select>
+                          </div>
+                        </div>
+
+                        {/* 4 Cards inside Payroll Budget */}
+                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+                          {/* 1. মোট সক্রিয় মাসিক বেতন দায় */}
+                          <div className="p-3.5 rounded-xl bg-white/[0.02] border border-white/10">
+                            <div className="text-[10px] uppercase font-bold text-slate-400 flex items-center justify-between">
+                              <span>মাসিক বেতন দায় (Active Payroll)</span>
+                              <span className="text-cyan-400 font-mono font-normal">{activeEmployees.length} জন সক্রিয়</span>
+                            </div>
+                            <div className="text-xl font-black font-mono text-white mt-1">
+                              ৳ {totalActiveMonthlySalaryCommitment.toLocaleString()}
+                            </div>
+                            <div className="text-[10px] text-slate-400 mt-0.5">
+                              প্রতি মাসের বাধ্যতামূলক দায়
+                            </div>
+                          </div>
+
+                          {/* 2. নির্বাচিত মাসে পেইড */}
+                          <div className="p-3.5 rounded-xl bg-emerald-500/10 border border-emerald-500/30">
+                            <div className="text-[10px] uppercase font-bold text-emerald-300 flex items-center justify-between">
+                              <span>ইতিমধ্যে পরিশোধিত ({payrollBudgetMonth})</span>
+                              <CheckCircle2 className="w-3 h-3 text-emerald-400" />
+                            </div>
+                            <div className="text-xl font-black font-mono text-emerald-400 mt-1">
+                              ৳ {payrollBudgetMetrics.paidAmount.toLocaleString()}
+                            </div>
+                            <div className="text-[10px] text-emerald-400/80 mt-0.5">
+                              {payrollBudgetMetrics.percent}% বেতন ডিস্ট্রিবিউট সম্পন্ন
+                            </div>
+                          </div>
+
+                          {/* 3. নির্বাচিত মাসে বকেয়া */}
+                          <div className="p-3.5 rounded-xl bg-amber-500/10 border border-amber-500/30">
+                            <div className="text-[10px] uppercase font-bold text-amber-300 flex items-center justify-between">
+                              <span>এখনও বকেয়া রয়েছে ({payrollBudgetMonth})</span>
+                              <Clock className="w-3 h-3 text-amber-400" />
+                            </div>
+                            <div className="text-xl font-black font-mono text-amber-300 mt-1">
+                              ৳ {payrollBudgetMetrics.pendingAmount.toLocaleString()}
+                            </div>
+                            <div className="text-[10px] text-amber-400/80 mt-0.5">
+                              {payrollBudgetMetrics.isFullyDisbursed ? "✓ সম্পূর্ণ পরিশোধিত" : "বকেয়া স্যালারি ডিসবার্স প্রয়োজন"}
+                            </div>
+                          </div>
+
+                          {/* 4. পে-রোল প্রগ্রেস ও কুইক ডিসবার্স বাটন */}
+                          <div className="p-3.5 rounded-xl bg-gradient-to-br from-cyan-950/30 to-blue-950/20 border border-cyan-500/30 flex flex-col justify-between">
+                            <div>
+                              <div className="flex items-center justify-between text-[10px] font-bold text-cyan-300">
+                                <span>পে-রোল সম্পূর্ণতা</span>
+                                <span className="font-mono">{payrollBudgetMetrics.percent}%</span>
+                              </div>
+                              <div className="w-full h-2 bg-white/10 rounded-full mt-1.5 overflow-hidden">
+                                <div
+                                  className="h-full bg-gradient-to-r from-cyan-500 to-emerald-400 rounded-full transition-all duration-500"
+                                  style={{ width: `${payrollBudgetMetrics.percent}%` }}
+                                />
+                              </div>
+                            </div>
+                            <button
+                              type="button"
+                              onClick={() => {
+                                const firstUnpaid = activeEmployees.find(
+                                  (e) => !getEmployeeMonthSalaryStatus(e, payrollBudgetMonth).isPaid
+                                ) || activeEmployees[0];
+                                setDisburseSalaryModalEmp(firstUnpaid || null);
+                                setDisburseSalaryMonth(payrollBudgetMonth);
+                                setDisburseSalaryAmount(firstUnpaid ? firstUnpaid.salary.toString() : "40000");
+                                setDisburseSalaryDate(liveDateFormatted);
+                              }}
+                              className="mt-2 w-full py-1.5 rounded-lg bg-cyan-500/20 hover:bg-cyan-500/30 text-cyan-300 border border-cyan-500/40 text-[11px] font-bold flex items-center justify-center gap-1.5 transition-colors"
+                            >
+                              <Plus className="w-3.5 h-3.5" />
+                              <span>{payrollBudgetMonth}-এর বেতন দিন</span>
+                            </button>
                           </div>
                         </div>
                       </div>

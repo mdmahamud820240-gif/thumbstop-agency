@@ -15,6 +15,7 @@ export function PwaInstallPrompt() {
   const [isIOS, setIsIOS] = useState(false);
   const [showIOSGuide, setShowIOSGuide] = useState(false);
   const [isStandalone, setIsStandalone] = useState(false);
+  const [isInstalled, setIsInstalled] = useState(false);
 
   useEffect(() => {
     // 1. Register Service Worker
@@ -127,7 +128,7 @@ export function PwaInstallPrompt() {
   };
 
   // Do not render anything if already running as installed app
-  if (isStandalone || !isVisible) return null;
+  if (isStandalone || isInstalled || !isVisible) return null;
 
   return (
     <>

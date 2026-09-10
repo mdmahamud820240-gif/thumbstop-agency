@@ -17,6 +17,7 @@ import {
   ShieldCheck,
   GitBranch,
   Sliders,
+  SlidersHorizontal,
   Settings,
   Sparkles,
   Clock,
@@ -959,11 +960,21 @@ export default function AdminControlPanel() {
   const [logsFilter, setLogsFilter] = useState<"all" | "auth" | "security" | "finance" | "tasks">("all");
   const [logsSearchQuery, setLogsSearchQuery] = useState("");
 
-  // Staff Credentials Edit Modal State (সুপার অ্যাডমিন কর্তৃক পাসওয়ার্ড পরিবর্তন)
+  // Staff Credentials & Info Edit Modal State (সুপার অ্যাডমিন কর্তৃক আপডেট)
   const [editingEmployeeCreds, setEditingEmployeeCreds] = useState<EmployeeRecord | null>(null);
   const [editCredUsername, setEditCredUsername] = useState("");
   const [editCredPassword, setEditCredPassword] = useState("");
+  const [editCredSalary, setEditCredSalary] = useState<number>(40000);
+  const [editCredJoinDate, setEditCredJoinDate] = useState<string>("");
   const [showEditCredPassword, setShowEditCredPassword] = useState(false);
+  const [formEmployeeJoinDate, setFormEmployeeJoinDate] = useState("");
+  const [viewingSalaryHistoryEmp, setViewingSalaryHistoryEmp] = useState<EmployeeRecord | null>(null);
+
+  // Finance Multi-Filter System State (মাস, খাত, গেটওয়ে ও খরচের ফিল্টার)
+  const [financeMonthFilter, setFinanceMonthFilter] = useState<string>("all");
+  const [financeSectorFilter, setFinanceSectorFilter] = useState<string>("all");
+  const [financeGatewayFilter, setFinanceGatewayFilter] = useState<string>("all");
+  const [financeExpenseCategoryFilter, setFinanceExpenseCategoryFilter] = useState<string>("all");
 
   // Client Progress & Deliverables Checklist Modal State
   const [selectedClientForProgress, setSelectedClientForProgress] = useState<ClientRecord | null>(null);
@@ -1613,36 +1624,183 @@ export default function AdminControlPanel() {
     return () => clearInterval(interval);
   }, [isAuthenticated, adhanNotificationEnabled]);
 
-  // Derived financial metrics with timeframe filtering
-  const filteredPayments = useMemo(() => {
-    if (financeTimeframe === "all") return payments;
-    const days = financeTimeframe === "7d" ? 7 : financeTimeframe === "28d" ? 28 : 30;
-    const refDate = new Date("2026-09-04T23:59:59");
-    const cutoffTime = refDate.getTime() - days * 24 * 60 * 60 * 1000;
+  // 💼 Employee Lifetime Salary & Tenure Helpers
+  const getEmployeeLifetimeSalary = (emp: EmployeeRecord) => {
+    return salaries
+      .filter(
+        (s) =>
+          (s.employeeId === emp.id || s.employeeName.trim().toLowerCase() === emp.name.trim().toLowerCase()) &&
+          s.status === "Paid"
+      )
+      .reduce((sum, s) => sum + s.amount, 0);
+  };
 
-    return payments.filter((p) => {
-      const pDate = new Date(p.date);
-      if (isNaN(pDate.getTime())) return true;
-      return pDate.getTime() >= cutoffTime;
+  const getEmployeeTenure = (joinDateStr?: string) => {
+    if (!joinDateStr) return "N/A";
+    const parsed = new Date(joinDateStr);
+    if (isNaN(parsed.getTime())) return joinDateStr;
+    const now = new Date("2026-09-10T12:00:00");
+    const diffMonths = Math.max(0, (now.getFullYear() - parsed.getFullYear()) * 12 + (now.getMonth() - parsed.getMonth()));
+    const years = Math.floor(diffMonths / 12);
+    const months = diffMonths % 12;
+    if (years > 0 && months > 0) return `${years} বছর ${months} মাস`;
+    if (years > 0) return `${years} বছর`;
+    if (months > 0) return `${months} মাস`;
+    return "নতুন যুক্ত (< ১ মাস)";
+  };
+
+  // 📊 Available Months, Sectors, Gateways for Dynamic Multi-Filters
+  const availableFinanceMonths = useMemo(() => {
+    const set = new Set<string>();
+    payments.forEach((p) => {
+      const parts = p.date.split(" ");
+      if (parts.length >= 3) set.add(`${parts[1]} ${parts[2]}`);
     });
-  }, [payments, financeTimeframe]);
+    expenses.forEach((e) => {
+      const parts = e.date.split(" ");
+      if (parts.length >= 3) set.add(`${parts[1]} ${parts[2]}`);
+    });
+    salaries.forEach((s) => {
+      if (s.month) set.add(s.month);
+    });
+    return Array.from(set).sort((a, b) => {
+      const da = new Date(`01 ${a}`);
+      const db = new Date(`01 ${b}`);
+      return db.getTime() - da.getTime();
+    });
+  }, [payments, expenses, salaries]);
+
+  const availableFinanceSectors = useMemo(() => {
+    const set = new Set<string>();
+    payments.forEach((p) => {
+      if (p.serviceName) set.add(p.serviceName);
+    });
+    services.forEach((s) => {
+      if (s.titleEn) set.add(s.titleEn);
+    });
+    return Array.from(set).sort();
+  }, [payments, services]);
+
+  // Derived financial metrics with dynamic multi-filter system
+  const filteredPayments = useMemo(() => {
+    return payments.filter((p) => {
+      // 1. Month Filter
+      if (financeMonthFilter !== "all") {
+        const parts = p.date.split(" ");
+        const pMonth = parts.length >= 3 ? `${parts[1]} ${parts[2]}` : "";
+        if (pMonth !== financeMonthFilter) return false;
+      }
+      // 2. Sector / Category Filter
+      if (financeSectorFilter !== "all") {
+        if (p.serviceName !== financeSectorFilter) return false;
+      }
+      // 3. Payment Gateway Filter
+      if (financeGatewayFilter !== "all") {
+        if (p.method !== financeGatewayFilter) return false;
+      }
+      // 4. Quick Timeframe Filter (when month filter is all)
+      if (financeMonthFilter === "all" && financeTimeframe !== "all") {
+        const days = financeTimeframe === "7d" ? 7 : financeTimeframe === "28d" ? 28 : 30;
+        const refDate = new Date("2026-09-10T23:59:59");
+        const cutoffTime = refDate.getTime() - days * 24 * 60 * 60 * 1000;
+        const pDate = new Date(p.date);
+        if (!isNaN(pDate.getTime()) && pDate.getTime() < cutoffTime) return false;
+      }
+      return true;
+    });
+  }, [payments, financeMonthFilter, financeSectorFilter, financeGatewayFilter, financeTimeframe]);
 
   const filteredExpenses = useMemo(() => {
-    if (financeTimeframe === "all") return expenses;
-    const days = financeTimeframe === "7d" ? 7 : financeTimeframe === "28d" ? 28 : 30;
-    const refDate = new Date("2026-09-04T23:59:59");
-    const cutoffTime = refDate.getTime() - days * 24 * 60 * 60 * 1000;
-
     return expenses.filter((e) => {
-      const eDate = new Date(e.date);
-      if (isNaN(eDate.getTime())) return true;
-      return eDate.getTime() >= cutoffTime;
+      // 1. Month Filter
+      if (financeMonthFilter !== "all") {
+        const parts = e.date.split(" ");
+        const eMonth = parts.length >= 3 ? `${parts[1]} ${parts[2]}` : "";
+        if (eMonth !== financeMonthFilter) return false;
+      }
+      // 2. Expense Category Filter
+      if (financeExpenseCategoryFilter !== "all") {
+        if (e.category !== financeExpenseCategoryFilter) return false;
+      }
+      // 3. Payment Gateway Filter
+      if (financeGatewayFilter !== "all") {
+        if (e.paymentMethod !== financeGatewayFilter) return false;
+      }
+      // 4. Quick Timeframe Filter (when month filter is all)
+      if (financeMonthFilter === "all" && financeTimeframe !== "all") {
+        const days = financeTimeframe === "7d" ? 7 : financeTimeframe === "28d" ? 28 : 30;
+        const refDate = new Date("2026-09-10T23:59:59");
+        const cutoffTime = refDate.getTime() - days * 24 * 60 * 60 * 1000;
+        const eDate = new Date(e.date);
+        if (!isNaN(eDate.getTime()) && eDate.getTime() < cutoffTime) return false;
+      }
+      return true;
     });
-  }, [expenses, financeTimeframe]);
+  }, [expenses, financeMonthFilter, financeExpenseCategoryFilter, financeGatewayFilter, financeTimeframe]);
 
   const totalRevenue = useMemo(() => filteredPayments.reduce((acc, p) => acc + p.amount, 0), [filteredPayments]);
   const totalExpenses = useMemo(() => filteredExpenses.reduce((acc, e) => acc + e.amount, 0), [filteredExpenses]);
   const netProfit = totalRevenue - totalExpenses;
+  const isDeficit = netProfit < 0;
+
+  // 🎯 Sector Breakdown Calculation (কোন খাত থেকে কত টাকা আয় হয়েছে)
+  const sectorBreakdown = useMemo(() => {
+    const map: Record<string, { count: number; total: number }> = {};
+    filteredPayments.forEach((p) => {
+      const sec = p.serviceName || "Other Solutions";
+      if (!map[sec]) map[sec] = { count: 0, total: 0 };
+      map[sec].count += 1;
+      map[sec].total += p.amount;
+    });
+    return Object.entries(map)
+      .map(([sector, data]) => ({
+        sector,
+        count: data.count,
+        total: data.total,
+        percentage: totalRevenue > 0 ? Math.round((data.total / totalRevenue) * 100) : 0,
+      }))
+      .sort((a, b) => b.total - a.total);
+  }, [filteredPayments, totalRevenue]);
+
+  // 🗓️ Monthly Income vs Expense Ledger Analytics
+  const monthlyAnalytics = useMemo(() => {
+    const monthsMap: Record<string, { income: number; expense: number; txCount: number }> = {};
+    payments.forEach((p) => {
+      const parts = p.date.split(" ");
+      const m = parts.length >= 3 ? `${parts[1]} ${parts[2]}` : "Sep 2026";
+      if (!monthsMap[m]) monthsMap[m] = { income: 0, expense: 0, txCount: 0 };
+      monthsMap[m].income += p.amount;
+      monthsMap[m].txCount += 1;
+    });
+    expenses.forEach((e) => {
+      const parts = e.date.split(" ");
+      const m = parts.length >= 3 ? `${parts[1]} ${parts[2]}` : "Sep 2026";
+      if (!monthsMap[m]) monthsMap[m] = { income: 0, expense: 0, txCount: 0 };
+      monthsMap[m].expense += e.amount;
+      monthsMap[m].txCount += 1;
+    });
+
+    return Object.entries(monthsMap)
+      .map(([month, data]) => {
+        const net = data.income - data.expense;
+        const margin = data.income > 0 ? Math.round((net / data.income) * 100) : 0;
+        return {
+          month,
+          income: data.income,
+          expense: data.expense,
+          net,
+          margin,
+          isDeficit: net < 0,
+          txCount: data.txCount,
+        };
+      })
+      .sort((a, b) => {
+        const da = new Date(`01 ${a.month}`);
+        const db = new Date(`01 ${b.month}`);
+        return db.getTime() - da.getTime();
+      });
+  }, [payments, expenses]);
+
   const activeClientsCount = useMemo(() => clients.filter((c) => c.status === "active").length, [clients]);
   const pendingClientsCount = useMemo(() => clients.filter((c) => c.status === "pending").length, [clients]);
   const completedClientsCount = useMemo(() => clients.filter((c) => c.status === "completed").length, [clients]);
@@ -1754,6 +1912,7 @@ export default function AdminControlPanel() {
         department: formDept,
         role: formRole,
         salary: parseInt(formAmount) || 40000,
+        joinDate: formEmployeeJoinDate.trim() || liveDateFormatted,
         status: "active",
         accessModules: formAccessModules && formAccessModules.length > 0 ? formAccessModules : ["Dashboard"],
         notes: formDesc,
@@ -1778,6 +1937,7 @@ export default function AdminControlPanel() {
     setFormFacebookPageUrl("");
     setFormUsername("");
     setFormPassword("");
+    setFormEmployeeJoinDate("");
   };
 
   // Handler for toggling a stage within the client progress modal
@@ -3833,9 +3993,11 @@ export default function AdminControlPanel() {
                               <th className="p-3.5">Employee</th>
                               <th className="p-3.5">Department</th>
                               <th className="p-3.5">Role</th>
+                              <th className="p-3.5">যোগদানের তারিখ ও স্থায়িত্ব</th>
+                              <th className="p-3.5">মাসিক বেতন (Salary)</th>
+                              <th className="p-3.5">আজীবনের মোট স্যালারি</th>
                               <th className="p-3.5">লগইন ক্রেডেনশিয়াল (Login)</th>
-                              <th className="p-3.5">অনুমোদিত মডিউল (Permissions)</th>
-                              <th className="p-3.5">Monthly Compensation</th>
+                              <th className="p-3.5">অনুমোদিত মডিউল</th>
                               <th className="p-3.5">Status</th>
                               <th className="p-3.5 text-right">Action</th>
                             </tr>
@@ -3844,6 +4006,8 @@ export default function AdminControlPanel() {
                             {employees.map((emp) => {
                               const empUser = emp.username || emp.email.split("@")[0] || "staff";
                               const empPass = emp.password || "thumbstop2026";
+                              const lifetimeSalary = getEmployeeLifetimeSalary(emp);
+                              const empTenure = getEmployeeTenure(emp.joinDate);
 
                               return (
                                 <tr key={emp.id} className={`transition-colors ${theme.rowHover}`}>
@@ -3863,6 +4027,38 @@ export default function AdminControlPanel() {
                                   </td>
                                   <td className={`p-3.5 ${isDark ? "text-slate-200" : "text-slate-700"}`}>{emp.role}</td>
                                   
+                                  {/* 📅 Join Date & Tenure Column */}
+                                  <td className="p-3.5">
+                                    <div className={`font-semibold text-xs flex items-center gap-1.5 ${isDark ? "text-slate-200" : "text-slate-800"}`}>
+                                      <Calendar className="w-3.5 h-3.5 text-cyan-400 shrink-0" />
+                                      <span>{emp.joinDate || "01 Jan 2024"}</span>
+                                    </div>
+                                    <div className="text-[10px] text-cyan-400/90 font-mono mt-0.5">
+                                      স্থায়িত্ব: {empTenure}
+                                    </div>
+                                  </td>
+
+                                  {/* Monthly Salary Column */}
+                                  <td className="p-3.5 font-mono font-bold text-emerald-400">
+                                    ৳ {emp.salary.toLocaleString()}
+                                  </td>
+
+                                  {/* 💰 Lifetime Total Salary Paid Column */}
+                                  <td className="p-3.5">
+                                    <div className="font-mono font-bold text-cyan-300 text-xs">
+                                      ৳ {lifetimeSalary.toLocaleString()}
+                                    </div>
+                                    <button
+                                      type="button"
+                                      onClick={() => setViewingSalaryHistoryEmp(emp)}
+                                      className="inline-flex items-center gap-1 text-[10px] text-cyan-400 hover:text-cyan-200 underline mt-0.5 hover:underline transition-colors"
+                                      title={`${emp.name}-এর বেতন হিস্ট্রি দেখুন`}
+                                    >
+                                      <Receipt className="w-3 h-3" />
+                                      <span>হিস্ট্রি দেখুন</span>
+                                    </button>
+                                  </td>
+
                                   {/* Login Credentials Column */}
                                   <td className="p-3.5">
                                     <div className="flex items-center gap-1.5">
@@ -3891,7 +4087,7 @@ export default function AdminControlPanel() {
                                         👑 Full Access (Super Admin)
                                       </span>
                                     ) : (
-                                      <div className="flex flex-wrap gap-1 max-w-[220px]">
+                                      <div className="flex flex-wrap gap-1 max-w-[200px]">
                                         {(emp.accessModules && emp.accessModules.length > 0 ? emp.accessModules : ["Dashboard"]).map((mod) => {
                                           const isFin = ["Finance", "Payments", "Expenses", "Salary", "Reports"].includes(mod);
                                           return (
@@ -3911,9 +4107,6 @@ export default function AdminControlPanel() {
                                     )}
                                   </td>
 
-                                  <td className="p-3.5 font-mono font-bold text-emerald-400">
-                                    ৳ {emp.salary.toLocaleString()}
-                                  </td>
                                   <td className="p-3.5">
                                     <span className="px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 text-[10px] font-bold border border-emerald-500/20">
                                       ACTIVE
@@ -3926,14 +4119,16 @@ export default function AdminControlPanel() {
                                           setEditingEmployeeCreds(emp);
                                           setEditCredUsername(empUser);
                                           setEditCredPassword(empPass);
+                                          setEditCredSalary(emp.salary);
+                                          setEditCredJoinDate(emp.joinDate || "01 Jan 2024");
                                           setEditCredAccessModules(emp.accessModules && emp.accessModules.length > 0 ? [...emp.accessModules] : ["Dashboard", "Tasks", "Clients"]);
                                           setEditCredPermissionPreset("custom");
                                         }}
                                         className="px-2.5 py-1 rounded-lg bg-cyan-500/10 hover:bg-cyan-500/20 text-cyan-400 border border-cyan-500/30 flex items-center gap-1 text-[10px] font-semibold transition-colors"
-                                        title="ইউজারনেম, পাসওয়ার্ড ও মডিউল পারমিশন পরিবর্তন"
+                                        title="ইউজারনেম, পাসওয়ার্ড, বেতন ও যোগদানের তারিখ পরিবর্তন"
                                       >
                                         <ShieldCheck className="w-3 h-3" />
-                                        <span>অ্যাক্সেস ও পাসওয়ার্ড</span>
+                                        <span>প্রোফাইল ও পারমিশন</span>
                                       </button>
                                       {emp.id !== "emp-01" && (
                                         <button
@@ -3959,7 +4154,7 @@ export default function AdminControlPanel() {
                       </div>
                     </div>
 
-                    {/* 🔑 Staff Credentials Edit Modal */}
+                    {/* 🔑 Staff Credentials & Profile Edit Modal */}
                     {editingEmployeeCreds && (
                       <div className="fixed inset-0 z-50 overflow-y-auto flex items-center justify-center p-4">
                         <div
@@ -3973,8 +4168,8 @@ export default function AdminControlPanel() {
                                 <Key className="w-4 h-4" />
                               </div>
                               <div>
-                                <h3 className="font-bold text-sm text-white">স্টাফ লগইন ক্রেডেনশিয়াল আপডেট</h3>
-                                <p className="text-[11px] text-slate-400">ইউজারনেম ও পাসওয়ার্ড পরিবর্তন করুন</p>
+                                <h3 className="font-bold text-sm text-white">স্টাফ প্রোফাইল ও ক্রেডেনশিয়াল আপডেট</h3>
+                                <p className="text-[11px] text-slate-400">বেতন, যোগদানের তারিখ, ইউজারনেম ও পাসওয়ার্ড</p>
                               </div>
                             </div>
                             <button
@@ -3992,6 +4187,8 @@ export default function AdminControlPanel() {
                               updateEmployee(editingEmployeeCreds.id, {
                                 username: editCredUsername.trim().toLowerCase(),
                                 password: editCredPassword.trim(),
+                                salary: editCredSalary || editingEmployeeCreds.salary,
+                                joinDate: editCredJoinDate.trim() || editingEmployeeCreds.joinDate || "01 Jan 2024",
                                 accessModules: finalMods,
                               });
                               if (loggedInStaff && loggedInStaff.id === editingEmployeeCreds.id) {
@@ -3999,10 +4196,12 @@ export default function AdminControlPanel() {
                                   ...loggedInStaff,
                                   username: editCredUsername.trim().toLowerCase(),
                                   password: editCredPassword.trim(),
+                                  salary: editCredSalary || editingEmployeeCreds.salary,
+                                  joinDate: editCredJoinDate.trim() || editingEmployeeCreds.joinDate || "01 Jan 2024",
                                   accessModules: finalMods,
                                 });
                               }
-                              showToast(`${editingEmployeeCreds.name}-এর অ্যাক্সেস পারমিশন ও পাসওয়ার্ড সফলভাবে আপডেট করা হয়েছে!`);
+                              showToast(`${editingEmployeeCreds.name}-এর প্রোফাইল ও অ্যাক্সেস পারমিশন সফলভাবে আপডেট করা হয়েছে!`);
                               setEditingEmployeeCreds(null);
                             }}
                             className="space-y-4 pt-4"
@@ -4014,6 +4213,30 @@ export default function AdminControlPanel() {
                                 <span className="text-[10px] text-cyan-400 font-normal">
                                   {editingEmployeeCreds.role} • {editingEmployeeCreds.department}
                                 </span>
+                              </div>
+                            </div>
+
+                            {/* Salary & Join Date Inputs */}
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                              <div>
+                                <label className="text-[11px] text-slate-300 block mb-1 font-semibold">মাসিক বেতন (Monthly ৳)</label>
+                                <input
+                                  type="number"
+                                  required
+                                  value={editCredSalary}
+                                  onChange={(e) => setEditCredSalary(parseInt(e.target.value) || 0)}
+                                  className={`w-full px-3 py-2 rounded-xl text-xs font-mono ${theme.inputBg}`}
+                                />
+                              </div>
+                              <div>
+                                <label className="text-[11px] text-slate-300 block mb-1 font-semibold">যোগদানের তারিখ (Join Date)</label>
+                                <input
+                                  type="text"
+                                  value={editCredJoinDate}
+                                  onChange={(e) => setEditCredJoinDate(e.target.value)}
+                                  placeholder="যেমন: 01 Jan 2024"
+                                  className={`w-full px-3 py-2 rounded-xl text-xs font-mono ${theme.inputBg}`}
+                                />
                               </div>
                             </div>
 
@@ -4158,10 +4381,151 @@ export default function AdminControlPanel() {
                                 type="submit"
                                 className={`px-4 py-1.5 rounded-xl text-xs font-semibold ${theme.accentBtn}`}
                               >
-                                ক্রেডেনশিয়াল সেভ করুন
+                                পরিবর্তন সেভ করুন
                               </button>
                             </div>
                           </form>
+                        </div>
+                      </div>
+                    )}
+
+                    {/* 📜 Lifetime Salary History Modal */}
+                    {viewingSalaryHistoryEmp && (
+                      <div className="fixed inset-0 z-50 overflow-y-auto flex items-center justify-center p-4">
+                        <div
+                          onClick={() => setViewingSalaryHistoryEmp(null)}
+                          className="fixed inset-0 bg-black/80 backdrop-blur-sm animate-in fade-in duration-200"
+                        />
+                        <div className="relative z-10 w-full max-w-2xl bg-[#070E1E] border border-cyan-500/30 rounded-2xl p-5 sm:p-6 shadow-2xl text-white animate-in zoom-in-95 duration-200">
+                          <div className="flex items-center justify-between pb-3 border-b border-white/10">
+                            <div className="flex items-center gap-2.5">
+                              <div className="w-9 h-9 rounded-xl bg-cyan-500/20 border border-cyan-500/40 flex items-center justify-center text-cyan-300">
+                                <Receipt className="w-5 h-5" />
+                              </div>
+                              <div>
+                                <h3 className="font-bold text-sm text-white flex items-center gap-2">
+                                  <span>{viewingSalaryHistoryEmp.name}</span>
+                                  <span className="text-[10px] px-2 py-0.5 rounded-full bg-cyan-500/10 text-cyan-300 border border-cyan-500/20 font-normal">
+                                    {viewingSalaryHistoryEmp.role}
+                                  </span>
+                                </h3>
+                                <p className="text-[11px] text-slate-400">
+                                  প্রতিষ্ঠানে যোগদানের পর থেকে আজীবনের মোট বেতন ও পারিশ্রমিক হিসাব
+                                </p>
+                              </div>
+                            </div>
+                            <button
+                              onClick={() => setViewingSalaryHistoryEmp(null)}
+                              className="p-1.5 rounded-lg bg-white/5 hover:bg-white/10 text-slate-400 hover:text-white transition-colors"
+                            >
+                              <X className="w-4 h-4" />
+                            </button>
+                          </div>
+
+                          {/* Summary Cards */}
+                          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 my-4">
+                            <div className="p-3.5 rounded-xl bg-white/[0.03] border border-white/10">
+                              <div className="text-[10px] text-slate-400 uppercase font-semibold">যোগদানের তারিখ</div>
+                              <div className="text-xs font-bold text-slate-100 mt-1 flex items-center gap-1.5">
+                                <Calendar className="w-3.5 h-3.5 text-cyan-400" />
+                                <span>{viewingSalaryHistoryEmp.joinDate || "01 Jan 2024"}</span>
+                              </div>
+                              <div className="text-[10px] text-cyan-400 font-mono mt-0.5">
+                                {getEmployeeTenure(viewingSalaryHistoryEmp.joinDate)}
+                              </div>
+                            </div>
+
+                            <div className="p-3.5 rounded-xl bg-white/[0.03] border border-white/10">
+                              <div className="text-[10px] text-slate-400 uppercase font-semibold">মাসিক নিয়মিত বেতন</div>
+                              <div className="text-sm font-black text-emerald-400 mt-1 font-mono">
+                                ৳ {viewingSalaryHistoryEmp.salary.toLocaleString()}
+                              </div>
+                              <div className="text-[10px] text-slate-400 mt-0.5">প্রতি মাসের চুক্তি</div>
+                            </div>
+
+                            <div className="p-3.5 rounded-xl bg-cyan-500/10 border border-cyan-500/30">
+                              <div className="text-[10px] text-cyan-300 uppercase font-bold">আজীবনের মোট পরিশোধিত বেতন</div>
+                              <div className="text-base font-black text-cyan-300 mt-1 font-mono">
+                                ৳ {getEmployeeLifetimeSalary(viewingSalaryHistoryEmp).toLocaleString()}
+                              </div>
+                              <div className="text-[10px] text-cyan-400/80 mt-0.5">
+                                {salaries.filter((s) => (s.employeeId === viewingSalaryHistoryEmp.id || s.employeeName.trim().toLowerCase() === viewingSalaryHistoryEmp.name.trim().toLowerCase()) && s.status === "Paid").length} টি সফল ডিস্ট্রিবিউশন
+                              </div>
+                            </div>
+                          </div>
+
+                          {/* Salary Disbursement History Table */}
+                          <div className="space-y-2">
+                            <div className="text-xs font-bold text-slate-300 flex items-center justify-between">
+                              <span>মাসভিত্তিক বিতরণ রেকর্ড (Disbursed Payroll Records)</span>
+                              <span className="text-[10px] text-slate-400">সর্বশেষ মাসগুলো ক্রমানুসারে</span>
+                            </div>
+                            <div className="rounded-xl border border-white/10 overflow-hidden max-h-60 overflow-y-auto">
+                              <table className="w-full text-left border-collapse text-xs">
+                                <thead>
+                                  <tr className="bg-white/5 border-b border-white/10 text-[10px] font-semibold text-slate-400 uppercase tracking-wider">
+                                    <th className="p-2.5">মাস (Month)</th>
+                                    <th className="p-2.5">ডিপার্টমেন্ট</th>
+                                    <th className="p-2.5">পরিমাণ (BDT)</th>
+                                    <th className="p-2.5">পরিশোধের তারিখ</th>
+                                    <th className="p-2.5 text-right">স্ট্যাটাস</th>
+                                  </tr>
+                                </thead>
+                                <tbody className="divide-y divide-white/5">
+                                  {salaries
+                                    .filter(
+                                      (s) =>
+                                        s.employeeId === viewingSalaryHistoryEmp.id ||
+                                        s.employeeName.trim().toLowerCase() === viewingSalaryHistoryEmp.name.trim().toLowerCase()
+                                    )
+                                    .map((s) => (
+                                      <tr key={s.id} className="hover:bg-white/[0.02] transition-colors">
+                                        <td className="p-2.5 font-mono font-bold text-white">{s.month}</td>
+                                        <td className="p-2.5 text-slate-300">{s.department}</td>
+                                        <td className="p-2.5 font-mono font-bold text-emerald-400">
+                                          ৳ {s.amount.toLocaleString()}
+                                        </td>
+                                        <td className="p-2.5 font-mono text-[11px] text-slate-400">
+                                          {s.paidDate || s.month}
+                                        </td>
+                                        <td className="p-2.5 text-right">
+                                          {s.status === "Paid" ? (
+                                            <span className="px-2 py-0.5 rounded-full text-[9px] font-bold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+                                              ✓ DISBURSED
+                                            </span>
+                                          ) : (
+                                            <span className="px-2 py-0.5 rounded-full text-[9px] font-bold bg-amber-500/10 text-amber-400 border border-amber-500/20">
+                                              PENDING
+                                            </span>
+                                          )}
+                                        </td>
+                                      </tr>
+                                    ))}
+                                  {salaries.filter(
+                                    (s) =>
+                                      s.employeeId === viewingSalaryHistoryEmp.id ||
+                                      s.employeeName.trim().toLowerCase() === viewingSalaryHistoryEmp.name.trim().toLowerCase()
+                                  ).length === 0 && (
+                                    <tr>
+                                      <td colSpan={5} className="p-4 text-center text-slate-500 text-xs">
+                                        কোনো বেতনের রেকর্ড পাওয়া যায়নি।
+                                      </td>
+                                    </tr>
+                                  )}
+                                </tbody>
+                              </table>
+                            </div>
+                          </div>
+
+                          <div className="flex justify-end gap-2 pt-4 mt-4 border-t border-white/10">
+                            <button
+                              type="button"
+                              onClick={() => setViewingSalaryHistoryEmp(null)}
+                              className="px-4 py-2 rounded-xl text-xs font-semibold text-slate-300 hover:text-white bg-white/10 hover:bg-white/15 transition-colors"
+                            >
+                              বন্ধ করুন
+                            </button>
+                          </div>
                         </div>
                       </div>
                     )}
@@ -4365,24 +4729,8 @@ export default function AdminControlPanel() {
                           </p>
                         </div>
 
-                        {/* Top Action Buttons & Timeframe Dropdown */}
+                        {/* Top Action Buttons */}
                         <div className="flex flex-wrap items-center gap-2 shrink-0">
-                          {/* Timeframe Dropdown Filter */}
-                          <div className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl ${isDark ? "bg-white/[0.04] border-cyan-500/30" : "bg-white border-slate-200"} border shadow-sm`}>
-                            <Calendar className="w-3.5 h-3.5 text-cyan-400" />
-                            <span className={`text-[11px] ${isDark ? "text-slate-300" : "text-slate-600"} font-medium`}>সময়কাল:</span>
-                            <select
-                              value={financeTimeframe}
-                              onChange={(e) => setFinanceTimeframe(e.target.value as any)}
-                              className={`${isDark ? "bg-[#0A162B] border-cyan-500/40 text-cyan-200" : "bg-slate-50 border-slate-300 text-slate-800"} border text-xs font-bold rounded-lg px-2.5 py-1 focus:outline-none cursor-pointer`}
-                            >
-                              <option value="all">সর্বমোট (All Time)</option>
-                              <option value="30d">গত ৩০ দিন (Last 30 Days)</option>
-                              <option value="28d">গত ২৮ দিন (Last 28 Days)</option>
-                              <option value="7d">গত ৭ দিন (Last 7 Days)</option>
-                            </select>
-                          </div>
-
                           <button
                             onClick={() => setShowFinanceStatementModal(true)}
                             className="px-3.5 py-2 rounded-xl text-xs font-semibold flex items-center gap-1.5 bg-cyan-500/20 hover:bg-cyan-500/30 text-cyan-300 border border-cyan-500/30 shadow-sm transition-all"
@@ -4434,6 +4782,124 @@ export default function AdminControlPanel() {
                         </div>
                       </div>
 
+                      {/* 🎛️ Dynamic Multi-Filter System Bar (মাস, সার্ভিস খাত, গেটওয়ে ও ব্যয়ের ক্যাটাগরি ফিল্টার) */}
+                      <div className={`p-4 rounded-2xl border ${theme.cardBg} ${theme.cardBorder} shadow-sm space-y-3`}>
+                        <div className="flex flex-wrap items-center justify-between gap-2 border-b border-white/5 pb-2.5">
+                          <div className="flex items-center gap-2">
+                            <SlidersHorizontal className="w-4 h-4 text-cyan-400" />
+                            <span className="text-xs font-bold text-white uppercase tracking-wider">
+                              ফাইন্যান্সিয়াল ফিল্টার ও কাস্টম অডিট কন্ট্রোল
+                            </span>
+                            {(financeMonthFilter !== "all" || financeSectorFilter !== "all" || financeGatewayFilter !== "all" || financeExpenseCategoryFilter !== "all") && (
+                              <span className="px-2 py-0.5 rounded-full bg-cyan-500/20 text-cyan-300 text-[10px] font-mono font-bold border border-cyan-500/30">
+                                ফিল্টার সক্রিয়
+                              </span>
+                            )}
+                          </div>
+
+                          {(financeMonthFilter !== "all" || financeSectorFilter !== "all" || financeGatewayFilter !== "all" || financeExpenseCategoryFilter !== "all") && (
+                            <button
+                              onClick={() => {
+                                setFinanceMonthFilter("all");
+                                setFinanceSectorFilter("all");
+                                setFinanceGatewayFilter("all");
+                                setFinanceExpenseCategoryFilter("all");
+                                setFinanceTimeframe("all");
+                              }}
+                              className="text-[11px] text-rose-400 hover:text-rose-300 flex items-center gap-1 font-semibold underline transition-colors"
+                            >
+                              <X className="w-3 h-3" />
+                              <span>সকল ফিল্টার রিসেট করুন</span>
+                            </button>
+                          )}
+                        </div>
+
+                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+                          {/* 1. Month Filter */}
+                          <div>
+                            <label className="text-[10px] text-slate-400 font-bold uppercase tracking-wider block mb-1 flex items-center gap-1">
+                              <Calendar className="w-3 h-3 text-cyan-400" />
+                              <span>মাস নির্বাচন (Month)</span>
+                            </label>
+                            <select
+                              value={financeMonthFilter}
+                              onChange={(e) => setFinanceMonthFilter(e.target.value)}
+                              className={`w-full px-3 py-2 rounded-xl text-xs font-bold ${isDark ? "bg-[#0A162B] border-cyan-500/30 text-cyan-200" : "bg-slate-50 border-slate-300 text-slate-800"} border focus:outline-none`}
+                            >
+                              <option value="all" className="bg-slate-900 text-white">সব মাস (All Months)</option>
+                              {availableFinanceMonths.map((m) => (
+                                <option key={m} value={m} className="bg-slate-900 text-white">
+                                  {m}
+                                </option>
+                              ))}
+                            </select>
+                          </div>
+
+                          {/* 2. Revenue Sector Filter */}
+                          <div>
+                            <label className="text-[10px] text-slate-400 font-bold uppercase tracking-wider block mb-1 flex items-center gap-1">
+                              <Coins className="w-3 h-3 text-emerald-400" />
+                              <span>আয়ের খাত / সার্ভিস (Sector)</span>
+                            </label>
+                            <select
+                              value={financeSectorFilter}
+                              onChange={(e) => setFinanceSectorFilter(e.target.value)}
+                              className={`w-full px-3 py-2 rounded-xl text-xs font-bold ${isDark ? "bg-[#0A162B] border-emerald-500/30 text-emerald-300" : "bg-slate-50 border-slate-300 text-slate-800"} border focus:outline-none`}
+                            >
+                              <option value="all" className="bg-slate-900 text-white">সকল আয়ের খাত (All Sectors)</option>
+                              {availableFinanceSectors.map((sec) => (
+                                <option key={sec} value={sec} className="bg-slate-900 text-white">
+                                  {sec}
+                                </option>
+                              ))}
+                            </select>
+                          </div>
+
+                          {/* 3. Payment Gateway Filter */}
+                          <div>
+                            <label className="text-[10px] text-slate-400 font-bold uppercase tracking-wider block mb-1 flex items-center gap-1">
+                              <Wallet className="w-3 h-3 text-amber-400" />
+                              <span>পেমেন্ট গেটওয়ে (Gateway)</span>
+                            </label>
+                            <select
+                              value={financeGatewayFilter}
+                              onChange={(e) => setFinanceGatewayFilter(e.target.value)}
+                              className={`w-full px-3 py-2 rounded-xl text-xs font-bold ${isDark ? "bg-[#0A162B] border-amber-500/30 text-amber-300" : "bg-slate-50 border-slate-300 text-slate-800"} border focus:outline-none`}
+                            >
+                              <option value="all" className="bg-slate-900 text-white">সকল গেটওয়ে (All Methods)</option>
+                              <option value="bKash Merchant" className="bg-slate-900 text-white">bKash Merchant</option>
+                              <option value="Nagad Personal" className="bg-slate-900 text-white">Nagad Personal</option>
+                              <option value="Rocket" className="bg-slate-900 text-white">Rocket</option>
+                              <option value="Bank Wire" className="bg-slate-900 text-white">Bank Wire / Transfer</option>
+                              <option value="Cash" className="bg-slate-900 text-white">Cash / নগদ</option>
+                            </select>
+                          </div>
+
+                          {/* 4. Expense Category Filter */}
+                          <div>
+                            <label className="text-[10px] text-slate-400 font-bold uppercase tracking-wider block mb-1 flex items-center gap-1">
+                              <TrendingDown className="w-3 h-3 text-rose-400" />
+                              <span>ব্যয়ের খাত (Expense Category)</span>
+                            </label>
+                            <select
+                              value={financeExpenseCategoryFilter}
+                              onChange={(e) => setFinanceExpenseCategoryFilter(e.target.value)}
+                              className={`w-full px-3 py-2 rounded-xl text-xs font-bold ${isDark ? "bg-[#0A162B] border-rose-500/30 text-rose-300" : "bg-slate-50 border-slate-300 text-slate-800"} border focus:outline-none`}
+                            >
+                              <option value="all" className="bg-slate-900 text-white">সকল ব্যয়ের খাত (All Categories)</option>
+                              <option value="Salaries" className="bg-slate-900 text-white">Salaries (বেতন)</option>
+                              <option value="Office Rent" className="bg-slate-900 text-white">Office Rent (অফিস ভাড়া)</option>
+                              <option value="Marketing" className="bg-slate-900 text-white">Marketing & Ads (বিজ্ঞাপন)</option>
+                              <option value="Software & Tools" className="bg-slate-900 text-white">Software & Cloud (টুলস)</option>
+                              <option value="Equipment" className="bg-slate-900 text-white">Equipment (যন্ত্রপাতি)</option>
+                              <option value="Utilities" className="bg-slate-900 text-white">Utilities & Internet</option>
+                              <option value="Entertainment" className="bg-slate-900 text-white">Team Bonus & Treats</option>
+                              <option value="Miscellaneous" className="bg-slate-900 text-white">Miscellaneous (অন্যান্য)</option>
+                            </select>
+                          </div>
+                        </div>
+                      </div>
+
                       {/* ⭐️ 4 Hero Financial Metric Cards (টোটাল কত টাকা আছে, কত টাকা মাইনাস হইছে, নেট ব্যালেন্স) ⭐️ */}
                       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                         {/* 1. টোটাল কত টাকা আয় হলো */}
@@ -4453,7 +4919,7 @@ export default function AdminControlPanel() {
                           </div>
                           <div className="text-[11px] text-emerald-400/80 mt-1.5 flex items-center gap-1.5 font-medium">
                             <CheckCircle2 className="w-3 h-3 text-emerald-400 shrink-0" />
-                            <span>{financeTimeframe === "all" ? "সর্বমোট" : financeTimeframe === "30d" ? "গত ৩০ দিনে" : financeTimeframe === "28d" ? "গত ২৮ দিনে" : "গত ৭ দিনে"} {filteredPayments.length}টি পেমেন্ট</span>
+                            <span>{filteredPayments.length}টি পেমেন্ট রেকর্ড অন্তর্ভুক্ত</span>
                           </div>
                         </div>
 
@@ -4474,29 +4940,50 @@ export default function AdminControlPanel() {
                           </div>
                           <div className="text-[11px] text-rose-400/80 mt-1.5 flex items-center gap-1.5 font-medium">
                             <AlertCircle className="w-3 h-3 text-rose-400 shrink-0" />
-                            <span>{financeTimeframe === "all" ? "সর্বমোট" : financeTimeframe === "30d" ? "গত ৩০ দিনে" : financeTimeframe === "28d" ? "গত ২৮ দিনে" : "গত ৭ দিনে"} {filteredExpenses.length}টি পরিচালনা খরচ</span>
+                            <span>{filteredExpenses.length}টি খরচ ও পরিচালন ব্যয়</span>
                           </div>
                         </div>
 
-                        {/* 3. বর্তমান ব্যালেন্স / উদ্বৃত্ত */}
-                        <div className={`p-5 rounded-2xl border ${theme.cardBg} border-cyan-500/30 shadow-lg relative overflow-hidden group hover:border-cyan-500/50 transition-all`}>
-                          <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-cyan-400 to-blue-600" />
-                          <div className="flex items-center justify-between mb-2">
-                            <span className="text-xs font-semibold text-cyan-400/90 uppercase tracking-wider">
-                              বর্তমান ব্যালেন্স (Current Balance)
-                            </span>
-                            <span className="p-1.5 rounded-lg bg-cyan-500/15 text-cyan-400 text-xs font-bold flex items-center gap-1">
-                              <Wallet className="w-3.5 h-3.5 text-cyan-400" />
-                              <span>ব্যালেন্স</span>
-                            </span>
+                        {/* 3. লাইভ কারেন্ট ব্যালেন্স (যদি টাকা নাই / লোনে থাকি -> মাইনাস ফিগার ও সতর্কবার্তা) */}
+                        {isDeficit ? (
+                          <div className="p-5 rounded-2xl border border-rose-500/80 bg-gradient-to-br from-rose-950/40 to-red-950/30 shadow-xl shadow-rose-500/20 ring-2 ring-rose-500/50 relative overflow-hidden group transition-all">
+                            <div className="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-rose-600 via-red-500 to-amber-500 animate-pulse" />
+                            <div className="flex items-center justify-between mb-2">
+                              <span className="text-xs font-bold text-rose-300 uppercase tracking-wider flex items-center gap-1.5">
+                                <AlertTriangle className="w-3.5 h-3.5 text-rose-400" />
+                                <span>ঘাটতি / ঋণ ব্যালেন্স</span>
+                              </span>
+                              <span className="px-2 py-0.5 rounded-full bg-rose-500/20 text-rose-300 text-[10px] font-bold border border-rose-500/30 flex items-center gap-1">
+                                ⚠️ লোনে / ধারের ব্যালেন্স
+                              </span>
+                            </div>
+                            <div className="text-2xl sm:text-3xl font-black tracking-tight text-rose-400 font-mono">
+                              - ৳ {Math.abs(netProfit).toLocaleString()}
+                            </div>
+                            <div className="text-[11px] text-rose-300/90 mt-1.5 flex items-center gap-1 font-semibold">
+                              <span>⚠️ বর্তমানে প্রতিষ্ঠানে ক্যাশ ঘাটতি রয়েছে</span>
+                            </div>
                           </div>
-                          <div className={`text-2xl sm:text-3xl font-black tracking-tight ${isDark ? "text-cyan-300" : "text-blue-600"} font-mono`}>
-                            ৳ {netProfit.toLocaleString()}
+                        ) : (
+                          <div className={`p-5 rounded-2xl border ${theme.cardBg} border-cyan-500/30 shadow-lg relative overflow-hidden group hover:border-cyan-500/50 transition-all`}>
+                            <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-cyan-400 to-emerald-500" />
+                            <div className="flex items-center justify-between mb-2">
+                              <span className="text-xs font-semibold text-cyan-400/90 uppercase tracking-wider">
+                                বর্তমান সঞ্চয় তহবিল (Net Reserves)
+                              </span>
+                              <span className="p-1.5 rounded-lg bg-cyan-500/15 text-cyan-400 text-xs font-bold flex items-center gap-1">
+                                <Wallet className="w-3.5 h-3.5 text-cyan-400" />
+                                <span>উদ্বৃত্ত</span>
+                              </span>
+                            </div>
+                            <div className={`text-2xl sm:text-3xl font-black tracking-tight ${isDark ? "text-cyan-300" : "text-emerald-600"} font-mono`}>
+                              + ৳ {netProfit.toLocaleString()}
+                            </div>
+                            <div className="text-[11px] text-cyan-400/80 mt-1.5 flex items-center gap-1 font-medium">
+                              <span>সঞ্চয় উদ্বৃত্ত • মার্জিন: {totalRevenue > 0 ? Math.round((netProfit / totalRevenue) * 100) : 0}%</span>
+                            </div>
                           </div>
-                          <div className="text-[11px] text-cyan-400/80 mt-1.5 flex items-center gap-1 font-medium">
-                            <span>নিট প্রফিট মার্জিন: {Math.round((netProfit / (totalRevenue || 1)) * 100)}%</span>
-                          </div>
-                        </div>
+                        )}
 
                         {/* 4. ক্লায়েন্ট কমার্শিয়াল অ্যাকাউন্ট */}
                         <div className={`p-5 rounded-2xl border ${theme.cardBg} ${theme.cardBorder} shadow-lg relative overflow-hidden group hover:border-amber-500/50 transition-all`}>
@@ -4516,6 +5003,136 @@ export default function AdminControlPanel() {
                           <div className={`text-[11px] ${isDark ? "text-slate-400" : "text-slate-500"} mt-1.5 flex items-center gap-1 font-medium`}>
                             <span>bKash, Nagad, Rocket ও ব্যাংক ট্রান্সফার</span>
                           </div>
+                        </div>
+                      </div>
+
+                      {/* 🎯 Sector Revenue Breakdown Widget (আলাদা আলাদা কোন খাত থেকে কত টাকা আয় হয়েছে) */}
+                      <div className={`p-5 rounded-2xl border ${theme.cardBg} ${theme.cardBorder} shadow-sm space-y-3`}>
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center gap-2">
+                            <Coins className="w-4 h-4 text-emerald-400" />
+                            <h3 className="text-xs font-bold text-white uppercase tracking-wider">
+                              খাতভিত্তিক আয় ও রেভিনিউ বিবরণী (Revenue by Sector)
+                            </h3>
+                          </div>
+                          <span className="text-[11px] text-slate-400 font-mono">
+                            মোট খাত: {sectorBreakdown.length} টি
+                          </span>
+                        </div>
+
+                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+                          {sectorBreakdown.map((sb) => {
+                            const isSelected = financeSectorFilter === sb.sector;
+                            return (
+                              <div
+                                key={sb.sector}
+                                onClick={() => setFinanceSectorFilter(isSelected ? "all" : sb.sector)}
+                                className={`p-3.5 rounded-xl border cursor-pointer transition-all ${
+                                  isSelected
+                                    ? "bg-emerald-500/20 border-emerald-500/60 ring-1 ring-emerald-500/40"
+                                    : "bg-white/[0.02] border-white/5 hover:bg-white/[0.05] hover:border-white/10"
+                                }`}
+                              >
+                                <div className="flex items-center justify-between mb-1.5">
+                                  <span className="text-[11px] font-bold text-slate-200 truncate pr-2">
+                                    {sb.sector}
+                                  </span>
+                                  <span className="text-[10px] font-mono font-bold text-emerald-400 px-1.5 py-0.5 rounded bg-emerald-500/10 border border-emerald-500/20">
+                                    {sb.percentage}%
+                                  </span>
+                                </div>
+                                <div className="text-base font-black font-mono text-emerald-400 mb-1">
+                                  ৳ {sb.total.toLocaleString()}
+                                </div>
+                                <div className="flex items-center justify-between text-[10px] text-slate-400">
+                                  <span>{sb.count}টি পেমেন্ট লেনদেন</span>
+                                  <span className="text-cyan-400 font-semibold">{isSelected ? "✓ নির্বাচিত" : "ফিল্টার করুন →"}</span>
+                                </div>
+                                <div className="w-full h-1 bg-white/10 rounded-full mt-2 overflow-hidden">
+                                  <div
+                                    className="h-full bg-gradient-to-r from-emerald-500 to-teal-400 rounded-full"
+                                    style={{ width: `${Math.min(100, sb.percentage)}%` }}
+                                  />
+                                </div>
+                              </div>
+                            );
+                          })}
+                        </div>
+                      </div>
+
+                      {/* 🗓️ Monthly Income vs Expense Ledger Table (মান্থলি কত টাকা ইনকাম ও খরচ হয়েছে) */}
+                      <div className={`p-5 rounded-2xl border ${theme.cardBg} ${theme.cardBorder} shadow-sm space-y-3`}>
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center gap-2">
+                            <BarChart3 className="w-4 h-4 text-cyan-400" />
+                            <h3 className="text-xs font-bold text-white uppercase tracking-wider">
+                              মাসভিত্তিক আয় বনাম ব্যয় লেজার (Monthly Income vs Expense Ledger)
+                            </h3>
+                          </div>
+                          <span className="text-[11px] text-slate-400 font-mono">
+                            {monthlyAnalytics.length}টি মাসের তুলনা
+                          </span>
+                        </div>
+
+                        <div className="rounded-xl border border-white/5 overflow-hidden">
+                          <table className="w-full text-left border-collapse text-xs">
+                            <thead>
+                              <tr className={`border-b border-white/5 ${theme.tableHeaderBg} text-[11px] font-semibold text-slate-400 uppercase tracking-wider`}>
+                                <th className="p-3">মাস (Month)</th>
+                                <th className="p-3">মোট আয় (Inflow)</th>
+                                <th className="p-3">মোট ব্যয় (Outflow)</th>
+                                <th className="p-3">নিট উদ্বৃত্ত / ঘাটতি (Net)</th>
+                                <th className="p-3">মার্জিন (%)</th>
+                                <th className="p-3 text-right">অ্যাকশন</th>
+                              </tr>
+                            </thead>
+                            <tbody className="divide-y divide-white/5 font-mono">
+                              {monthlyAnalytics.map((ma) => (
+                                <tr key={ma.month} className={`hover:bg-white/[0.02] transition-colors ${financeMonthFilter === ma.month ? "bg-cyan-500/10" : ""}`}>
+                                  <td className="p-3 font-bold text-white font-sans flex items-center gap-1.5">
+                                    <Calendar className="w-3.5 h-3.5 text-cyan-400" />
+                                    <span>{ma.month}</span>
+                                    {financeMonthFilter === ma.month && (
+                                      <span className="px-1.5 py-0.5 rounded text-[9px] bg-cyan-500/20 text-cyan-300 font-bold">
+                                        সক্রিয় ফিল্টার
+                                      </span>
+                                    )}
+                                  </td>
+                                  <td className="p-3 text-emerald-400 font-bold">
+                                    ৳ {ma.income.toLocaleString()}
+                                  </td>
+                                  <td className="p-3 text-rose-400 font-bold">
+                                    - ৳ {ma.expense.toLocaleString()}
+                                  </td>
+                                  <td className="p-3">
+                                    {ma.isDeficit ? (
+                                      <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-rose-500/20 text-rose-300 border border-rose-500/30 flex items-center gap-1 w-fit">
+                                        <AlertTriangle className="w-3 h-3 text-rose-400" />
+                                        <span>ঘাটতি / ঋণ - ৳ {Math.abs(ma.net).toLocaleString()}</span>
+                                      </span>
+                                    ) : (
+                                      <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 flex items-center gap-1 w-fit">
+                                        <CheckCircle2 className="w-3 h-3 text-emerald-400" />
+                                        <span>উদ্বৃত্ত + ৳ {ma.net.toLocaleString()}</span>
+                                      </span>
+                                    )}
+                                  </td>
+                                  <td className="p-3 text-slate-300">
+                                    {ma.margin}%
+                                  </td>
+                                  <td className="p-3 text-right">
+                                    <button
+                                      type="button"
+                                      onClick={() => setFinanceMonthFilter(financeMonthFilter === ma.month ? "all" : ma.month)}
+                                      className="px-2.5 py-1 rounded-lg bg-cyan-500/10 hover:bg-cyan-500/20 text-cyan-400 border border-cyan-500/30 text-[10px] font-sans font-semibold transition-colors"
+                                    >
+                                      {financeMonthFilter === ma.month ? "রিসেট ফিল্টার" : "এই মাসের হিসাব"}
+                                    </button>
+                                  </td>
+                                </tr>
+                              ))}
+                            </tbody>
+                          </table>
                         </div>
                       </div>
 
@@ -4669,8 +5286,8 @@ export default function AdminControlPanel() {
                       {financeSubTab === "salary" && (
                         <div className="space-y-3">
                           <div className="flex items-center justify-between text-xs text-slate-400 px-1">
-                            <span>কর্মকর্তাদের মাসিক বেতন ও পারিশ্রমিক তালিকা</span>
-                            <span className="font-mono text-cyan-400">সক্রিয় পে-রোল</span>
+                            <span>কর্মকর্তাদের মাসিক বেতন, যোগদানের তারিখ ও আজীবনের পরিশোধিত স্যালারি তালিকা</span>
+                            <span className="font-mono text-cyan-400">সক্রিয় পে-রোল ও হিস্ট্রি</span>
                           </div>
                           <div className={`rounded-2xl border overflow-hidden ${theme.cardBg} ${theme.cardBorder} shadow-sm`}>
                             <div className="overflow-x-auto">
@@ -4679,39 +5296,75 @@ export default function AdminControlPanel() {
                                   <tr className={`border-b ${isDark ? "border-white/5" : "border-slate-200"} ${theme.tableHeaderBg} text-[11px] font-semibold text-slate-400 uppercase tracking-wider`}>
                                     <th className="p-3.5">Employee</th>
                                     <th className="p-3.5">Department</th>
+                                    <th className="p-3.5">যোগদানের তারিখ</th>
                                     <th className="p-3.5">Month</th>
                                     <th className="p-3.5">Amount (BDT)</th>
+                                    <th className="p-3.5">আজীবনের মোট স্যালারি</th>
                                     <th className="p-3.5 text-right">Status</th>
                                   </tr>
                                 </thead>
                                 <tbody className={`divide-y ${isDark ? "divide-white/5" : "divide-slate-200"}`}>
-                                  {salaries.map((s) => (
-                                    <tr key={s.id} className={`transition-colors ${theme.rowHover}`}>
-                                      <td className={`p-3.5 font-bold ${isDark ? "text-white" : "text-slate-900"}`}>{s.employeeName}</td>
-                                      <td className="p-3.5 text-slate-400">{s.department}</td>
-                                      <td className={`p-3.5 font-mono text-[11px] ${isDark ? "text-slate-300" : "text-slate-700"}`}>{s.month}</td>
-                                      <td className="p-3.5 font-mono font-bold text-emerald-400">
-                                        ৳ {s.amount.toLocaleString()}
-                                      </td>
-                                      <td className="p-3.5 text-right">
-                                        {s.status === "Paid" ? (
-                                          <span className="px-2.5 py-1 rounded-full text-[10px] font-bold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
-                                            ✓ DISBURSED
-                                          </span>
-                                        ) : (
-                                          <button
-                                            onClick={() => {
-                                              markSalaryPaid(s.id);
-                                              showToast(`Marked ${s.employeeName}'s salary as paid.`);
-                                            }}
-                                            className="px-2.5 py-1 rounded-lg text-[10px] font-bold bg-amber-500 hover:bg-amber-400 text-slate-950"
-                                          >
-                                            Mark Paid
-                                          </button>
-                                        )}
-                                      </td>
-                                    </tr>
-                                  ))}
+                                  {salaries.map((s) => {
+                                    const matchingEmp = employees.find(
+                                      (e) => e.id === s.employeeId || e.name.trim().toLowerCase() === s.employeeName.trim().toLowerCase()
+                                    );
+                                    const lifetimeSalary = matchingEmp ? getEmployeeLifetimeSalary(matchingEmp) : s.amount;
+                                    const joinDate = matchingEmp?.joinDate || "01 Jan 2024";
+
+                                    return (
+                                      <tr key={s.id} className={`transition-colors ${theme.rowHover}`}>
+                                        <td className={`p-3.5 font-bold ${isDark ? "text-white" : "text-slate-900"}`}>{s.employeeName}</td>
+                                        <td className="p-3.5 text-slate-400">{s.department}</td>
+                                        <td className="p-3.5">
+                                          <div className="flex items-center gap-1.5 font-mono text-[11px] text-slate-300">
+                                            <Calendar className="w-3 h-3 text-cyan-400" />
+                                            <span>{joinDate}</span>
+                                          </div>
+                                        </td>
+                                        <td className={`p-3.5 font-mono text-[11px] ${isDark ? "text-slate-300" : "text-slate-700"}`}>
+                                          <div>{s.month}</div>
+                                          {s.paidDate && (
+                                            <div className="text-[10px] text-slate-500">পরিশোধ: {s.paidDate}</div>
+                                          )}
+                                        </td>
+                                        <td className="p-3.5 font-mono font-bold text-emerald-400">
+                                          ৳ {s.amount.toLocaleString()}
+                                        </td>
+                                        <td className="p-3.5">
+                                          <div className="font-mono font-bold text-cyan-300">
+                                            ৳ {lifetimeSalary.toLocaleString()}
+                                          </div>
+                                          {matchingEmp && (
+                                            <button
+                                              type="button"
+                                              onClick={() => setViewingSalaryHistoryEmp(matchingEmp)}
+                                              className="inline-flex items-center gap-1 text-[10px] text-cyan-400 hover:text-cyan-200 underline mt-0.5"
+                                            >
+                                              <Receipt className="w-2.5 h-2.5" />
+                                              <span>হিস্ট্রি দেখুন</span>
+                                            </button>
+                                          )}
+                                        </td>
+                                        <td className="p-3.5 text-right">
+                                          {s.status === "Paid" ? (
+                                            <span className="px-2.5 py-1 rounded-full text-[10px] font-bold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+                                              ✓ DISBURSED
+                                            </span>
+                                          ) : (
+                                            <button
+                                              onClick={() => {
+                                                markSalaryPaid(s.id);
+                                                showToast(`Marked ${s.employeeName}'s salary as paid.`);
+                                              }}
+                                              className="px-2.5 py-1 rounded-lg text-[10px] font-bold bg-amber-500 hover:bg-amber-400 text-slate-950"
+                                            >
+                                              Mark Paid
+                                            </button>
+                                          )}
+                                        </td>
+                                      </tr>
+                                    );
+                                  })}
                                 </tbody>
                               </table>
                             </div>
@@ -8561,7 +9214,7 @@ export default function AdminControlPanel() {
                     </div>
                   </div>
 
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                     <div>
                       <label className="text-xs text-slate-400 block mb-1">Monthly Salary (মাসিক বেতন ৳)</label>
                       <input
@@ -8569,6 +9222,16 @@ export default function AdminControlPanel() {
                         placeholder="যেমন: 45000"
                         value={formAmount}
                         onChange={(e) => setFormAmount(e.target.value)}
+                        className={`w-full px-3 py-2 rounded-xl text-xs font-mono ${theme.inputBg}`}
+                      />
+                    </div>
+                    <div>
+                      <label className="text-xs text-slate-400 block mb-1">যোগদানের তারিখ (Join Date)</label>
+                      <input
+                        type="text"
+                        placeholder={liveDateFormatted || "01 Sep 2026"}
+                        value={formEmployeeJoinDate}
+                        onChange={(e) => setFormEmployeeJoinDate(e.target.value)}
                         className={`w-full px-3 py-2 rounded-xl text-xs font-mono ${theme.inputBg}`}
                       />
                     </div>

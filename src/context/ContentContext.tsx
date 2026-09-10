@@ -142,6 +142,7 @@ export function ContentProvider({ children }: { children: React.ReactNode }) {
                 ...emp,
                 username: emp.username || def?.username || emp.name.toLowerCase().replace(/[^a-z0-9]/g, "_"),
                 password: emp.password || def?.password || "staff2026",
+                joinDate: emp.joinDate || def?.joinDate || "01 Jan 2024",
               };
             });
             setEmployees(merged);

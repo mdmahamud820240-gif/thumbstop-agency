@@ -210,6 +210,7 @@ export interface EmployeeRecord {
   status: "active" | "on_leave";
   accessModules: string[];
   notes?: string;
+  joinDate?: string; // e.g. "01 Jan 2024" or "2024-01-01"
 }
 
 export interface PaymentRecord {
@@ -234,11 +235,13 @@ export interface ExpenseRecord {
 
 export interface SalaryRecord {
   id: string;
+  employeeId?: string;
   employeeName: string;
   department: string;
   month: string;
   amount: number;
   status: "Paid" | "Pending";
+  paidDate?: string;
 }
 
 export interface ActivityLog {
@@ -1379,6 +1382,7 @@ export const defaultEmployees: EmployeeRecord[] = [
     role: "Super Admin / Agency Director",
     salary: 120000,
     status: "active",
+    joinDate: "01 Jan 2024",
     accessModules: ["Dashboard", "Clients", "Services", "Tasks", "Employees", "Departments", "Payments", "Expenses", "Salary", "Reports", "Permissions", "Workflow", "Settings", "Logs"]
   },
   {
@@ -1391,6 +1395,7 @@ export const defaultEmployees: EmployeeRecord[] = [
     role: "Lead Full-Stack Engineer",
     salary: 65000,
     status: "active",
+    joinDate: "15 Jun 2024",
     accessModules: ["Dashboard", "Tasks", "Clients", "Services", "Workflow"]
   },
   {
@@ -1403,6 +1408,7 @@ export const defaultEmployees: EmployeeRecord[] = [
     role: "Senior Video Editor & Colorist",
     salary: 45000,
     status: "active",
+    joinDate: "01 Nov 2024",
     accessModules: ["Dashboard", "Tasks", "Clients"]
   },
   {
@@ -1415,6 +1421,7 @@ export const defaultEmployees: EmployeeRecord[] = [
     role: "Art Director & Model Producer",
     salary: 48000,
     status: "active",
+    joinDate: "01 Feb 2025",
     accessModules: ["Dashboard", "Tasks", "Clients", "Services"]
   },
   {
@@ -1427,11 +1434,13 @@ export const defaultEmployees: EmployeeRecord[] = [
     role: "Finance Officer",
     salary: 38000,
     status: "active",
+    joinDate: "10 May 2025",
     accessModules: ["Dashboard", "Payments", "Expenses", "Salary", "Reports"]
   }
 ];
 
 export const defaultPayments: PaymentRecord[] = [
+  // September 2026
   {
     id: "pay-101",
     clientName: "Akram Hossain",
@@ -1481,10 +1490,63 @@ export const defaultPayments: PaymentRecord[] = [
     date: "04 Sep 2026",
     transactionId: "BK559812A2",
     status: "Paid"
+  },
+  // August 2026
+  {
+    id: "pay-106",
+    clientName: "Madrasa Darul Quran",
+    serviceName: "Online Madrasa Solution",
+    method: "Bank Wire",
+    amount: 55000,
+    date: "18 Aug 2026",
+    transactionId: "DBBL-WIRE-8812",
+    status: "Paid"
+  },
+  {
+    id: "pay-107",
+    clientName: "Green Life Organic",
+    serviceName: "Digital Marketing & Ads",
+    method: "bKash",
+    amount: 28000,
+    date: "12 Aug 2026",
+    transactionId: "BK331908X4",
+    status: "Paid"
+  },
+  {
+    id: "pay-108",
+    clientName: "Apex Media Hub",
+    serviceName: "Video Editing & Animation",
+    method: "Nagad",
+    amount: 32000,
+    date: "25 Aug 2026",
+    transactionId: "NG77215B9",
+    status: "Paid"
+  },
+  // July 2026
+  {
+    id: "pay-109",
+    clientName: "Iqra Online Institute",
+    serviceName: "Online Madrasa Solution",
+    method: "bKash",
+    amount: 45000,
+    date: "14 Jul 2026",
+    transactionId: "BK229103C8",
+    status: "Paid"
+  },
+  {
+    id: "pay-110",
+    clientName: "Smart Care Solutions",
+    serviceName: "Web Design & Development",
+    method: "Bank Wire",
+    amount: 70000,
+    date: "22 Jul 2026",
+    transactionId: "CITY-WIRE-5519",
+    status: "Paid"
   }
 ];
 
 export const defaultExpenses: ExpenseRecord[] = [
+  // September 2026
   {
     id: "exp-01",
     category: "Salary",
@@ -1524,49 +1586,196 @@ export const defaultExpenses: ExpenseRecord[] = [
     amount: 25000,
     date: "04 Sep 2026",
     paymentMethod: "Credit Card"
+  },
+  // August 2026
+  {
+    id: "exp-06",
+    category: "Salary",
+    description: "August Staff Payroll Disbursal",
+    amount: 180000,
+    date: "01 Aug 2026",
+    paymentMethod: "Bank Transfer"
+  },
+  {
+    id: "exp-07",
+    category: "Marketing",
+    description: "Meta Ads Agency Campaign (August)",
+    amount: 22000,
+    date: "10 Aug 2026",
+    paymentMethod: "Credit Card"
+  },
+  // July 2026
+  {
+    id: "exp-08",
+    category: "Salary",
+    description: "July Staff Payroll Disbursal",
+    amount: 180000,
+    date: "01 Jul 2026",
+    paymentMethod: "Bank Transfer"
+  },
+  {
+    id: "exp-09",
+    category: "Software & Cloud",
+    description: "Vercel & Domain Subscriptions",
+    amount: 8500,
+    date: "05 Jul 2026",
+    paymentMethod: "Credit Card"
   }
 ];
 
 export const defaultSalaries: SalaryRecord[] = [
+  // September 2026
   {
     id: "sal-01",
+    employeeId: "emp-01",
     employeeName: "Abu Tawfiq",
     department: "Executive Management",
     month: "September 2026",
     amount: 120000,
-    status: "Paid"
+    status: "Paid",
+    paidDate: "01 Sep 2026"
   },
   {
     id: "sal-02",
+    employeeId: "emp-02",
     employeeName: "Tariqul Islam",
     department: "Web & Tech",
     month: "September 2026",
     amount: 65000,
-    status: "Paid"
+    status: "Paid",
+    paidDate: "01 Sep 2026"
   },
   {
     id: "sal-03",
+    employeeId: "emp-03",
     employeeName: "Sayed Mahmud",
     department: "Video & Animation",
     month: "September 2026",
     amount: 45000,
-    status: "Paid"
+    status: "Paid",
+    paidDate: "01 Sep 2026"
   },
   {
     id: "sal-04",
+    employeeId: "emp-04",
     employeeName: "Nabila Tabassum",
     department: "Creative",
     month: "September 2026",
     amount: 48000,
-    status: "Paid"
+    status: "Paid",
+    paidDate: "01 Sep 2026"
   },
   {
     id: "sal-05",
+    employeeId: "emp-05",
     employeeName: "Karim Chowdhury",
     department: "Finance & Accounts",
     month: "September 2026",
     amount: 38000,
-    status: "Paid"
+    status: "Paid",
+    paidDate: "01 Sep 2026"
+  },
+  // August 2026
+  {
+    id: "sal-06",
+    employeeId: "emp-01",
+    employeeName: "Abu Tawfiq",
+    department: "Executive Management",
+    month: "August 2026",
+    amount: 120000,
+    status: "Paid",
+    paidDate: "01 Aug 2026"
+  },
+  {
+    id: "sal-07",
+    employeeId: "emp-02",
+    employeeName: "Tariqul Islam",
+    department: "Web & Tech",
+    month: "August 2026",
+    amount: 65000,
+    status: "Paid",
+    paidDate: "01 Aug 2026"
+  },
+  {
+    id: "sal-08",
+    employeeId: "emp-03",
+    employeeName: "Sayed Mahmud",
+    department: "Video & Animation",
+    month: "August 2026",
+    amount: 45000,
+    status: "Paid",
+    paidDate: "01 Aug 2026"
+  },
+  {
+    id: "sal-09",
+    employeeId: "emp-04",
+    employeeName: "Nabila Tabassum",
+    department: "Creative",
+    month: "August 2026",
+    amount: 48000,
+    status: "Paid",
+    paidDate: "01 Aug 2026"
+  },
+  {
+    id: "sal-10",
+    employeeId: "emp-05",
+    employeeName: "Karim Chowdhury",
+    department: "Finance & Accounts",
+    month: "August 2026",
+    amount: 38000,
+    status: "Paid",
+    paidDate: "01 Aug 2026"
+  },
+  // July 2026
+  {
+    id: "sal-11",
+    employeeId: "emp-01",
+    employeeName: "Abu Tawfiq",
+    department: "Executive Management",
+    month: "July 2026",
+    amount: 120000,
+    status: "Paid",
+    paidDate: "01 Jul 2026"
+  },
+  {
+    id: "sal-12",
+    employeeId: "emp-02",
+    employeeName: "Tariqul Islam",
+    department: "Web & Tech",
+    month: "July 2026",
+    amount: 65000,
+    status: "Paid",
+    paidDate: "01 Jul 2026"
+  },
+  {
+    id: "sal-13",
+    employeeId: "emp-03",
+    employeeName: "Sayed Mahmud",
+    department: "Video & Animation",
+    month: "July 2026",
+    amount: 45000,
+    status: "Paid",
+    paidDate: "01 Jul 2026"
+  },
+  {
+    id: "sal-14",
+    employeeId: "emp-04",
+    employeeName: "Nabila Tabassum",
+    department: "Creative",
+    month: "July 2026",
+    amount: 48000,
+    status: "Paid",
+    paidDate: "01 Jul 2026"
+  },
+  {
+    id: "sal-15",
+    employeeId: "emp-05",
+    employeeName: "Karim Chowdhury",
+    department: "Finance & Accounts",
+    month: "July 2026",
+    amount: 38000,
+    status: "Paid",
+    paidDate: "01 Jul 2026"
   }
 ];
 

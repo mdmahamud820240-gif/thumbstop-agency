@@ -349,28 +349,78 @@ export const MANAGEMENT_THEMES: ManagementTheme[] = [
   },
   {
     id: "luxury_pearl_light",
-    name: "Luxury Pearl Light",
-    nameBn: "লাক্সারি পার্ল লাইট (দিনের প্রিমিয়াম লাইট থিম)",
-    desc: "Refined bright executive ivory and porcelain canvas with sharp royal blue and slate typography.",
+    name: "Executive Platinum Day (Default Light)",
+    nameBn: "এক্সিকিউটিভ প্লাটিনাম ডে (দিনের আরামদায়ক ডিফল্ট)",
+    desc: "Ultra-refined soothing porcelain canvas with deep slate typography and crisp royal blue accents. High contrast without eye strain.",
     isDark: false,
     accent: "#1E5BC4",
     accentSecondary: "#194EAA",
     badgeBg: "bg-blue-100",
     badgeText: "text-blue-800",
-    previewGradient: "from-[#F5F7FB] via-[#E2E8F0] to-[#1E5BC4]",
-    bg: "bg-[#F5F7FB]",
-    cardBg: "bg-white",
-    cardBorder: "border-[#E5EAF2] hover:border-blue-400/60 transition-all duration-300",
-    textMain: "text-[#102038]",
-    textMuted: "text-[#6B7C96]",
-    headerBg: "bg-white/95 border-[#E2E8F0]",
-    sidebarBg: "bg-[#07182D] border-[#07182D]",
-    tableHeaderBg: "bg-[#F8FAFD]",
-    rowHover: "hover:bg-[#F0F4FA]",
-    inputBg: "bg-white border-[#D6DFEB] text-slate-900 focus:border-blue-500",
-    statBg: "bg-white border-[#E5EAF2]",
-    accentBtn: "bg-[#1E5BC4] hover:bg-[#194EAA] text-white shadow-md shadow-blue-600/20",
-    secondaryBtn: "bg-white border-[#D6DFEB] text-slate-700 hover:bg-[#F2F6FC]",
+    previewGradient: "from-[#F1F5F9] via-[#E2E8F0] to-[#1E5BC4]",
+    bg: "bg-[#F1F5F9]",
+    cardBg: "bg-white shadow-[0_4px_20px_-4px_rgba(0,0,0,0.06)] border border-slate-200/90",
+    cardBorder: "border-slate-200/90 hover:border-blue-400/50 hover:shadow-md transition-all duration-300",
+    textMain: "text-slate-900",
+    textMuted: "text-slate-600",
+    headerBg: "bg-white/95 backdrop-blur-xl border-slate-200/90 shadow-xs",
+    sidebarBg: "bg-[#091122] border-r border-slate-800",
+    tableHeaderBg: "bg-slate-100/90 border-slate-200",
+    rowHover: "hover:bg-slate-50/90",
+    inputBg: "bg-white border-slate-300 text-slate-900 placeholder:text-slate-400 focus:border-blue-500 shadow-xs",
+    statBg: "bg-white border-slate-200 shadow-xs",
+    accentBtn: "bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white shadow-md shadow-blue-500/20 font-bold",
+    secondaryBtn: "bg-slate-100 border-slate-200 text-slate-800 hover:bg-slate-200/70 font-semibold",
+  },
+  {
+    id: "pure_ivory_emerald",
+    name: "Ivory Jade Light (Islamic Day Mode)",
+    nameBn: "আইভরি জেড ডে (ইসলামিক ও প্রশান্তিময় লাইট)",
+    desc: "Warm calming ivory workspace with rich emerald green accents and crisp dark slate text. Maximum reading comfort.",
+    isDark: false,
+    accent: "#059669",
+    accentSecondary: "#047857",
+    badgeBg: "bg-emerald-100",
+    badgeText: "text-emerald-800",
+    previewGradient: "from-[#F3F7F5] via-[#E6F0EB] to-[#059669]",
+    bg: "bg-[#F3F7F5]",
+    cardBg: "bg-white shadow-[0_4px_20px_-4px_rgba(0,0,0,0.06)] border border-emerald-100/90",
+    cardBorder: "border-emerald-200/80 hover:border-emerald-400/60 hover:shadow-md transition-all duration-300",
+    textMain: "text-slate-900",
+    textMuted: "text-slate-600",
+    headerBg: "bg-white/95 backdrop-blur-xl border-emerald-200/60 shadow-xs",
+    sidebarBg: "bg-[#061814] border-r border-emerald-950/80",
+    tableHeaderBg: "bg-emerald-50/80 border-emerald-100",
+    rowHover: "hover:bg-emerald-50/50",
+    inputBg: "bg-white border-emerald-200 text-slate-900 placeholder:text-slate-400 focus:border-emerald-500 shadow-xs",
+    statBg: "bg-white border-emerald-100 shadow-xs",
+    accentBtn: "bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white shadow-md shadow-emerald-600/20 font-bold",
+    secondaryBtn: "bg-emerald-50/80 border-emerald-200 text-emerald-900 hover:bg-emerald-100/70 font-semibold",
+  },
+  {
+    id: "nordic_frost_light",
+    name: "Nordic Frost Light (Clean Minimal)",
+    nameBn: "নরডিক ফ্রস্ট ডে (ক্লিন ও আধুনিক মিনিমাল)",
+    desc: "Crisp architectural light aesthetic with cool mist canvas, ice blue accents, and deep charcoal text.",
+    isDark: false,
+    accent: "#0284C7",
+    accentSecondary: "#0369A1",
+    badgeBg: "bg-sky-100",
+    badgeText: "text-sky-800",
+    previewGradient: "from-[#F0F5FA] via-[#E2EDF7] to-[#0284C7]",
+    bg: "bg-[#F0F5FA]",
+    cardBg: "bg-white shadow-[0_4px_20px_-4px_rgba(0,0,0,0.06)] border border-slate-200/90",
+    cardBorder: "border-slate-200/90 hover:border-sky-400/60 hover:shadow-md transition-all duration-300",
+    textMain: "text-slate-900",
+    textMuted: "text-slate-600",
+    headerBg: "bg-white/95 backdrop-blur-xl border-slate-200/90 shadow-xs",
+    sidebarBg: "bg-[#0B1526] border-r border-slate-800",
+    tableHeaderBg: "bg-sky-50/70 border-sky-100",
+    rowHover: "hover:bg-sky-50/40",
+    inputBg: "bg-white border-slate-300 text-slate-900 placeholder:text-slate-400 focus:border-sky-500 shadow-xs",
+    statBg: "bg-white border-slate-200 shadow-xs",
+    accentBtn: "bg-gradient-to-r from-sky-600 to-cyan-600 hover:from-sky-500 hover:to-cyan-500 text-white shadow-md shadow-sky-600/20 font-bold",
+    secondaryBtn: "bg-slate-100 border-slate-200 text-slate-800 hover:bg-slate-200/70 font-semibold",
   },
 ];
 
@@ -676,10 +726,10 @@ export default function AdminControlPanel() {
 
   // 🎨 Active Management Theme Resolution (Must be called before any early returns)
   const activeMgmtTheme = useMemo(() => {
-    if (!isDark) {
-      return MANAGEMENT_THEMES.find((t) => !t.isDark) || MANAGEMENT_THEMES[9];
-    }
     const found = MANAGEMENT_THEMES.find((t) => t.id === managementThemeId);
+    if (!isDark) {
+      return found && !found.isDark ? found : MANAGEMENT_THEMES.find((t) => !t.isDark) || MANAGEMENT_THEMES[9];
+    }
     return found && found.isDark ? found : MANAGEMENT_THEMES[0];
   }, [isDark, managementThemeId]);
 
@@ -4096,11 +4146,11 @@ export default function AdminControlPanel() {
 
                       {/* Fixed Active Payroll Commitment Pill */}
                       <div className="flex items-center justify-start lg:justify-end">
-                        <div className="px-3.5 py-1.5 rounded-xl bg-cyan-500/10 border border-cyan-500/30 flex items-center gap-2">
-                          <Coins className="w-3.5 h-3.5 text-cyan-400 shrink-0" />
+                        <div className={`px-3.5 py-1.5 rounded-xl ${isDark ? "bg-cyan-500/10 border-cyan-500/30 text-cyan-300" : "bg-sky-50 border-sky-200 text-sky-800"} border flex items-center gap-2`}>
+                          <Coins className={`w-3.5 h-3.5 ${isDark ? "text-cyan-400" : "text-sky-600"} shrink-0`} />
                           <div className="text-[11px]">
-                            <span className="text-slate-400">সক্রিয় মাসিক দায়:</span>{" "}
-                            <span className="font-mono font-bold text-cyan-300">৳ {totalActiveMonthlySalaryCommitment.toLocaleString()}</span>
+                            <span className={isDark ? "text-slate-400" : "text-slate-600"}>সক্রিয় মাসিক দায়:</span>{" "}
+                            <span className={`font-mono font-bold ${isDark ? "text-cyan-300" : "text-sky-700"}`}>৳ {totalActiveMonthlySalaryCommitment.toLocaleString()}</span>
                           </div>
                         </div>
                       </div>
@@ -4110,7 +4160,7 @@ export default function AdminControlPanel() {
                       <div className="overflow-x-auto">
                         <table className="w-full text-left border-collapse text-xs">
                           <thead>
-                            <tr className={`border-b border-white/5 ${theme.tableHeaderBg} text-[11px] font-semibold text-slate-400 uppercase tracking-wider`}>
+                            <tr className={`border-b ${isDark ? "border-white/5 text-slate-400" : "border-slate-200 text-slate-600"} ${theme.tableHeaderBg} text-[11px] font-semibold uppercase tracking-wider`}>
                               <th className="p-3.5">Employee</th>
                               <th className="p-3.5">Department</th>
                               <th className="p-3.5">Role</th>
@@ -4186,7 +4236,7 @@ export default function AdminControlPanel() {
                                   </td>
 
                                   {/* Monthly Salary Column */}
-                                  <td className="p-3.5 font-mono font-bold text-emerald-400">
+                                  <td className={`p-3.5 font-mono font-bold ${isDark ? "text-emerald-400" : "text-emerald-700"}`}>
                                     ৳ {emp.salary.toLocaleString()}
                                     {emp.status === "inactive" && (
                                       <div className="text-[9px] text-slate-500 font-sans font-normal">বাজেট বহির্ভূত</div>
@@ -4195,13 +4245,13 @@ export default function AdminControlPanel() {
 
                                   {/* 💰 Lifetime Total Salary Paid Column */}
                                   <td className="p-3.5">
-                                    <div className="font-mono font-bold text-cyan-300 text-xs">
+                                    <div className={`font-mono font-bold ${isDark ? "text-cyan-300" : "text-sky-700"} text-xs`}>
                                       ৳ {lifetimeSalary.toLocaleString()}
                                     </div>
                                     <button
                                       type="button"
                                       onClick={() => setViewingSalaryHistoryEmp(emp)}
-                                      className="inline-flex items-center gap-1 text-[10px] text-cyan-400 hover:text-cyan-200 underline mt-0.5 hover:underline transition-colors"
+                                      className={`inline-flex items-center gap-1 text-[10px] ${isDark ? "text-cyan-400 hover:text-cyan-200" : "text-sky-700 hover:text-sky-900"} underline mt-0.5 transition-colors`}
                                       title={`${emp.name}-এর বেতন হিস্ট্রি দেখুন`}
                                     >
                                       <Receipt className="w-3 h-3" />
@@ -4215,11 +4265,11 @@ export default function AdminControlPanel() {
                                       <span className="text-[10px] text-slate-500 italic">অব্যাহতিপ্রাপ্ত (প্রযোজ্য নয়)</span>
                                     ) : monthSalaryStatus.isPaid ? (
                                       <div>
-                                        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-emerald-500/15 border border-emerald-500/30 text-emerald-400 text-[10px] font-bold">
+                                        <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-md ${isDark ? "bg-emerald-500/15 border-emerald-500/30 text-emerald-400" : "bg-emerald-50 border-emerald-200 text-emerald-700"} border text-[10px] font-bold`}>
                                           <Check className="w-3 h-3" />
                                           <span>পেইড ✓</span>
                                         </span>
-                                        <div className="text-[9px] text-slate-400 font-mono mt-0.5">
+                                        <div className={`text-[9px] ${isDark ? "text-slate-400" : "text-slate-500"} font-mono mt-0.5`}>
                                           {monthSalaryStatus.paidDate || "পরিশোধিত"}
                                         </div>
                                       </div>
@@ -4238,10 +4288,10 @@ export default function AdminControlPanel() {
                                           );
                                           setDisburseSalaryNotes(`${emp.name}-এর ${disburseSalaryMonth} মাসের নিয়মিত পারিশ্রমিক`);
                                         }}
-                                        className="px-2.5 py-1 rounded-lg bg-amber-500/15 hover:bg-amber-500/25 text-amber-300 border border-amber-500/30 flex items-center gap-1 text-[10px] font-bold transition-colors shadow-sm"
+                                        className={`px-2.5 py-1 rounded-lg ${isDark ? "bg-amber-500/15 hover:bg-amber-500/25 text-amber-300 border-amber-500/30" : "bg-amber-50 hover:bg-amber-100 text-amber-800 border-amber-200"} border flex items-center gap-1 text-[10px] font-bold transition-colors shadow-sm`}
                                         title={`${disburseSalaryMonth} মাসের বেতন প্রদান করুন`}
                                       >
-                                        <Coins className="w-3 h-3 text-amber-400" />
+                                        <Coins className="w-3 h-3 text-amber-500" />
                                         <span>বকেয়া ⏳ বেতন দিন</span>
                                       </button>
                                     )}
@@ -4250,19 +4300,19 @@ export default function AdminControlPanel() {
                                   {/* Login Credentials Column */}
                                   <td className="p-3.5">
                                     <div className="flex items-center gap-1.5">
-                                      <span className="font-mono text-cyan-400 font-bold text-[11px]">@{empUser}</span>
+                                      <span className={`font-mono ${isDark ? "text-cyan-400" : "text-sky-700"} font-bold text-[11px]`}>@{empUser}</span>
                                       <button
                                         onClick={() => {
                                           navigator.clipboard.writeText(`ইউজারনেম: ${empUser}\nপাসওয়ার্ড: ${empPass}`);
                                           showToast(`${emp.name}-এর লগইন তথ্য কপি করা হয়েছে!`);
                                         }}
-                                        className={`p-1 rounded ${isDark ? "bg-white/5 hover:bg-cyan-500/20 text-slate-400 hover:text-cyan-300" : "bg-slate-100 hover:bg-blue-100 text-slate-600 hover:text-blue-700"} transition-colors`}
+                                        className={`p-1 rounded ${isDark ? "bg-white/5 hover:bg-cyan-500/20 text-slate-400 hover:text-cyan-300" : "bg-slate-100 hover:bg-sky-100 text-slate-600 hover:text-sky-800"} transition-colors`}
                                         title="লগইন তথ্য কপি করুন"
                                       >
                                         <Copy className="w-3 h-3" />
                                       </button>
                                     </div>
-                                    <div className="text-[10px] text-slate-400 font-mono flex items-center gap-1 mt-0.5">
+                                    <div className={`text-[10px] ${isDark ? "text-slate-400" : "text-slate-500"} font-mono flex items-center gap-1 mt-0.5`}>
                                       <span>পাসওয়ার্ড:</span>
                                       <span className={`font-semibold ${isDark ? "text-slate-300" : "text-slate-700"}`}>{empPass}</span>
                                     </div>
@@ -4271,7 +4321,7 @@ export default function AdminControlPanel() {
                                   {/* 🛡️ Access & Permissions Column */}
                                   <td className="p-3.5">
                                     {emp.id === "emp-01" ? (
-                                      <span className="px-2 py-0.5 rounded-full bg-amber-500/15 text-amber-300 font-bold border border-amber-500/30 text-[10px] inline-flex items-center gap-1">
+                                      <span className={`px-2 py-0.5 rounded-full ${isDark ? "bg-amber-500/15 text-amber-300 border-amber-500/30" : "bg-amber-50 text-amber-800 border-amber-200"} font-bold border text-[10px] inline-flex items-center gap-1`}>
                                         👑 Full Access (Super Admin)
                                       </span>
                                     ) : (
@@ -4281,10 +4331,10 @@ export default function AdminControlPanel() {
                                           return (
                                             <span
                                               key={mod}
-                                              className={`px-1.5 py-0.5 rounded text-[9px] font-semibold ${
+                                              className={`px-1.5 py-0.5 rounded text-[9px] font-semibold border ${
                                                 isFin
-                                                  ? "bg-emerald-500/15 text-emerald-300 border border-emerald-500/30"
-                                                  : "bg-cyan-500/15 text-cyan-300 border border-cyan-500/30"
+                                                  ? (isDark ? "bg-emerald-500/15 text-emerald-300 border-emerald-500/30" : "bg-emerald-50 text-emerald-700 border-emerald-200")
+                                                  : (isDark ? "bg-cyan-500/15 text-cyan-300 border-cyan-500/30" : "bg-sky-50 text-sky-700 border-sky-200")
                                               }`}
                                             >
                                               {mod}
@@ -4299,18 +4349,18 @@ export default function AdminControlPanel() {
                                   <td className="p-3.5">
                                     {emp.status === "inactive" ? (
                                       <div>
-                                        <span className="px-2 py-0.5 rounded-full bg-rose-500/15 text-rose-400 text-[10px] font-bold border border-rose-500/30 inline-flex items-center gap-1">
+                                        <span className={`px-2 py-0.5 rounded-full ${isDark ? "bg-rose-500/15 text-rose-400 border-rose-500/30" : "bg-rose-50 text-rose-700 border-rose-200"} text-[10px] font-bold border inline-flex items-center gap-1`}>
                                           <UserX className="w-3 h-3" />
                                           <span>ডিঅ্যাক্টিভ</span>
                                         </span>
                                         {emp.deactivationReason && (
-                                          <div className="text-[9px] text-slate-400 max-w-[120px] truncate mt-0.5" title={emp.deactivationReason}>
+                                          <div className={`text-[9px] ${isDark ? "text-slate-400" : "text-slate-500"} max-w-[120px] truncate mt-0.5`} title={emp.deactivationReason}>
                                             {emp.deactivationReason}
                                           </div>
                                         )}
                                       </div>
                                     ) : (
-                                      <span className="px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 text-[10px] font-bold border border-emerald-500/20">
+                                      <span className={`px-2 py-0.5 rounded-full ${isDark ? "bg-emerald-500/10 text-emerald-400 border-emerald-500/20" : "bg-emerald-50 text-emerald-700 border-emerald-200"} text-[10px] font-bold border`}>
                                         ACTIVE
                                       </span>
                                     )}
@@ -4335,7 +4385,7 @@ export default function AdminControlPanel() {
                                             );
                                             setDisburseSalaryNotes(`${emp.name}-এর ${disburseSalaryMonth} মাসের নিয়মিত পারিশ্রমিক`);
                                           }}
-                                          className="px-2 py-1 rounded-lg bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 flex items-center gap-1 text-[10px] font-semibold transition-colors"
+                                          className={`px-2 py-1 rounded-lg ${isDark ? "bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 border-emerald-500/30" : "bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border-emerald-200"} border flex items-center gap-1 text-[10px] font-semibold transition-colors`}
                                           title="মাসিক বেতন প্রদান করুন"
                                         >
                                           <Coins className="w-3 h-3" />
@@ -4347,7 +4397,7 @@ export default function AdminControlPanel() {
                                       <button
                                         type="button"
                                         onClick={() => setViewingEmployeeWorkHistory(emp)}
-                                        className="px-2 py-1 rounded-lg bg-purple-500/10 hover:bg-purple-500/20 text-purple-300 border border-purple-500/30 flex items-center gap-1 text-[10px] font-semibold transition-colors"
+                                        className={`px-2 py-1 rounded-lg ${isDark ? "bg-purple-500/10 hover:bg-purple-500/20 text-purple-300 border-purple-500/30" : "bg-purple-50 hover:bg-purple-100 text-purple-700 border-purple-200"} border flex items-center gap-1 text-[10px] font-semibold transition-colors`}
                                         title={`${emp.name}-এর কাজের হিস্ট্রি ও ক্লায়েন্ট টাস্ক রেকর্ড`}
                                       >
                                         <Archive className="w-3 h-3" />
@@ -4364,7 +4414,7 @@ export default function AdminControlPanel() {
                                           setEditCredAccessModules(emp.accessModules && emp.accessModules.length > 0 ? [...emp.accessModules] : ["Dashboard", "Tasks", "Clients"]);
                                           setEditCredPermissionPreset("custom");
                                         }}
-                                        className="px-2 py-1 rounded-lg bg-cyan-500/10 hover:bg-cyan-500/20 text-cyan-400 border border-cyan-500/30 flex items-center gap-1 text-[10px] font-semibold transition-colors"
+                                        className={`px-2 py-1 rounded-lg ${isDark ? "bg-cyan-500/10 hover:bg-cyan-500/20 text-cyan-400 border-cyan-500/30" : "bg-sky-50 hover:bg-sky-100 text-sky-700 border-sky-200"} border flex items-center gap-1 text-[10px] font-semibold transition-colors`}
                                         title="ইউজারনেম, পাসওয়ার্ড, বেতন ও যোগদানের তারিখ পরিবর্তন"
                                       >
                                         <ShieldCheck className="w-3 h-3" />
@@ -4380,7 +4430,7 @@ export default function AdminControlPanel() {
                                               reactivateEmployee(emp.id);
                                               showToast(`${emp.name}-কে পুনরায় সক্রিয় করা হয়েছে!`);
                                             }}
-                                            className="px-2 py-1 rounded-lg bg-emerald-500/15 hover:bg-emerald-500/25 text-emerald-300 border border-emerald-500/30 flex items-center gap-1 text-[10px] font-bold transition-colors"
+                                            className={`px-2 py-1 rounded-lg ${isDark ? "bg-emerald-500/15 hover:bg-emerald-500/25 text-emerald-300 border-emerald-500/30" : "bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border-emerald-200"} border flex items-center gap-1 text-[10px] font-bold transition-colors`}
                                             title="পুনরায় সক্রিয় করুন"
                                           >
                                             <RotateCcw className="w-3 h-3" />
@@ -4393,7 +4443,7 @@ export default function AdminControlPanel() {
                                               setDeactivatingEmp(emp);
                                               setDeactivationReasonInput("");
                                             }}
-                                            className="p-1.5 rounded text-slate-500 hover:text-rose-400 hover:bg-rose-500/10 transition-colors"
+                                            className={`p-1.5 rounded ${isDark ? "text-slate-500 hover:text-rose-400 hover:bg-rose-500/10" : "text-slate-400 hover:text-rose-600 hover:bg-rose-50"} transition-colors`}
                                             title="ডিঅ্যাক্টিভ করুন (হিস্ট্রি সংরক্ষিত থাকবে)"
                                           >
                                             <UserX className="w-3.5 h-3.5" />
@@ -4417,20 +4467,20 @@ export default function AdminControlPanel() {
                           onClick={() => setEditingEmployeeCreds(null)}
                           className="fixed inset-0 bg-black/80 backdrop-blur-sm animate-in fade-in duration-200"
                         />
-                        <div className="relative z-10 w-full max-w-md bg-[#070E1E] border border-cyan-500/30 rounded-2xl p-5 sm:p-6 shadow-2xl text-white animate-in zoom-in-95 duration-200">
-                          <div className="flex items-center justify-between pb-3 border-b border-white/10">
+                        <div className={`relative z-10 w-full max-w-md ${isDark ? "bg-[#070E1E] border-cyan-500/30 text-white" : "bg-white border-slate-200 text-slate-900 shadow-2xl"} border rounded-2xl p-5 sm:p-6 shadow-2xl animate-in zoom-in-95 duration-200`}>
+                          <div className={`flex items-center justify-between pb-3 border-b ${isDark ? "border-white/10" : "border-slate-200"}`}>
                             <div className="flex items-center gap-2">
-                              <div className="w-8 h-8 rounded-xl bg-cyan-500/20 border border-cyan-500/40 flex items-center justify-center text-cyan-300">
+                              <div className={`w-8 h-8 rounded-xl ${isDark ? "bg-cyan-500/20 border-cyan-500/40 text-cyan-300" : "bg-sky-50 border-sky-200 text-sky-700"} border flex items-center justify-center`}>
                                 <Key className="w-4 h-4" />
                               </div>
                               <div>
-                                <h3 className="font-bold text-sm text-white">স্টাফ প্রোফাইল ও ক্রেডেনশিয়াল আপডেট</h3>
-                                <p className="text-[11px] text-slate-400">বেতন, যোগদানের তারিখ, ইউজারনেম ও পাসওয়ার্ড</p>
+                                <h3 className={`font-bold text-sm ${isDark ? "text-white" : "text-slate-900"}`}>স্টাফ প্রোফাইল ও ক্রেডেনশিয়াল আপডেট</h3>
+                                <p className={`text-[11px] ${isDark ? "text-slate-400" : "text-slate-500"}`}>বেতন, যোগদানের তারিখ, ইউজারনেম ও পাসওয়ার্ড</p>
                               </div>
                             </div>
                             <button
                               onClick={() => setEditingEmployeeCreds(null)}
-                              className="p-1.5 rounded-lg bg-white/5 hover:bg-white/10 text-slate-400 hover:text-white"
+                              className={`p-1.5 rounded-lg ${isDark ? "bg-white/5 hover:bg-white/10 text-slate-400 hover:text-white" : "bg-slate-100 hover:bg-slate-200 text-slate-600 hover:text-slate-900"}`}
                             >
                               <X className="w-4 h-4" />
                             </button>
@@ -4463,10 +4513,10 @@ export default function AdminControlPanel() {
                             className="space-y-4 pt-4"
                           >
                             <div>
-                              <label className="text-[11px] text-slate-400 block mb-1">স্টাফ মেম্বার</label>
-                              <div className="text-xs font-bold text-white bg-white/5 p-2.5 rounded-xl border border-white/10 flex items-center justify-between">
+                              <label className={`text-[11px] ${isDark ? "text-slate-400" : "text-slate-600"} block mb-1 font-medium`}>স্টাফ মেম্বার</label>
+                              <div className={`text-xs font-bold ${isDark ? "text-white bg-white/5 border-white/10" : "text-slate-900 bg-slate-50 border-slate-200"} p-2.5 rounded-xl border flex items-center justify-between`}>
                                 <span>{editingEmployeeCreds.name}</span>
-                                <span className="text-[10px] text-cyan-400 font-normal">
+                                <span className={`text-[10px] ${isDark ? "text-cyan-400" : "text-sky-700"} font-normal`}>
                                   {editingEmployeeCreds.role} • {editingEmployeeCreds.department}
                                 </span>
                               </div>
@@ -4475,7 +4525,7 @@ export default function AdminControlPanel() {
                             {/* Salary & Join Date Inputs */}
                             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                               <div>
-                                <label className="text-[11px] text-slate-300 block mb-1 font-semibold">মাসিক বেতন (Monthly ৳)</label>
+                                <label className={`text-[11px] ${isDark ? "text-slate-300" : "text-slate-700"} block mb-1 font-semibold`}>মাসিক বেতন (Monthly ৳)</label>
                                 <input
                                   type="number"
                                   required
@@ -4485,7 +4535,7 @@ export default function AdminControlPanel() {
                                 />
                               </div>
                               <div>
-                                <label className="text-[11px] text-slate-300 block mb-1 font-semibold">যোগদানের তারিখ (Join Date)</label>
+                                <label className={`text-[11px] ${isDark ? "text-slate-300" : "text-slate-700"} block mb-1 font-semibold`}>যোগদানের তারিখ (Join Date)</label>
                                 <input
                                   type="text"
                                   value={editCredJoinDate}
@@ -4497,7 +4547,7 @@ export default function AdminControlPanel() {
                             </div>
 
                             <div>
-                              <label className="text-[11px] text-slate-300 block mb-1 font-semibold">সিস্টেম ইউজারনেম (@Username)</label>
+                              <label className={`text-[11px] ${isDark ? "text-slate-300" : "text-slate-700"} block mb-1 font-semibold`}>সিস্টেম ইউজারনেম (@Username)</label>
                               <input
                                 type="text"
                                 required
@@ -4509,7 +4559,7 @@ export default function AdminControlPanel() {
                             </div>
 
                             <div>
-                              <label className="text-[11px] text-slate-300 font-semibold block mb-1">লগইন পাসওয়ার্ড (Password)</label>
+                              <label className={`text-[11px] ${isDark ? "text-slate-300" : "text-slate-700"} font-semibold block mb-1`}>লগইন পাসওয়ার্ড (Password)</label>
                               <div className="relative">
                                 <input
                                   type={showEditCredPassword ? "text" : "password"}
@@ -4522,7 +4572,7 @@ export default function AdminControlPanel() {
                                 <button
                                   type="button"
                                   onClick={() => setShowEditCredPassword(!showEditCredPassword)}
-                                  className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-white"
+                                  className={`absolute right-2.5 top-1/2 -translate-y-1/2 ${isDark ? "text-slate-400 hover:text-white" : "text-slate-500 hover:text-slate-900"}`}
                                 >
                                   {showEditCredPassword ? <EyeOff className="w-3.5 h-3.5" /> : <Eye className="w-3.5 h-3.5" />}
                                 </button>
@@ -4530,17 +4580,17 @@ export default function AdminControlPanel() {
                             </div>
 
                             {/* 🛡️ Module Access & Permissions Editor */}
-                            <div className="p-3.5 rounded-2xl bg-gradient-to-br from-[#091427] to-[#0B1A33] border border-cyan-500/30 space-y-3">
+                            <div className={`p-3.5 rounded-2xl ${isDark ? "bg-gradient-to-br from-[#091427] to-[#0B1A33] border-cyan-500/30" : "bg-slate-50 border-slate-200"} border space-y-3`}>
                               <div className="flex items-center justify-between">
                                 <div className="flex items-center gap-1.5">
-                                  <ShieldCheck className="w-4 h-4 text-cyan-400" />
-                                  <span className="text-xs font-bold text-white">মডিউল পারমিশন (Visible Modules)</span>
+                                  <ShieldCheck className={`w-4 h-4 ${isDark ? "text-cyan-400" : "text-sky-600"}`} />
+                                  <span className={`text-xs font-bold ${isDark ? "text-white" : "text-slate-900"}`}>মডিউল পারমিশন (Visible Modules)</span>
                                 </div>
-                                <span className="text-[10px] text-cyan-400 font-mono font-bold">{editCredAccessModules.length} টি সিলেক্টেড</span>
+                                <span className={`text-[10px] ${isDark ? "text-cyan-400" : "text-sky-700"} font-mono font-bold`}>{editCredAccessModules.length} টি সিলেক্টেড</span>
                               </div>
 
                               <div>
-                                <label className="text-[10px] font-bold text-slate-300 block mb-1">কুইক রোল প্রিসেট (ড্রপডাউন সিলেক্টর)</label>
+                                <label className={`text-[10px] font-bold ${isDark ? "text-slate-300" : "text-slate-600"} block mb-1`}>কুইক রোল প্রিসেট (ড্রপডাউন সিলেক্টর)</label>
                                 <select
                                   value={editCredPermissionPreset}
                                   onChange={(e) => {
@@ -4551,18 +4601,18 @@ export default function AdminControlPanel() {
                                       setEditCredAccessModules([...found.modules]);
                                     }
                                   }}
-                                  className={`w-full px-3 py-2 rounded-xl text-xs font-semibold ${theme.inputBg} border border-cyan-500/30 focus:border-cyan-400`}
+                                  className={`w-full px-3 py-2 rounded-xl text-xs font-semibold ${theme.inputBg} border ${isDark ? "border-cyan-500/30" : "border-slate-300"}`}
                                 >
                                   {ROLE_PERMISSION_PRESETS.map((p) => (
-                                    <option key={p.id} value={p.id} className="bg-slate-900 text-white py-1">
+                                    <option key={p.id} value={p.id} className={isDark ? "bg-slate-900 text-white py-1" : "bg-white text-slate-900 py-1"}>
                                       {p.label}
                                     </option>
                                   ))}
                                 </select>
                               </div>
 
-                              <div className="pt-2 border-t border-white/10 space-y-2">
-                                <div className="text-[10px] text-slate-400 font-bold uppercase tracking-wider flex items-center justify-between">
+                              <div className={`pt-2 border-t ${isDark ? "border-white/10" : "border-slate-200"} space-y-2`}>
+                                <div className={`text-[10px] ${isDark ? "text-slate-400" : "text-slate-500"} font-bold uppercase tracking-wider flex items-center justify-between`}>
                                   <span>নির্দিষ্ট মডিউল অনুমোদন:</span>
                                   <div className="flex gap-2">
                                     <button
@@ -4571,7 +4621,7 @@ export default function AdminControlPanel() {
                                         setEditCredAccessModules(AVAILABLE_STAFF_MODULES.map((m) => m.id));
                                         setEditCredPermissionPreset("custom");
                                       }}
-                                      className="text-cyan-400 hover:underline"
+                                      className={`${isDark ? "text-cyan-400" : "text-sky-600"} hover:underline`}
                                     >
                                       সব সিলেক্ট
                                     </button>
@@ -4582,7 +4632,7 @@ export default function AdminControlPanel() {
                                         setEditCredAccessModules(["Dashboard"]);
                                         setEditCredPermissionPreset("custom");
                                       }}
-                                      className="text-rose-400 hover:underline"
+                                      className="text-rose-500 hover:underline"
                                     >
                                       ক্লিয়ার
                                     </button>
@@ -4606,16 +4656,16 @@ export default function AdminControlPanel() {
                                         className={`flex items-center gap-2 p-2 rounded-xl border cursor-pointer select-none transition-all ${
                                           isChecked
                                             ? mod.isConfidential
-                                              ? "bg-emerald-500/15 border-emerald-500/40 text-emerald-200 font-medium"
-                                              : "bg-cyan-500/15 border-cyan-500/40 text-cyan-200 font-medium"
-                                            : "bg-white/[0.02] border-white/5 text-slate-400 hover:bg-white/[0.05]"
+                                              ? (isDark ? "bg-emerald-500/15 border-emerald-500/40 text-emerald-200 font-medium" : "bg-emerald-50 border-emerald-300 text-emerald-800 font-medium")
+                                              : (isDark ? "bg-cyan-500/15 border-cyan-500/40 text-cyan-200 font-medium" : "bg-sky-50 border-sky-300 text-sky-800 font-medium")
+                                            : (isDark ? "bg-white/[0.02] border-white/5 text-slate-400 hover:bg-white/[0.05]" : "bg-white border-slate-200 text-slate-600 hover:bg-slate-50")
                                         }`}
                                       >
                                         <input
                                           type="checkbox"
                                           checked={isChecked}
                                           onChange={() => {}}
-                                          className="rounded border-white/20 bg-slate-900 text-cyan-500 focus:ring-0 w-3.5 h-3.5"
+                                          className={`rounded ${isDark ? "border-white/20 bg-slate-900 text-cyan-500" : "border-slate-300 bg-white text-sky-600"} focus:ring-0 w-3.5 h-3.5`}
                                         />
                                         <span className="text-[11px] truncate">{mod.label}</span>
                                       </label>
@@ -4625,11 +4675,11 @@ export default function AdminControlPanel() {
                               </div>
                             </div>
 
-                            <div className="flex justify-end gap-2 pt-3 border-t border-white/10">
+                            <div className={`flex justify-end gap-2 pt-3 border-t ${isDark ? "border-white/10" : "border-slate-200"}`}>
                               <button
                                 type="button"
                                 onClick={() => setEditingEmployeeCreds(null)}
-                                className="px-3.5 py-1.5 rounded-xl text-xs text-slate-400 hover:text-white bg-white/5"
+                                className={`px-3.5 py-1.5 rounded-xl text-xs ${isDark ? "text-slate-400 hover:text-white bg-white/5" : "text-slate-600 hover:text-slate-900 bg-slate-100"}`}
                               >
                                 বাতিল
                               </button>
@@ -4652,27 +4702,37 @@ export default function AdminControlPanel() {
                           onClick={() => setViewingSalaryHistoryEmp(null)}
                           className="fixed inset-0 bg-black/80 backdrop-blur-sm animate-in fade-in duration-200"
                         />
-                        <div className="relative z-10 w-full max-w-2xl bg-[#070E1E] border border-cyan-500/30 rounded-2xl p-5 sm:p-6 shadow-2xl text-white animate-in zoom-in-95 duration-200">
-                          <div className="flex items-center justify-between pb-3 border-b border-white/10">
+                        <div className={`relative z-10 w-full max-w-2xl rounded-2xl p-5 sm:p-6 shadow-2xl transition-colors duration-200 animate-in zoom-in-95 ${
+                          isDark
+                            ? "bg-[#070E1E] border border-cyan-500/30 text-white"
+                            : "bg-white border border-slate-200 text-slate-900 shadow-xl"
+                        }`}>
+                          <div className={`flex items-center justify-between pb-3 border-b ${isDark ? "border-white/10" : "border-slate-200"}`}>
                             <div className="flex items-center gap-2.5">
-                              <div className="w-9 h-9 rounded-xl bg-cyan-500/20 border border-cyan-500/40 flex items-center justify-center text-cyan-300">
+                              <div className={`w-9 h-9 rounded-xl flex items-center justify-center ${
+                                isDark ? "bg-cyan-500/20 border border-cyan-500/40 text-cyan-300" : "bg-cyan-50 border border-cyan-200 text-cyan-700"
+                              }`}>
                                 <Receipt className="w-5 h-5" />
                               </div>
                               <div>
-                                <h3 className="font-bold text-sm text-white flex items-center gap-2">
+                                <h3 className={`font-bold text-sm flex items-center gap-2 ${isDark ? "text-white" : "text-slate-900"}`}>
                                   <span>{viewingSalaryHistoryEmp.name}</span>
-                                  <span className="text-[10px] px-2 py-0.5 rounded-full bg-cyan-500/10 text-cyan-300 border border-cyan-500/20 font-normal">
+                                  <span className={`text-[10px] px-2 py-0.5 rounded-full font-normal border ${
+                                    isDark ? "bg-cyan-500/10 text-cyan-300 border-cyan-500/20" : "bg-cyan-50 text-cyan-700 border-cyan-200"
+                                  }`}>
                                     {viewingSalaryHistoryEmp.role}
                                   </span>
                                 </h3>
-                                <p className="text-[11px] text-slate-400">
+                                <p className={`text-[11px] ${isDark ? "text-slate-400" : "text-slate-500"}`}>
                                   প্রতিষ্ঠানে যোগদানের পর থেকে আজীবনের মোট বেতন ও পারিশ্রমিক হিসাব
                                 </p>
                               </div>
                             </div>
                             <button
                               onClick={() => setViewingSalaryHistoryEmp(null)}
-                              className="p-1.5 rounded-lg bg-white/5 hover:bg-white/10 text-slate-400 hover:text-white transition-colors"
+                              className={`p-1.5 rounded-lg transition-colors ${
+                                isDark ? "bg-white/5 hover:bg-white/10 text-slate-400 hover:text-white" : "bg-slate-100 hover:bg-slate-200 text-slate-500 hover:text-slate-800"
+                              }`}
                             >
                               <X className="w-4 h-4" />
                             </button>
@@ -4680,31 +4740,31 @@ export default function AdminControlPanel() {
 
                           {/* Summary Cards */}
                           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 my-4">
-                            <div className="p-3.5 rounded-xl bg-white/[0.03] border border-white/10">
-                              <div className="text-[10px] text-slate-400 uppercase font-semibold">যোগদানের তারিখ</div>
-                              <div className="text-xs font-bold text-slate-100 mt-1 flex items-center gap-1.5">
-                                <Calendar className="w-3.5 h-3.5 text-cyan-400" />
+                            <div className={`p-3.5 rounded-xl border ${isDark ? "bg-white/[0.03] border-white/10" : "bg-slate-50 border-slate-200"}`}>
+                              <div className={`text-[10px] uppercase font-semibold ${isDark ? "text-slate-400" : "text-slate-500"}`}>যোগদানের তারিখ</div>
+                              <div className={`text-xs font-bold mt-1 flex items-center gap-1.5 ${isDark ? "text-slate-100" : "text-slate-800"}`}>
+                                <Calendar className={`w-3.5 h-3.5 ${isDark ? "text-cyan-400" : "text-cyan-600"}`} />
                                 <span>{viewingSalaryHistoryEmp.joinDate || "01 Jan 2024"}</span>
                               </div>
-                              <div className="text-[10px] text-cyan-400 font-mono mt-0.5">
+                              <div className={`text-[10px] font-mono mt-0.5 ${isDark ? "text-cyan-400" : "text-cyan-700 font-semibold"}`}>
                                 {getEmployeeTenure(viewingSalaryHistoryEmp.joinDate)}
                               </div>
                             </div>
 
-                            <div className="p-3.5 rounded-xl bg-white/[0.03] border border-white/10">
-                              <div className="text-[10px] text-slate-400 uppercase font-semibold">মাসিক নিয়মিত বেতন</div>
-                              <div className="text-sm font-black text-emerald-400 mt-1 font-mono">
+                            <div className={`p-3.5 rounded-xl border ${isDark ? "bg-white/[0.03] border-white/10" : "bg-slate-50 border-slate-200"}`}>
+                              <div className={`text-[10px] uppercase font-semibold ${isDark ? "text-slate-400" : "text-slate-500"}`}>মাসিক নিয়মিত বেতন</div>
+                              <div className={`text-sm font-black mt-1 font-mono ${isDark ? "text-emerald-400" : "text-emerald-600"}`}>
                                 ৳ {viewingSalaryHistoryEmp.salary.toLocaleString()}
                               </div>
-                              <div className="text-[10px] text-slate-400 mt-0.5">প্রতি মাসের চুক্তি</div>
+                              <div className={`text-[10px] mt-0.5 ${isDark ? "text-slate-400" : "text-slate-500"}`}>প্রতি মাসের চুক্তি</div>
                             </div>
 
-                            <div className="p-3.5 rounded-xl bg-cyan-500/10 border border-cyan-500/30">
-                              <div className="text-[10px] text-cyan-300 uppercase font-bold">আজীবনের মোট পরিশোধিত বেতন</div>
-                              <div className="text-base font-black text-cyan-300 mt-1 font-mono">
+                            <div className={`p-3.5 rounded-xl border ${isDark ? "bg-cyan-500/10 border-cyan-500/30" : "bg-cyan-50 border-cyan-200"}`}>
+                              <div className={`text-[10px] uppercase font-bold ${isDark ? "text-cyan-300" : "text-cyan-800"}`}>আজীবনের মোট পরিশোধিত বেতন</div>
+                              <div className={`text-base font-black mt-1 font-mono ${isDark ? "text-cyan-300" : "text-cyan-700"}`}>
                                 ৳ {getEmployeeLifetimeSalary(viewingSalaryHistoryEmp).toLocaleString()}
                               </div>
-                              <div className="text-[10px] text-cyan-400/80 mt-0.5">
+                              <div className={`text-[10px] mt-0.5 ${isDark ? "text-cyan-400/80" : "text-cyan-700"}`}>
                                 {salaries.filter((s) => (s.employeeId === viewingSalaryHistoryEmp.id || s.employeeName.trim().toLowerCase() === viewingSalaryHistoryEmp.name.trim().toLowerCase()) && s.status === "Paid").length} টি সফল ডিস্ট্রিবিউশন
                               </div>
                             </div>
@@ -4712,14 +4772,16 @@ export default function AdminControlPanel() {
 
                           {/* Salary Disbursement History Table */}
                           <div className="space-y-2">
-                            <div className="text-xs font-bold text-slate-300 flex items-center justify-between">
+                            <div className={`text-xs font-bold flex items-center justify-between ${isDark ? "text-slate-300" : "text-slate-700"}`}>
                               <span>মাসভিত্তিক বিতরণ রেকর্ড (Disbursed Payroll Records)</span>
-                              <span className="text-[10px] text-slate-400">সর্বশেষ মাসগুলো ক্রমানুসারে</span>
+                              <span className={`text-[10px] ${isDark ? "text-slate-400" : "text-slate-500"}`}>সর্বশেষ মাসগুলো ক্রমানুসারে</span>
                             </div>
-                            <div className="rounded-xl border border-white/10 overflow-hidden max-h-60 overflow-y-auto">
+                            <div className={`rounded-xl border overflow-hidden max-h-60 overflow-y-auto ${isDark ? "border-white/10" : "border-slate-200"}`}>
                               <table className="w-full text-left border-collapse text-xs">
                                 <thead>
-                                  <tr className="bg-white/5 border-b border-white/10 text-[10px] font-semibold text-slate-400 uppercase tracking-wider">
+                                  <tr className={`border-b text-[10px] font-semibold uppercase tracking-wider ${
+                                    isDark ? "bg-white/5 border-white/10 text-slate-400" : "bg-slate-50 border-slate-200 text-slate-600"
+                                  }`}>
                                     <th className="p-2.5">মাস (Month)</th>
                                     <th className="p-2.5">ডিপার্টমেন্ট</th>
                                     <th className="p-2.5">পরিমাণ (BDT)</th>
@@ -4727,7 +4789,7 @@ export default function AdminControlPanel() {
                                     <th className="p-2.5 text-right">স্ট্যাটাস</th>
                                   </tr>
                                 </thead>
-                                <tbody className="divide-y divide-white/5">
+                                <tbody className={`divide-y ${isDark ? "divide-white/5" : "divide-slate-200"}`}>
                                   {salaries
                                     .filter(
                                       (s) =>
@@ -4735,22 +4797,26 @@ export default function AdminControlPanel() {
                                         s.employeeName.trim().toLowerCase() === viewingSalaryHistoryEmp.name.trim().toLowerCase()
                                     )
                                     .map((s) => (
-                                      <tr key={s.id} className="hover:bg-white/[0.02] transition-colors">
-                                        <td className="p-2.5 font-mono font-bold text-white">{s.month}</td>
-                                        <td className="p-2.5 text-slate-300">{s.department}</td>
-                                        <td className="p-2.5 font-mono font-bold text-emerald-400">
+                                      <tr key={s.id} className={`transition-colors ${isDark ? "hover:bg-white/[0.02]" : "hover:bg-slate-50/80"}`}>
+                                        <td className={`p-2.5 font-mono font-bold ${isDark ? "text-white" : "text-slate-900"}`}>{s.month}</td>
+                                        <td className={`p-2.5 ${isDark ? "text-slate-300" : "text-slate-600"}`}>{s.department}</td>
+                                        <td className={`p-2.5 font-mono font-bold ${isDark ? "text-emerald-400" : "text-emerald-700"}`}>
                                           ৳ {s.amount.toLocaleString()}
                                         </td>
-                                        <td className="p-2.5 font-mono text-[11px] text-slate-400">
+                                        <td className={`p-2.5 font-mono text-[11px] ${isDark ? "text-slate-400" : "text-slate-500"}`}>
                                           {s.paidDate || s.month}
                                         </td>
                                         <td className="p-2.5 text-right">
                                           {s.status === "Paid" ? (
-                                            <span className="px-2 py-0.5 rounded-full text-[9px] font-bold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+                                            <span className={`px-2 py-0.5 rounded-full text-[9px] font-bold border ${
+                                              isDark ? "bg-emerald-500/10 text-emerald-400 border-emerald-500/20" : "bg-emerald-50 text-emerald-700 border-emerald-200"
+                                            }`}>
                                               ✓ DISBURSED
                                             </span>
                                           ) : (
-                                            <span className="px-2 py-0.5 rounded-full text-[9px] font-bold bg-amber-500/10 text-amber-400 border border-amber-500/20">
+                                            <span className={`px-2 py-0.5 rounded-full text-[9px] font-bold border ${
+                                              isDark ? "bg-amber-500/10 text-amber-400 border-amber-500/20" : "bg-amber-50 text-amber-700 border-amber-200"
+                                            }`}>
                                               PENDING
                                             </span>
                                           )}
@@ -4763,7 +4829,7 @@ export default function AdminControlPanel() {
                                       s.employeeName.trim().toLowerCase() === viewingSalaryHistoryEmp.name.trim().toLowerCase()
                                   ).length === 0 && (
                                     <tr>
-                                      <td colSpan={5} className="p-4 text-center text-slate-500 text-xs">
+                                      <td colSpan={5} className={`p-4 text-center text-xs ${isDark ? "text-slate-500" : "text-slate-400"}`}>
                                         কোনো বেতনের রেকর্ড পাওয়া যায়নি।
                                       </td>
                                     </tr>
@@ -4773,11 +4839,13 @@ export default function AdminControlPanel() {
                             </div>
                           </div>
 
-                          <div className="flex justify-end gap-2 pt-4 mt-4 border-t border-white/10">
+                          <div className={`flex justify-end gap-2 pt-4 mt-4 border-t ${isDark ? "border-white/10" : "border-slate-200"}`}>
                             <button
                               type="button"
                               onClick={() => setViewingSalaryHistoryEmp(null)}
-                              className="px-4 py-2 rounded-xl text-xs font-semibold text-slate-300 hover:text-white bg-white/10 hover:bg-white/15 transition-colors"
+                              className={`px-4 py-2 rounded-xl text-xs font-semibold transition-colors ${
+                                isDark ? "text-slate-300 hover:text-white bg-white/10 hover:bg-white/15" : "text-slate-700 hover:text-slate-900 bg-slate-100 hover:bg-slate-200 border border-slate-200"
+                              }`}
                             >
                               বন্ধ করুন
                             </button>
@@ -4793,39 +4861,51 @@ export default function AdminControlPanel() {
                           onClick={() => setDisburseSalaryModalEmp(null)}
                           className="fixed inset-0 bg-black/80 backdrop-blur-sm animate-in fade-in duration-200"
                         />
-                        <div className="relative z-10 w-full max-w-lg bg-[#070E1E] border border-emerald-500/30 rounded-2xl p-5 sm:p-6 shadow-2xl text-white animate-in zoom-in-95 duration-200">
-                          <div className="flex items-center justify-between pb-3 border-b border-white/10">
+                        <div className={`relative z-10 w-full max-w-lg rounded-2xl p-5 sm:p-6 shadow-2xl transition-colors duration-200 animate-in zoom-in-95 ${
+                          isDark
+                            ? "bg-[#070E1E] border border-emerald-500/30 text-white"
+                            : "bg-white border border-slate-200 text-slate-900 shadow-xl"
+                        }`}>
+                          <div className={`flex items-center justify-between pb-3 border-b ${isDark ? "border-white/10" : "border-slate-200"}`}>
                             <div className="flex items-center gap-2.5">
-                              <div className="w-9 h-9 rounded-xl bg-emerald-500/20 border border-emerald-500/40 flex items-center justify-center text-emerald-300">
+                              <div className={`w-9 h-9 rounded-xl flex items-center justify-center ${
+                                isDark ? "bg-emerald-500/20 border border-emerald-500/40 text-emerald-300" : "bg-emerald-50 border border-emerald-200 text-emerald-700"
+                              }`}>
                                 <Coins className="w-5 h-5" />
                               </div>
                               <div>
-                                <h3 className="font-bold text-sm text-white">মাসিক বেতন ও পারিশ্রমিক বিতরণ ভাউচার</h3>
-                                <p className="text-[11px] text-slate-400">নির্দিষ্ট মাসের বেতন প্রদান ও ফাইন্যান্স এক্সপেন্স সিঙ্ক</p>
+                                <h3 className={`font-bold text-sm ${isDark ? "text-white" : "text-slate-900"}`}>মাসিক বেতন ও পারিশ্রমিক বিতরণ ভাউচার</h3>
+                                <p className={`text-[11px] ${isDark ? "text-slate-400" : "text-slate-500"}`}>নির্দিষ্ট মাসের বেতন প্রদান ও ফাইন্যান্স এক্সপেন্স সিঙ্ক</p>
                               </div>
                             </div>
                             <button
                               onClick={() => setDisburseSalaryModalEmp(null)}
-                              className="p-1.5 rounded-lg bg-white/5 hover:bg-white/10 text-slate-400 hover:text-white"
+                              className={`p-1.5 rounded-lg transition-colors ${
+                                isDark ? "bg-white/5 hover:bg-white/10 text-slate-400 hover:text-white" : "bg-slate-100 hover:bg-slate-200 text-slate-500 hover:text-slate-800"
+                              }`}
                             >
                               <X className="w-4 h-4" />
                             </button>
                           </div>
 
                           {/* Employee Highlight Header */}
-                          <div className="my-4 p-3.5 rounded-xl bg-white/[0.03] border border-white/10 flex items-center justify-between">
+                          <div className={`my-4 p-3.5 rounded-xl border flex items-center justify-between ${
+                            isDark ? "bg-white/[0.03] border-white/10" : "bg-slate-50 border-slate-200"
+                          }`}>
                             <div className="flex items-center gap-2.5">
-                              <div className="w-9 h-9 rounded-full bg-cyan-500/20 text-cyan-300 font-bold flex items-center justify-center text-sm border border-cyan-500/30">
+                              <div className={`w-9 h-9 rounded-full font-bold flex items-center justify-center text-sm border ${
+                                isDark ? "bg-cyan-500/20 text-cyan-300 border-cyan-500/30" : "bg-cyan-50 text-cyan-700 border-cyan-200"
+                              }`}>
                                 {disburseSalaryModalEmp.name.charAt(0)}
                               </div>
                               <div>
-                                <div className="font-bold text-white text-xs">{disburseSalaryModalEmp.name}</div>
-                                <div className="text-[10px] text-slate-400">{disburseSalaryModalEmp.role} • {disburseSalaryModalEmp.department}</div>
+                                <div className={`font-bold text-xs ${isDark ? "text-white" : "text-slate-900"}`}>{disburseSalaryModalEmp.name}</div>
+                                <div className={`text-[10px] ${isDark ? "text-slate-400" : "text-slate-500"}`}>{disburseSalaryModalEmp.role} • {disburseSalaryModalEmp.department}</div>
                               </div>
                             </div>
                             <div className="text-right">
-                              <div className="text-[10px] text-slate-400 uppercase font-semibold">চুক্তিবদ্ধ মূল বেতন</div>
-                              <div className="font-mono font-bold text-emerald-400 text-sm">৳ {disburseSalaryModalEmp.salary.toLocaleString()}</div>
+                              <div className={`text-[10px] uppercase font-semibold ${isDark ? "text-slate-400" : "text-slate-500"}`}>চুক্তিবদ্ধ মূল বেতন</div>
+                              <div className={`font-mono font-bold text-sm ${isDark ? "text-emerald-400" : "text-emerald-600"}`}>৳ {disburseSalaryModalEmp.salary.toLocaleString()}</div>
                             </div>
                           </div>
 
@@ -4850,8 +4930,8 @@ export default function AdminControlPanel() {
                             {/* Target Month Selection */}
                             <div>
                               <div className="flex items-center justify-between mb-1.5">
-                                <label className="text-xs font-semibold text-slate-300">কোন মাসের বেতন প্রদান করা হচ্ছে? (Target Month)</label>
-                                <span className="text-[10px] text-cyan-400 font-medium">মাস নির্বাচন আবশ্যক</span>
+                                <label className={`text-xs font-semibold ${isDark ? "text-slate-300" : "text-slate-700"}`}>কোন মাসের বেতন প্রদান করা হচ্ছে? (Target Month)</label>
+                                <span className={`text-[10px] font-medium ${isDark ? "text-cyan-400" : "text-cyan-700"}`}>মাস নির্বাচন আবশ্যক</span>
                               </div>
                               <div className="grid grid-cols-3 sm:grid-cols-4 gap-1.5 mb-2">
                                 {["Sep 2026", "Oct 2026", "Nov 2026", "Dec 2026", "Aug 2026", "Jul 2026", "Jun 2026", "May 2026"].map((m) => (
@@ -4861,8 +4941,12 @@ export default function AdminControlPanel() {
                                     onClick={() => setDisburseSalaryMonth(m)}
                                     className={`py-1.5 px-2 rounded-lg text-xs font-mono font-semibold transition-colors border ${
                                       disburseSalaryMonth === m
-                                        ? "bg-emerald-500/20 text-emerald-300 border-emerald-500/50 shadow-sm shadow-emerald-500/10"
-                                        : "bg-white/5 text-slate-400 border-white/5 hover:bg-white/10 hover:text-white"
+                                        ? isDark
+                                          ? "bg-emerald-500/20 text-emerald-300 border-emerald-500/50 shadow-sm shadow-emerald-500/10"
+                                          : "bg-emerald-100 text-emerald-800 border-emerald-300 shadow-sm"
+                                        : isDark
+                                          ? "bg-white/5 text-slate-400 border-white/5 hover:bg-white/10 hover:text-white"
+                                          : "bg-slate-100 text-slate-600 border-slate-200 hover:bg-slate-200 hover:text-slate-900"
                                     }`}
                                   >
                                     {m}
@@ -4875,31 +4959,35 @@ export default function AdminControlPanel() {
                                 onChange={(e) => setDisburseSalaryMonth(e.target.value)}
                                 placeholder="উদাঃ Sep 2026 বা নিজের মতো লিখুন"
                                 required
-                                className="w-full px-3 py-2 rounded-xl bg-black/40 border border-white/10 text-white text-xs focus:outline-none focus:border-emerald-500 font-mono"
+                                className={`w-full px-3 py-2 rounded-xl text-xs font-mono focus:outline-none focus:border-emerald-500 border ${
+                                  isDark ? "bg-black/40 border-white/10 text-white" : "bg-white border-slate-300 text-slate-900"
+                                }`}
                               />
                             </div>
 
                             {/* Salary Amount & Quick Reset */}
                             <div>
                               <div className="flex items-center justify-between mb-1.5">
-                                <label className="text-xs font-semibold text-slate-300">পরিশোধের পরিমাণ (Amount in BDT)</label>
+                                <label className={`text-xs font-semibold ${isDark ? "text-slate-300" : "text-slate-700"}`}>পরিশোধের পরিমাণ (Amount in BDT)</label>
                                 <button
                                   type="button"
                                   onClick={() => setDisburseSalaryAmount(String(disburseSalaryModalEmp.salary))}
-                                  className="text-[10px] text-emerald-400 hover:text-emerald-300 underline"
+                                  className={`text-[10px] underline ${isDark ? "text-emerald-400 hover:text-emerald-300" : "text-emerald-700 hover:text-emerald-800 font-semibold"}`}
                                 >
                                   মূল বেতন সেট করুন (৳{disburseSalaryModalEmp.salary.toLocaleString()})
                                 </button>
                               </div>
                               <div className="relative">
-                                <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 font-bold text-xs">৳</span>
+                                <span className={`absolute left-3.5 top-1/2 -translate-y-1/2 font-bold text-xs ${isDark ? "text-slate-400" : "text-slate-500"}`}>৳</span>
                                 <input
                                   type="number"
                                   value={disburseSalaryAmount}
                                   onChange={(e) => setDisburseSalaryAmount(e.target.value)}
                                   placeholder={String(disburseSalaryModalEmp.salary)}
                                   required
-                                  className="w-full pl-8 pr-3 py-2 rounded-xl bg-black/40 border border-white/10 text-emerald-400 text-xs font-mono font-bold focus:outline-none focus:border-emerald-500"
+                                  className={`w-full pl-8 pr-3 py-2 rounded-xl text-xs font-mono font-bold focus:outline-none focus:border-emerald-500 border ${
+                                    isDark ? "bg-black/40 border-white/10 text-emerald-400" : "bg-white border-slate-300 text-emerald-700"
+                                  }`}
                                 />
                               </div>
                             </div>
@@ -4907,11 +4995,13 @@ export default function AdminControlPanel() {
                             {/* Payment Gateway & Date */}
                             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                               <div>
-                                <label className="block text-xs font-semibold text-slate-300 mb-1.5">পেমেন্ট মেথড (Payment Gateway)</label>
+                                <label className={`block text-xs font-semibold mb-1.5 ${isDark ? "text-slate-300" : "text-slate-700"}`}>পেমেন্ট মেথড (Payment Gateway)</label>
                                 <select
                                   value={disburseSalaryMethod}
                                   onChange={(e) => setDisburseSalaryMethod(e.target.value)}
-                                  className="w-full px-3 py-2 rounded-xl bg-black/40 border border-white/10 text-white text-xs focus:outline-none focus:border-emerald-500"
+                                  className={`w-full px-3 py-2 rounded-xl text-xs focus:outline-none focus:border-emerald-500 border ${
+                                    isDark ? "bg-black/40 border-white/10 text-white" : "bg-white border-slate-300 text-slate-900"
+                                  }`}
                                 >
                                   <option value="Bank Wire (City Bank)">Bank Wire (City Bank)</option>
                                   <option value="bKash Merchant">bKash Merchant</option>
@@ -4922,42 +5012,50 @@ export default function AdminControlPanel() {
                               </div>
 
                               <div>
-                                <label className="block text-xs font-semibold text-slate-300 mb-1.5">প্রদানের তারিখ (Date)</label>
+                                <label className={`block text-xs font-semibold mb-1.5 ${isDark ? "text-slate-300" : "text-slate-700"}`}>প্রদানের তারিখ (Date)</label>
                                 <input
                                   type="text"
                                   value={disburseSalaryDate}
                                   onChange={(e) => setDisburseSalaryDate(e.target.value)}
                                   placeholder="10 Sep 2026"
-                                  className="w-full px-3 py-2 rounded-xl bg-black/40 border border-white/10 text-white text-xs font-mono focus:outline-none focus:border-emerald-500"
+                                  className={`w-full px-3 py-2 rounded-xl text-xs font-mono focus:outline-none focus:border-emerald-500 border ${
+                                    isDark ? "bg-black/40 border-white/10 text-white" : "bg-white border-slate-300 text-slate-900"
+                                  }`}
                                 />
                               </div>
                             </div>
 
                             {/* Notes / Reference */}
                             <div>
-                              <label className="block text-xs font-semibold text-slate-300 mb-1.5">ট্রানজেকশন রেফারেন্স / নোট (ঐচ্ছিক)</label>
+                              <label className={`block text-xs font-semibold mb-1.5 ${isDark ? "text-slate-300" : "text-slate-700"}`}>ট্রানজেকশন রেফারেন্স / নোট (ঐচ্ছিক)</label>
                               <input
                                 type="text"
                                 value={disburseSalaryNotes}
                                 onChange={(e) => setDisburseSalaryNotes(e.target.value)}
                                 placeholder="উদাঃ City Bank Ref #TX99102 বা বোনাস সহ নিয়মিত বেতন"
-                                className="w-full px-3 py-2 rounded-xl bg-black/40 border border-white/10 text-white text-xs focus:outline-none focus:border-emerald-500"
+                                className={`w-full px-3 py-2 rounded-xl text-xs focus:outline-none focus:border-emerald-500 border ${
+                                  isDark ? "bg-black/40 border-white/10 text-white" : "bg-white border-slate-300 text-slate-900"
+                                }`}
                               />
                             </div>
 
                             {/* Auto Sync Callout */}
-                            <div className="p-3 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-[11px] text-emerald-300 flex items-start gap-2 leading-relaxed">
-                              <Sparkles className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
+                            <div className={`p-3 rounded-xl border text-[11px] flex items-start gap-2 leading-relaxed ${
+                              isDark ? "bg-emerald-500/10 border-emerald-500/20 text-emerald-300" : "bg-emerald-50 border-emerald-200 text-emerald-800"
+                            }`}>
+                              <Sparkles className={`w-4 h-4 shrink-0 mt-0.5 ${isDark ? "text-emerald-400" : "text-emerald-600"}`} />
                               <div>
                                 <strong>স্বয়ংক্রিয় ফাইন্যান্স সিঙ্ক:</strong> এই বেতন নিশ্চিত করার সাথে সাথে ফাইন্যান্স এক্সপেন্সের <em>'Salary'</em> খাতে এন্ট্রি যুক্ত হবে এবং লাইভ ক্যাশ ব্যালেন্স ও পিএন্ডএল অটোমেটিকভাবে আপডেট হবে।
                               </div>
                             </div>
 
-                            <div className="flex justify-end gap-2 pt-3 border-t border-white/10">
+                            <div className={`flex justify-end gap-2 pt-3 border-t ${isDark ? "border-white/10" : "border-slate-200"}`}>
                               <button
                                 type="button"
                                 onClick={() => setDisburseSalaryModalEmp(null)}
-                                className="px-4 py-2 rounded-xl text-xs text-slate-400 hover:text-white bg-white/5 hover:bg-white/10 transition-colors"
+                                className={`px-4 py-2 rounded-xl text-xs transition-colors ${
+                                  isDark ? "text-slate-400 hover:text-white bg-white/5 hover:bg-white/10" : "text-slate-700 hover:text-slate-900 bg-slate-100 hover:bg-slate-200 border border-slate-200"
+                                }`}
                               >
                                 বাতিল
                               </button>
@@ -4981,42 +5079,56 @@ export default function AdminControlPanel() {
                           onClick={() => setDeactivatingEmp(null)}
                           className="fixed inset-0 bg-black/80 backdrop-blur-sm animate-in fade-in duration-200"
                         />
-                        <div className="relative z-10 w-full max-w-md bg-[#070E1E] border border-rose-500/30 rounded-2xl p-5 sm:p-6 shadow-2xl text-white animate-in zoom-in-95 duration-200">
-                          <div className="flex items-center justify-between pb-3 border-b border-white/10">
+                        <div className={`relative z-10 w-full max-w-md rounded-2xl p-5 sm:p-6 shadow-2xl transition-colors duration-200 animate-in zoom-in-95 ${
+                          isDark
+                            ? "bg-[#070E1E] border border-rose-500/30 text-white"
+                            : "bg-white border border-rose-200 text-slate-900 shadow-xl"
+                        }`}>
+                          <div className={`flex items-center justify-between pb-3 border-b ${isDark ? "border-white/10" : "border-slate-200"}`}>
                             <div className="flex items-center gap-2.5">
-                              <div className="w-9 h-9 rounded-xl bg-rose-500/20 border border-rose-500/40 flex items-center justify-center text-rose-400">
+                              <div className={`w-9 h-9 rounded-xl flex items-center justify-center ${
+                                isDark ? "bg-rose-500/20 border border-rose-500/40 text-rose-400" : "bg-rose-50 border border-rose-200 text-rose-600"
+                              }`}>
                                 <UserX className="w-5 h-5" />
                               </div>
                               <div>
-                                <h3 className="font-bold text-sm text-white">কর্মী অ্যাকাউন্ট স্থগিতকরণ / ডিঅ্যাক্টিভ</h3>
-                                <p className="text-[11px] text-slate-400">হিস্ট্রি ১০০% সংরক্ষিত রেখে অ্যাকাউন্ট স্থগিত</p>
+                                <h3 className={`font-bold text-sm ${isDark ? "text-white" : "text-slate-900"}`}>কর্মী অ্যাকাউন্ট স্থগিতকরণ / ডিঅ্যাক্টিভ</h3>
+                                <p className={`text-[11px] ${isDark ? "text-slate-400" : "text-slate-500"}`}>হিস্ট্রি ১০০% সংরক্ষিত রেখে অ্যাকাউন্ট স্থগিত</p>
                               </div>
                             </div>
                             <button
                               onClick={() => setDeactivatingEmp(null)}
-                              className="p-1.5 rounded-lg bg-white/5 hover:bg-white/10 text-slate-400 hover:text-white"
+                              className={`p-1.5 rounded-lg transition-colors ${
+                                isDark ? "bg-white/5 hover:bg-white/10 text-slate-400 hover:text-white" : "bg-slate-100 hover:bg-slate-200 text-slate-500 hover:text-slate-800"
+                              }`}
                             >
                               <X className="w-4 h-4" />
                             </button>
                           </div>
 
                           <div className="my-4 space-y-3">
-                            <div className="p-3 rounded-xl bg-white/[0.03] border border-white/10 flex items-center justify-between">
+                            <div className={`p-3 rounded-xl border flex items-center justify-between ${
+                              isDark ? "bg-white/[0.03] border-white/10" : "bg-slate-50 border-slate-200"
+                            }`}>
                               <div>
-                                <div className="font-bold text-sm text-white">{deactivatingEmp.name}</div>
-                                <div className="text-xs text-slate-400">{deactivatingEmp.role} • {deactivatingEmp.department}</div>
+                                <div className={`font-bold text-sm ${isDark ? "text-white" : "text-slate-900"}`}>{deactivatingEmp.name}</div>
+                                <div className={`text-xs ${isDark ? "text-slate-400" : "text-slate-500"}`}>{deactivatingEmp.role} • {deactivatingEmp.department}</div>
                               </div>
-                              <span className="px-2 py-0.5 rounded bg-rose-500/20 text-rose-300 text-[10px] font-bold border border-rose-500/30">
+                              <span className={`px-2 py-0.5 rounded text-[10px] font-bold border ${
+                                isDark ? "bg-rose-500/20 text-rose-300 border-rose-500/30" : "bg-rose-50 text-rose-700 border-rose-200"
+                              }`}>
                                 ডিঅ্যাক্টিভ হবে
                               </span>
                             </div>
 
-                            <div className="p-3.5 rounded-xl bg-rose-500/10 border border-rose-500/25 text-xs text-slate-300 space-y-2 leading-relaxed">
-                              <div className="flex items-center gap-1.5 font-bold text-rose-300">
+                            <div className={`p-3.5 rounded-xl border text-xs space-y-2 leading-relaxed ${
+                              isDark ? "bg-rose-500/10 border-rose-500/25 text-slate-300" : "bg-rose-50 border-rose-200 text-rose-900"
+                            }`}>
+                              <div className={`flex items-center gap-1.5 font-bold ${isDark ? "text-rose-300" : "text-rose-700"}`}>
                                 <AlertCircle className="w-4 h-4" />
                                 <span>অ্যাকাউন্ট স্থগিতকরণের নিয়ম ও গ্যারান্টি:</span>
                               </div>
-                              <ul className="list-disc pl-4 space-y-1 text-[11px] text-slate-300">
+                              <ul className={`list-disc pl-4 space-y-1 text-[11px] ${isDark ? "text-slate-300" : "text-slate-700"}`}>
                                 <li>লগইন অ্যাক্সেস সাময়িকভাবে বন্ধ হবে।</li>
                                 <li>
                                   <strong>মাসিক পে-রোল কমিটমেন্ট:</strong> সক্রিয় মাসিক পে-রোল ও বাজেট হিসাব থেকে তার বেতন <strong>বাদ পড়বে</strong> (খরচ বাড়বে না)।
@@ -5029,7 +5141,7 @@ export default function AdminControlPanel() {
                             </div>
 
                             <div>
-                              <label className="block text-xs font-semibold text-slate-300 mb-1.5">
+                              <label className={`block text-xs font-semibold mb-1.5 ${isDark ? "text-slate-300" : "text-slate-700"}`}>
                                 অব্যাহতির কারণ / মন্তব্য (ঐচ্ছিক):
                               </label>
                               <input
@@ -5037,16 +5149,20 @@ export default function AdminControlPanel() {
                                 value={deactivationReasonInput}
                                 onChange={(e) => setDeactivationReasonInput(e.target.value)}
                                 placeholder="উদাঃ প্রজেক্ট চুক্তি সমাপ্ত / উচ্চশিক্ষা / অন্য সংস্থায় যোগদান"
-                                className="w-full px-3 py-2 rounded-xl bg-black/40 border border-white/10 text-white text-xs focus:outline-none focus:border-rose-500"
+                                className={`w-full px-3 py-2 rounded-xl text-xs focus:outline-none focus:border-rose-500 border ${
+                                  isDark ? "bg-black/40 border-white/10 text-white" : "bg-white border-slate-300 text-slate-900"
+                                }`}
                               />
                             </div>
                           </div>
 
-                          <div className="flex justify-end gap-2 pt-3 border-t border-white/10">
+                          <div className={`flex justify-end gap-2 pt-3 border-t ${isDark ? "border-white/10" : "border-slate-200"}`}>
                             <button
                               type="button"
                               onClick={() => setDeactivatingEmp(null)}
-                              className="px-4 py-2 rounded-xl text-xs text-slate-400 hover:text-white bg-white/5 hover:bg-white/10 transition-colors"
+                              className={`px-4 py-2 rounded-xl text-xs transition-colors ${
+                                isDark ? "text-slate-400 hover:text-white bg-white/5 hover:bg-white/10" : "text-slate-700 hover:text-slate-900 bg-slate-100 hover:bg-slate-200 border border-slate-200"
+                              }`}
                             >
                               বাতিল
                             </button>
@@ -5074,31 +5190,43 @@ export default function AdminControlPanel() {
                           onClick={() => setViewingEmployeeWorkHistory(null)}
                           className="fixed inset-0 bg-black/80 backdrop-blur-sm animate-in fade-in duration-200"
                         />
-                        <div className="relative z-10 w-full max-w-3xl bg-[#070E1E] border border-purple-500/30 rounded-2xl p-5 sm:p-6 shadow-2xl text-white animate-in zoom-in-95 duration-200 max-h-[90vh] flex flex-col">
-                          <div className="flex items-center justify-between pb-3 border-b border-white/10 shrink-0">
+                        <div className={`relative z-10 w-full max-w-3xl rounded-2xl p-5 sm:p-6 shadow-2xl transition-colors duration-200 animate-in zoom-in-95 max-h-[90vh] flex flex-col ${
+                          isDark
+                            ? "bg-[#070E1E] border border-purple-500/30 text-white"
+                            : "bg-white border border-slate-200 text-slate-900 shadow-xl"
+                        }`}>
+                          <div className={`flex items-center justify-between pb-3 border-b shrink-0 ${isDark ? "border-white/10" : "border-slate-200"}`}>
                             <div className="flex items-center gap-2.5">
-                              <div className="w-9 h-9 rounded-xl bg-purple-500/20 border border-purple-500/40 flex items-center justify-center text-purple-300">
+                              <div className={`w-9 h-9 rounded-xl flex items-center justify-center ${
+                                isDark ? "bg-purple-500/20 border border-purple-500/40 text-purple-300" : "bg-purple-50 border border-purple-200 text-purple-700"
+                              }`}>
                                 <Archive className="w-5 h-5" />
                               </div>
                               <div>
-                                <h3 className="font-bold text-sm text-white flex items-center gap-2">
+                                <h3 className={`font-bold text-sm flex items-center gap-2 ${isDark ? "text-white" : "text-slate-900"}`}>
                                   <span>{viewingEmployeeWorkHistory.name}</span>
                                   <span className={`text-[10px] px-2 py-0.5 rounded-full font-normal border ${
                                     viewingEmployeeWorkHistory.status === "inactive"
-                                      ? "bg-rose-500/10 text-rose-300 border-rose-500/20"
-                                      : "bg-emerald-500/10 text-emerald-300 border-emerald-500/20"
+                                      ? isDark
+                                        ? "bg-rose-500/10 text-rose-300 border-rose-500/20"
+                                        : "bg-rose-50 text-rose-700 border-rose-200"
+                                      : isDark
+                                        ? "bg-emerald-500/10 text-emerald-300 border-emerald-500/20"
+                                        : "bg-emerald-50 text-emerald-700 border-emerald-200"
                                   }`}>
                                     {viewingEmployeeWorkHistory.status === "inactive" ? "ডিঅ্যাক্টিভ / সাবেক কর্মী" : "সক্রিয় কর্মী"}
                                   </span>
                                 </h3>
-                                <p className="text-[11px] text-slate-400">
+                                <p className={`text-[11px] ${isDark ? "text-slate-400" : "text-slate-500"}`}>
                                   কর্মীর আজীবনের কাজের রেকর্ড, সম্পন্নকৃত টাস্ক ও লাইফটাইম পে-রোল আর্কাইভ
                                 </p>
                               </div>
                             </div>
                             <button
                               onClick={() => setViewingEmployeeWorkHistory(null)}
-                              className="p-1.5 rounded-lg bg-white/5 hover:bg-white/10 text-slate-400 hover:text-white"
+                              className={`p-1.5 rounded-lg transition-colors ${
+                                isDark ? "bg-white/5 hover:bg-white/10 text-slate-400 hover:text-white" : "bg-slate-100 hover:bg-slate-200 text-slate-500 hover:text-slate-800"
+                              }`}
                             >
                               <X className="w-4 h-4" />
                             </button>
@@ -5106,44 +5234,46 @@ export default function AdminControlPanel() {
 
                           {/* Top Metric Cards */}
                           <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 my-3 shrink-0">
-                            <div className="p-3 rounded-xl bg-white/[0.03] border border-white/10">
-                              <div className="text-[10px] text-slate-400 uppercase font-semibold">বিভাগ ও রোল</div>
-                              <div className="text-xs font-bold text-white mt-0.5 truncate">{viewingEmployeeWorkHistory.role}</div>
-                              <div className="text-[10px] text-purple-400">{viewingEmployeeWorkHistory.department}</div>
+                            <div className={`p-3 rounded-xl border ${isDark ? "bg-white/[0.03] border-white/10" : "bg-slate-50 border-slate-200"}`}>
+                              <div className={`text-[10px] uppercase font-semibold ${isDark ? "text-slate-400" : "text-slate-500"}`}>বিভাগ ও রোল</div>
+                              <div className={`text-xs font-bold mt-0.5 truncate ${isDark ? "text-white" : "text-slate-900"}`}>{viewingEmployeeWorkHistory.role}</div>
+                              <div className={`text-[10px] ${isDark ? "text-purple-400" : "text-purple-700 font-medium"}`}>{viewingEmployeeWorkHistory.department}</div>
                             </div>
 
-                            <div className="p-3 rounded-xl bg-white/[0.03] border border-white/10">
-                              <div className="text-[10px] text-slate-400 uppercase font-semibold">যোগদান ও স্থায়িত্ব</div>
-                              <div className="text-xs font-bold text-cyan-300 mt-0.5">{viewingEmployeeWorkHistory.joinDate || "01 Jan 2024"}</div>
-                              <div className="text-[10px] text-slate-400">{getEmployeeTenure(viewingEmployeeWorkHistory.joinDate)}</div>
+                            <div className={`p-3 rounded-xl border ${isDark ? "bg-white/[0.03] border-white/10" : "bg-slate-50 border-slate-200"}`}>
+                              <div className={`text-[10px] uppercase font-semibold ${isDark ? "text-slate-400" : "text-slate-500"}`}>যোগদান ও স্থায়িত্ব</div>
+                              <div className={`text-xs font-bold mt-0.5 ${isDark ? "text-cyan-300" : "text-cyan-700"}`}>{viewingEmployeeWorkHistory.joinDate || "01 Jan 2024"}</div>
+                              <div className={`text-[10px] ${isDark ? "text-slate-400" : "text-slate-500"}`}>{getEmployeeTenure(viewingEmployeeWorkHistory.joinDate)}</div>
                             </div>
 
-                            <div className="p-3 rounded-xl bg-white/[0.03] border border-white/10">
-                              <div className="text-[10px] text-slate-400 uppercase font-semibold">লাইফটাইম বেতন পরিশোধ</div>
-                              <div className="text-xs font-mono font-bold text-emerald-400 mt-0.5">
+                            <div className={`p-3 rounded-xl border ${isDark ? "bg-white/[0.03] border-white/10" : "bg-slate-50 border-slate-200"}`}>
+                              <div className={`text-[10px] uppercase font-semibold ${isDark ? "text-slate-400" : "text-slate-500"}`}>লাইফটাইম বেতন পরিশোধ</div>
+                              <div className={`text-xs font-mono font-bold mt-0.5 ${isDark ? "text-emerald-400" : "text-emerald-700"}`}>
                                 ৳ {getEmployeeLifetimeSalary(viewingEmployeeWorkHistory).toLocaleString()}
                               </div>
-                              <div className="text-[10px] text-slate-400">
+                              <div className={`text-[10px] ${isDark ? "text-slate-400" : "text-slate-500"}`}>
                                 {salaries.filter((s) => s.employeeId === viewingEmployeeWorkHistory.id || s.employeeName.toLowerCase() === viewingEmployeeWorkHistory.name.toLowerCase()).length} টি পেমেন্ট
                               </div>
                             </div>
 
-                            <div className="p-3 rounded-xl bg-white/[0.03] border border-white/10">
-                              <div className="text-[10px] text-slate-400 uppercase font-semibold">সম্পন্ন কাজের রেকর্ড</div>
-                              <div className="text-xs font-mono font-bold text-purple-300 mt-0.5">
+                            <div className={`p-3 rounded-xl border ${isDark ? "bg-white/[0.03] border-white/10" : "bg-slate-50 border-slate-200"}`}>
+                              <div className={`text-[10px] uppercase font-semibold ${isDark ? "text-slate-400" : "text-slate-500"}`}>সম্পন্ন কাজের রেকর্ড</div>
+                              <div className={`text-xs font-mono font-bold mt-0.5 ${isDark ? "text-purple-300" : "text-purple-700"}`}>
                                 {tasks.filter((t) => t.assignedTo?.toLowerCase().includes(viewingEmployeeWorkHistory.name.toLowerCase())).length} টি টাস্ক
                               </div>
-                              <div className="text-[10px] text-emerald-400">স্থায়ী আর্কাইভে সংরক্ষিত</div>
+                              <div className={`text-[10px] ${isDark ? "text-emerald-400" : "text-emerald-700 font-medium"}`}>স্থায়ী আর্কাইভে সংরক্ষিত</div>
                             </div>
                           </div>
 
                           {/* Deactivation Info (If applicable) */}
                           {viewingEmployeeWorkHistory.status === "inactive" && (
-                            <div className="mb-3 p-2.5 rounded-xl bg-rose-500/10 border border-rose-500/20 text-xs text-rose-300 flex items-center justify-between shrink-0">
+                            <div className={`mb-3 p-2.5 rounded-xl border text-xs flex items-center justify-between shrink-0 ${
+                              isDark ? "bg-rose-500/10 border-rose-500/20 text-rose-300" : "bg-rose-50 border-rose-200 text-rose-900"
+                            }`}>
                               <div>
                                 <span className="font-bold">অব্যাহতির বিবরণ:</span> {viewingEmployeeWorkHistory.deactivationReason || "প্রজেক্ট সম্পন্ন / পারস্পরিক সম্মতি"}
                                 {viewingEmployeeWorkHistory.deactivatedAt && (
-                                  <span className="text-[11px] text-slate-400 ml-2">({viewingEmployeeWorkHistory.deactivatedAt})</span>
+                                  <span className={`text-[11px] ml-2 ${isDark ? "text-slate-400" : "text-slate-500"}`}>({viewingEmployeeWorkHistory.deactivatedAt})</span>
                                 )}
                               </div>
                               <button
@@ -5153,7 +5283,9 @@ export default function AdminControlPanel() {
                                   showToast(`${viewingEmployeeWorkHistory.name}-কে পুনরায় সক্রিয় করা হয়েছে!`);
                                   setViewingEmployeeWorkHistory(null);
                                 }}
-                                className="px-2.5 py-1 rounded-lg bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-300 border border-emerald-500/40 text-[10px] font-bold transition-colors"
+                                className={`px-2.5 py-1 rounded-lg border text-[10px] font-bold transition-colors ${
+                                  isDark ? "bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-300 border-emerald-500/40" : "bg-emerald-100 hover:bg-emerald-200 text-emerald-800 border-emerald-300"
+                                }`}
                               >
                                 পুনরায় সক্রিয় করুন
                               </button>
@@ -5164,13 +5296,15 @@ export default function AdminControlPanel() {
                           <div className="overflow-y-auto space-y-4 pr-1 flex-1">
                             {/* 1. Tasks & Deliverables Section */}
                             <div>
-                              <div className="text-xs font-bold text-white mb-2 flex items-center gap-1.5">
-                                <CheckSquare className="w-3.5 h-3.5 text-cyan-400" />
+                              <div className={`text-xs font-bold mb-2 flex items-center gap-1.5 ${isDark ? "text-white" : "text-slate-900"}`}>
+                                <CheckSquare className={`w-3.5 h-3.5 ${isDark ? "text-cyan-400" : "text-cyan-600"}`} />
                                 <span>অ্যাসাইনকৃত টাস্ক ও প্রজেক্ট ডেলিভারেবলস:</span>
                               </div>
-                              <div className="rounded-xl border border-white/10 overflow-hidden">
+                              <div className={`rounded-xl border overflow-hidden ${isDark ? "border-white/10" : "border-slate-200"}`}>
                                 <table className="w-full text-left text-xs">
-                                  <thead className="bg-white/5 text-[10px] uppercase font-semibold text-slate-400">
+                                  <thead className={`text-[10px] uppercase font-semibold ${
+                                    isDark ? "bg-white/5 text-slate-400 border-b border-white/10" : "bg-slate-50 text-slate-600 border-b border-slate-200"
+                                  }`}>
                                     <tr>
                                       <th className="p-2.5">Task Title</th>
                                       <th className="p-2.5">Client / Project</th>
@@ -5179,30 +5313,30 @@ export default function AdminControlPanel() {
                                       <th className="p-2.5 text-right">Status</th>
                                     </tr>
                                   </thead>
-                                  <tbody className="divide-y divide-white/5 font-sans">
+                                  <tbody className={`divide-y font-sans ${isDark ? "divide-white/5" : "divide-slate-200"}`}>
                                     {tasks
                                       .filter((t) => t.assignedTo?.toLowerCase().includes(viewingEmployeeWorkHistory.name.toLowerCase()))
                                       .map((t) => (
-                                        <tr key={t.id} className="hover:bg-white/[0.02]">
-                                          <td className="p-2.5 font-medium text-white">{t.title}</td>
-                                          <td className="p-2.5 text-cyan-300">{t.clientName || "Agency Internal"}</td>
+                                        <tr key={t.id} className={`transition-colors ${isDark ? "hover:bg-white/[0.02]" : "hover:bg-slate-50/80"}`}>
+                                          <td className={`p-2.5 font-medium ${isDark ? "text-white" : "text-slate-900"}`}>{t.title}</td>
+                                          <td className={`p-2.5 ${isDark ? "text-cyan-300" : "text-cyan-700"}`}>{t.clientName || "Agency Internal"}</td>
                                           <td className="p-2.5">
                                             <div className="flex items-center gap-1.5">
-                                              <div className="w-12 bg-white/10 rounded-full h-1.5 overflow-hidden">
+                                              <div className={`w-12 rounded-full h-1.5 overflow-hidden ${isDark ? "bg-white/10" : "bg-slate-200"}`}>
                                                 <div
-                                                  className="bg-cyan-400 h-full rounded-full"
+                                                  className="bg-cyan-500 h-full rounded-full"
                                                   style={{ width: `${t.progress}%` }}
                                                 />
                                               </div>
-                                              <span className="font-mono text-[10px] text-slate-400">{t.progress}%</span>
+                                              <span className={`font-mono text-[10px] ${isDark ? "text-slate-400" : "text-slate-500"}`}>{t.progress}%</span>
                                             </div>
                                           </td>
-                                          <td className="p-2.5 text-slate-400 font-mono text-[11px]">{t.deadline}</td>
+                                          <td className={`p-2.5 font-mono text-[11px] ${isDark ? "text-slate-400" : "text-slate-500"}`}>{t.deadline}</td>
                                           <td className="p-2.5 text-right">
-                                            <span className={`px-2 py-0.5 rounded text-[10px] font-bold ${
+                                            <span className={`px-2 py-0.5 rounded text-[10px] font-bold border ${
                                               t.status === "completed"
-                                                ? "bg-emerald-500/15 text-emerald-400"
-                                                : "bg-amber-500/15 text-amber-400"
+                                                ? isDark ? "bg-emerald-500/15 text-emerald-400 border-emerald-500/20" : "bg-emerald-50 text-emerald-700 border-emerald-200"
+                                                : isDark ? "bg-amber-500/15 text-amber-400 border-amber-500/20" : "bg-amber-50 text-amber-700 border-amber-200"
                                             }`}>
                                               {t.status === "completed" ? "Completed" : t.status === "in_progress" ? "In Progress" : "Pending"}
                                             </span>
@@ -5211,7 +5345,7 @@ export default function AdminControlPanel() {
                                       ))}
                                     {tasks.filter((t) => t.assignedTo?.toLowerCase().includes(viewingEmployeeWorkHistory.name.toLowerCase())).length === 0 && (
                                       <tr>
-                                        <td colSpan={5} className="p-4 text-center text-slate-500 text-xs">
+                                        <td colSpan={5} className={`p-4 text-center text-xs ${isDark ? "text-slate-500" : "text-slate-400"}`}>
                                           এই কর্মীর নামে কোনো সরাসরি টাস্ক রেকর্ড পাওয়া যায়নি।
                                         </td>
                                       </tr>
@@ -5223,13 +5357,15 @@ export default function AdminControlPanel() {
 
                             {/* 2. Lifetime Salary & Disbursement Records */}
                             <div>
-                              <div className="text-xs font-bold text-white mb-2 flex items-center gap-1.5">
-                                <Receipt className="w-3.5 h-3.5 text-emerald-400" />
+                              <div className={`text-xs font-bold mb-2 flex items-center gap-1.5 ${isDark ? "text-white" : "text-slate-900"}`}>
+                                <Receipt className={`w-3.5 h-3.5 ${isDark ? "text-emerald-400" : "text-emerald-600"}`} />
                                 <span>লাইফটাইম পে-রোল ও বেতন বিতরণ রেকর্ড:</span>
                               </div>
-                              <div className="rounded-xl border border-white/10 overflow-hidden">
+                              <div className={`rounded-xl border overflow-hidden ${isDark ? "border-white/10" : "border-slate-200"}`}>
                                 <table className="w-full text-left text-xs">
-                                  <thead className="bg-white/5 text-[10px] uppercase font-semibold text-slate-400">
+                                  <thead className={`text-[10px] uppercase font-semibold ${
+                                    isDark ? "bg-white/5 text-slate-400 border-b border-white/10" : "bg-slate-50 text-slate-600 border-b border-slate-200"
+                                  }`}>
                                     <tr>
                                       <th className="p-2.5">Month</th>
                                       <th className="p-2.5">Amount</th>
@@ -5238,7 +5374,7 @@ export default function AdminControlPanel() {
                                       <th className="p-2.5 text-right">Status</th>
                                     </tr>
                                   </thead>
-                                  <tbody className="divide-y divide-white/5 font-sans">
+                                  <tbody className={`divide-y font-sans ${isDark ? "divide-white/5" : "divide-slate-200"}`}>
                                     {salaries
                                       .filter(
                                         (s) =>
@@ -5246,13 +5382,15 @@ export default function AdminControlPanel() {
                                           s.employeeName.toLowerCase() === viewingEmployeeWorkHistory.name.toLowerCase()
                                       )
                                       .map((s) => (
-                                        <tr key={s.id} className="hover:bg-white/[0.02]">
-                                          <td className="p-2.5 font-mono font-bold text-white">{s.month}</td>
-                                          <td className="p-2.5 font-mono font-bold text-emerald-400">৳ {s.amount.toLocaleString()}</td>
-                                          <td className="p-2.5 font-mono text-[11px] text-slate-400">{s.paidDate || s.month}</td>
-                                          <td className="p-2.5 text-[11px] text-slate-300">{s.paymentMethod || "Bank Wire"}</td>
+                                        <tr key={s.id} className={`transition-colors ${isDark ? "hover:bg-white/[0.02]" : "hover:bg-slate-50/80"}`}>
+                                          <td className={`p-2.5 font-mono font-bold ${isDark ? "text-white" : "text-slate-900"}`}>{s.month}</td>
+                                          <td className={`p-2.5 font-mono font-bold ${isDark ? "text-emerald-400" : "text-emerald-700"}`}>৳ {s.amount.toLocaleString()}</td>
+                                          <td className={`p-2.5 font-mono text-[11px] ${isDark ? "text-slate-400" : "text-slate-500"}`}>{s.paidDate || s.month}</td>
+                                          <td className={`p-2.5 text-[11px] ${isDark ? "text-slate-300" : "text-slate-600"}`}>{s.paymentMethod || "Bank Wire"}</td>
                                           <td className="p-2.5 text-right">
-                                            <span className="px-2 py-0.5 rounded-full text-[9px] font-bold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+                                            <span className={`px-2 py-0.5 rounded-full text-[9px] font-bold border ${
+                                              isDark ? "bg-emerald-500/10 text-emerald-400 border-emerald-500/20" : "bg-emerald-50 text-emerald-700 border-emerald-200"
+                                            }`}>
                                               ✓ PAID
                                             </span>
                                           </td>
@@ -5264,7 +5402,7 @@ export default function AdminControlPanel() {
                                         s.employeeName.toLowerCase() === viewingEmployeeWorkHistory.name.toLowerCase()
                                     ).length === 0 && (
                                       <tr>
-                                        <td colSpan={5} className="p-4 text-center text-slate-500 text-xs">
+                                        <td colSpan={5} className={`p-4 text-center text-xs ${isDark ? "text-slate-500" : "text-slate-400"}`}>
                                           কোনো বেতনের রেকর্ড পাওয়া যায়নি।
                                         </td>
                                       </tr>
@@ -5275,11 +5413,13 @@ export default function AdminControlPanel() {
                             </div>
                           </div>
 
-                          <div className="flex justify-end gap-2 pt-3 mt-3 border-t border-white/10 shrink-0">
+                          <div className={`flex justify-end gap-2 pt-3 mt-3 border-t shrink-0 ${isDark ? "border-white/10" : "border-slate-200"}`}>
                             <button
                               type="button"
                               onClick={() => setViewingEmployeeWorkHistory(null)}
-                              className="px-4 py-2 rounded-xl text-xs font-semibold text-slate-300 hover:text-white bg-white/10 hover:bg-white/15 transition-colors"
+                              className={`px-4 py-2 rounded-xl text-xs font-semibold transition-colors ${
+                                isDark ? "text-slate-300 hover:text-white bg-white/10 hover:bg-white/15" : "text-slate-700 hover:text-slate-900 bg-slate-100 hover:bg-slate-200 border border-slate-200"
+                              }`}
                             >
                               বন্ধ করুন
                             </button>
@@ -5765,20 +5905,20 @@ export default function AdminControlPanel() {
                       </div>
 
                       {/* 🏢 Fixed Commitments & Monthly Payroll Budget Widget (মাসিক অপরিহার্য খরচ ও পে-রোল দায়বদ্ধতা) */}
-                      <div className={`p-5 rounded-2xl border ${theme.cardBg} border-cyan-500/30 shadow-lg relative overflow-hidden space-y-4`}>
-                        <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 border-b border-white/5 pb-3">
+                      <div className={`p-5 rounded-2xl border ${theme.cardBg} ${isDark ? "border-cyan-500/30 shadow-lg" : "border-slate-200 shadow-sm"} relative overflow-hidden space-y-4`}>
+                        <div className={`flex flex-col md:flex-row md:items-center justify-between gap-3 border-b ${isDark ? "border-white/5" : "border-slate-200"} pb-3`}>
                           <div className="flex items-center gap-2.5">
-                            <div className="w-8 h-8 rounded-xl bg-cyan-500/20 border border-cyan-500/40 flex items-center justify-center text-cyan-300">
+                            <div className={`w-8 h-8 rounded-xl ${isDark ? "bg-cyan-500/20 border-cyan-500/40 text-cyan-300" : "bg-sky-50 border-sky-200 text-sky-700"} border flex items-center justify-center`}>
                               <Building className="w-4 h-4" />
                             </div>
                             <div>
-                              <h3 className="text-xs sm:text-sm font-bold text-white flex items-center gap-2">
+                              <h3 className={`text-xs sm:text-sm font-bold ${isDark ? "text-white" : "text-slate-900"} flex items-center gap-2`}>
                                 <span>মাসিক অপরিহার্য খরচ ও পে-রোল বাজেট (Fixed Commitments & Payroll Burn)</span>
-                                <span className="px-2 py-0.5 rounded-full bg-cyan-500/15 text-cyan-300 text-[10px] font-mono border border-cyan-500/20">
+                                <span className={`px-2 py-0.5 rounded-full ${isDark ? "bg-cyan-500/15 text-cyan-300 border-cyan-500/20" : "bg-sky-50 text-sky-700 border-sky-200"} text-[10px] font-mono border`}>
                                   প্যাসিভ খরচ
                                 </span>
                               </h3>
-                              <p className="text-[11px] text-slate-400">
+                              <p className={`text-[11px] ${isDark ? "text-slate-400" : "text-slate-500"}`}>
                                 যে খরচগুলো প্রতি মাসে নিশ্চিতভাবে হবেই — সক্রিয় টিম বেতন ও স্থায়ী পরিচালন ব্যয়
                               </p>
                             </div>
@@ -5786,14 +5926,14 @@ export default function AdminControlPanel() {
 
                           {/* Target Month Selector for Payroll Budget */}
                           <div className="flex items-center gap-2">
-                            <span className="text-xs text-slate-400 font-semibold">বাজেট মাস:</span>
+                            <span className={`text-xs ${isDark ? "text-slate-400" : "text-slate-600"} font-semibold`}>বাজেট মাস:</span>
                             <select
                               value={payrollBudgetMonth}
                               onChange={(e) => setPayrollBudgetMonth(e.target.value)}
                               className={`px-3 py-1.5 rounded-xl text-xs font-bold ${isDark ? "bg-[#0A162B] border-cyan-500/30 text-cyan-200" : "bg-slate-50 border-slate-300 text-slate-800"} border focus:outline-none cursor-pointer`}
                             >
                               {availableFinanceMonths.map((m) => (
-                                <option key={m} value={m} className="bg-slate-900 text-white">
+                                <option key={m} value={m} className={isDark ? "bg-slate-900 text-white" : "bg-white text-slate-900"}>
                                   {m}
                                 </option>
                               ))}
@@ -5804,55 +5944,55 @@ export default function AdminControlPanel() {
                         {/* 4 Cards inside Payroll Budget */}
                         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
                           {/* 1. মোট সক্রিয় মাসিক বেতন দায় */}
-                          <div className="p-3.5 rounded-xl bg-white/[0.02] border border-white/10">
-                            <div className="text-[10px] uppercase font-bold text-slate-400 flex items-center justify-between">
+                          <div className={`p-3.5 rounded-xl ${isDark ? "bg-white/[0.02] border-white/10" : "bg-slate-50 border-slate-200"} border`}>
+                            <div className={`text-[10px] uppercase font-bold ${isDark ? "text-slate-400" : "text-slate-600"} flex items-center justify-between`}>
                               <span>মাসিক বেতন দায় (Active Payroll)</span>
-                              <span className="text-cyan-400 font-mono font-normal">{activeEmployees.length} জন সক্রিয়</span>
+                              <span className={`${isDark ? "text-cyan-400" : "text-sky-700"} font-mono font-normal`}>{activeEmployees.length} জন সক্রিয়</span>
                             </div>
-                            <div className="text-xl font-black font-mono text-white mt-1">
+                            <div className={`text-xl font-black font-mono ${isDark ? "text-white" : "text-slate-900"} mt-1`}>
                               ৳ {totalActiveMonthlySalaryCommitment.toLocaleString()}
                             </div>
-                            <div className="text-[10px] text-slate-400 mt-0.5">
+                            <div className={`text-[10px] ${isDark ? "text-slate-400" : "text-slate-500"} mt-0.5`}>
                               প্রতি মাসের বাধ্যতামূলক দায়
                             </div>
                           </div>
 
                           {/* 2. নির্বাচিত মাসে পেইড */}
-                          <div className="p-3.5 rounded-xl bg-emerald-500/10 border border-emerald-500/30">
-                            <div className="text-[10px] uppercase font-bold text-emerald-300 flex items-center justify-between">
+                          <div className={`p-3.5 rounded-xl ${isDark ? "bg-emerald-500/10 border-emerald-500/30" : "bg-emerald-50 border-emerald-200"} border`}>
+                            <div className={`text-[10px] uppercase font-bold ${isDark ? "text-emerald-300" : "text-emerald-800"} flex items-center justify-between`}>
                               <span>ইতিমধ্যে পরিশোধিত ({payrollBudgetMonth})</span>
-                              <CheckCircle2 className="w-3 h-3 text-emerald-400" />
+                              <CheckCircle2 className={`w-3 h-3 ${isDark ? "text-emerald-400" : "text-emerald-600"}`} />
                             </div>
-                            <div className="text-xl font-black font-mono text-emerald-400 mt-1">
+                            <div className={`text-xl font-black font-mono ${isDark ? "text-emerald-400" : "text-emerald-700"} mt-1`}>
                               ৳ {payrollBudgetMetrics.paidAmount.toLocaleString()}
                             </div>
-                            <div className="text-[10px] text-emerald-400/80 mt-0.5">
+                            <div className={`text-[10px] ${isDark ? "text-emerald-400/80" : "text-emerald-700"} mt-0.5`}>
                               {payrollBudgetMetrics.percent}% বেতন ডিস্ট্রিবিউট সম্পন্ন
                             </div>
                           </div>
 
                           {/* 3. নির্বাচিত মাসে বকেয়া */}
-                          <div className="p-3.5 rounded-xl bg-amber-500/10 border border-amber-500/30">
-                            <div className="text-[10px] uppercase font-bold text-amber-300 flex items-center justify-between">
+                          <div className={`p-3.5 rounded-xl ${isDark ? "bg-amber-500/10 border-amber-500/30" : "bg-amber-50 border-amber-200"} border`}>
+                            <div className={`text-[10px] uppercase font-bold ${isDark ? "text-amber-300" : "text-amber-800"} flex items-center justify-between`}>
                               <span>এখনও বকেয়া রয়েছে ({payrollBudgetMonth})</span>
-                              <Clock className="w-3 h-3 text-amber-400" />
+                              <Clock className={`w-3 h-3 ${isDark ? "text-amber-400" : "text-amber-600"}`} />
                             </div>
-                            <div className="text-xl font-black font-mono text-amber-300 mt-1">
+                            <div className={`text-xl font-black font-mono ${isDark ? "text-amber-300" : "text-amber-700"} mt-1`}>
                               ৳ {payrollBudgetMetrics.pendingAmount.toLocaleString()}
                             </div>
-                            <div className="text-[10px] text-amber-400/80 mt-0.5">
+                            <div className={`text-[10px] ${isDark ? "text-amber-400/80" : "text-amber-700"} mt-0.5`}>
                               {payrollBudgetMetrics.isFullyDisbursed ? "✓ সম্পূর্ণ পরিশোধিত" : "বকেয়া স্যালারি ডিসবার্স প্রয়োজন"}
                             </div>
                           </div>
 
                           {/* 4. পে-রোল প্রগ্রেস ও কুইক ডিসবার্স বাটন */}
-                          <div className="p-3.5 rounded-xl bg-gradient-to-br from-cyan-950/30 to-blue-950/20 border border-cyan-500/30 flex flex-col justify-between">
+                          <div className={`p-3.5 rounded-xl ${isDark ? "bg-gradient-to-br from-cyan-950/30 to-blue-950/20 border-cyan-500/30" : "bg-slate-50 border-slate-200"} border flex flex-col justify-between`}>
                             <div>
-                              <div className="flex items-center justify-between text-[10px] font-bold text-cyan-300">
+                              <div className={`flex items-center justify-between text-[10px] font-bold ${isDark ? "text-cyan-300" : "text-sky-800"}`}>
                                 <span>পে-রোল সম্পূর্ণতা</span>
                                 <span className="font-mono">{payrollBudgetMetrics.percent}%</span>
                               </div>
-                              <div className="w-full h-2 bg-white/10 rounded-full mt-1.5 overflow-hidden">
+                              <div className={`w-full h-2 ${isDark ? "bg-white/10" : "bg-slate-200"} rounded-full mt-1.5 overflow-hidden`}>
                                 <div
                                   className="h-full bg-gradient-to-r from-cyan-500 to-emerald-400 rounded-full transition-all duration-500"
                                   style={{ width: `${payrollBudgetMetrics.percent}%` }}
@@ -5870,7 +6010,7 @@ export default function AdminControlPanel() {
                                 setDisburseSalaryAmount(firstUnpaid ? firstUnpaid.salary.toString() : "40000");
                                 setDisburseSalaryDate(liveDateFormatted);
                               }}
-                              className="mt-2 w-full py-1.5 rounded-lg bg-cyan-500/20 hover:bg-cyan-500/30 text-cyan-300 border border-cyan-500/40 text-[11px] font-bold flex items-center justify-center gap-1.5 transition-colors"
+                              className={`mt-2 w-full py-1.5 rounded-lg ${isDark ? "bg-cyan-500/20 hover:bg-cyan-500/30 text-cyan-300 border-cyan-500/40" : "bg-sky-100 hover:bg-sky-200 text-sky-800 border-sky-300"} border text-[11px] font-bold flex items-center justify-center gap-1.5 transition-colors`}
                             >
                               <Plus className="w-3.5 h-3.5" />
                               <span>{payrollBudgetMonth}-এর বেতন দিন</span>
@@ -5883,12 +6023,12 @@ export default function AdminControlPanel() {
                       <div className={`p-5 rounded-2xl border ${theme.cardBg} ${theme.cardBorder} shadow-sm space-y-3`}>
                         <div className="flex items-center justify-between">
                           <div className="flex items-center gap-2">
-                            <Coins className="w-4 h-4 text-emerald-400" />
-                            <h3 className="text-xs font-bold text-white uppercase tracking-wider">
+                            <Coins className="w-4 h-4 text-emerald-500" />
+                            <h3 className={`text-xs font-bold ${isDark ? "text-white" : "text-slate-900"} uppercase tracking-wider`}>
                               খাতভিত্তিক আয় ও রেভিনিউ বিবরণী (Revenue by Sector)
                             </h3>
                           </div>
-                          <span className="text-[11px] text-slate-400 font-mono">
+                          <span className={`text-[11px] ${isDark ? "text-slate-400" : "text-slate-500"} font-mono`}>
                             মোট খাত: {sectorBreakdown.length} টি
                           </span>
                         </div>
@@ -5902,26 +6042,26 @@ export default function AdminControlPanel() {
                                 onClick={() => setFinanceSectorFilter(isSelected ? "all" : sb.sector)}
                                 className={`p-3.5 rounded-xl border cursor-pointer transition-all ${
                                   isSelected
-                                    ? "bg-emerald-500/20 border-emerald-500/60 ring-1 ring-emerald-500/40"
-                                    : "bg-white/[0.02] border-white/5 hover:bg-white/[0.05] hover:border-white/10"
+                                    ? (isDark ? "bg-emerald-500/20 border-emerald-500/60 ring-1 ring-emerald-500/40" : "bg-emerald-50 border-emerald-400 ring-2 ring-emerald-300/60 shadow-sm")
+                                    : (isDark ? "bg-white/[0.02] border-white/5 hover:bg-white/[0.05] hover:border-white/10" : "bg-slate-50/80 border-slate-200 hover:bg-white hover:border-slate-300 hover:shadow-xs")
                                 }`}
                               >
                                 <div className="flex items-center justify-between mb-1.5">
-                                  <span className="text-[11px] font-bold text-slate-200 truncate pr-2">
+                                  <span className={`text-[11px] font-bold ${isDark ? "text-slate-200" : "text-slate-800"} truncate pr-2`}>
                                     {sb.sector}
                                   </span>
-                                  <span className="text-[10px] font-mono font-bold text-emerald-400 px-1.5 py-0.5 rounded bg-emerald-500/10 border border-emerald-500/20">
+                                  <span className={`text-[10px] font-mono font-bold ${isDark ? "text-emerald-400 bg-emerald-500/10 border-emerald-500/20" : "text-emerald-700 bg-emerald-100 border-emerald-300"} px-1.5 py-0.5 rounded border`}>
                                     {sb.percentage}%
                                   </span>
                                 </div>
-                                <div className="text-base font-black font-mono text-emerald-400 mb-1">
+                                <div className={`text-base font-black font-mono ${isDark ? "text-emerald-400" : "text-emerald-700"} mb-1`}>
                                   ৳ {sb.total.toLocaleString()}
                                 </div>
-                                <div className="flex items-center justify-between text-[10px] text-slate-400">
+                                <div className={`flex items-center justify-between text-[10px] ${isDark ? "text-slate-400" : "text-slate-500"}`}>
                                   <span>{sb.count}টি পেমেন্ট লেনদেন</span>
-                                  <span className="text-cyan-400 font-semibold">{isSelected ? "✓ নির্বাচিত" : "ফিল্টার করুন →"}</span>
+                                  <span className={`${isDark ? "text-cyan-400" : "text-sky-700"} font-semibold`}>{isSelected ? "✓ নির্বাচিত" : "ফিল্টার করুন →"}</span>
                                 </div>
-                                <div className="w-full h-1 bg-white/10 rounded-full mt-2 overflow-hidden">
+                                <div className={`w-full h-1 ${isDark ? "bg-white/10" : "bg-slate-200"} rounded-full mt-2 overflow-hidden`}>
                                   <div
                                     className="h-full bg-gradient-to-r from-emerald-500 to-teal-400 rounded-full"
                                     style={{ width: `${Math.min(100, sb.percentage)}%` }}
@@ -5937,20 +6077,20 @@ export default function AdminControlPanel() {
                       <div className={`p-5 rounded-2xl border ${theme.cardBg} ${theme.cardBorder} shadow-sm space-y-3`}>
                         <div className="flex items-center justify-between">
                           <div className="flex items-center gap-2">
-                            <BarChart3 className="w-4 h-4 text-cyan-400" />
-                            <h3 className="text-xs font-bold text-white uppercase tracking-wider">
+                            <BarChart3 className={`w-4 h-4 ${isDark ? "text-cyan-400" : "text-sky-600"}`} />
+                            <h3 className={`text-xs font-bold ${isDark ? "text-white" : "text-slate-900"} uppercase tracking-wider`}>
                               মাসভিত্তিক আয় বনাম ব্যয় লেজার (Monthly Income vs Expense Ledger)
                             </h3>
                           </div>
-                          <span className="text-[11px] text-slate-400 font-mono">
+                          <span className={`text-[11px] ${isDark ? "text-slate-400" : "text-slate-500"} font-mono`}>
                             {monthlyAnalytics.length}টি মাসের তুলনা
                           </span>
                         </div>
 
-                        <div className="rounded-xl border border-white/5 overflow-hidden">
+                        <div className={`rounded-xl border ${isDark ? "border-white/5" : "border-slate-200"} overflow-hidden`}>
                           <table className="w-full text-left border-collapse text-xs">
                             <thead>
-                              <tr className={`border-b border-white/5 ${theme.tableHeaderBg} text-[11px] font-semibold text-slate-400 uppercase tracking-wider`}>
+                              <tr className={`border-b ${isDark ? "border-white/5 text-slate-400" : "border-slate-200 text-slate-600"} ${theme.tableHeaderBg} text-[11px] font-semibold uppercase tracking-wider`}>
                                 <th className="p-3">মাস (Month)</th>
                                 <th className="p-3">মোট আয় (Inflow)</th>
                                 <th className="p-3">মোট ব্যয় (Outflow)</th>
@@ -5959,45 +6099,45 @@ export default function AdminControlPanel() {
                                 <th className="p-3 text-right">অ্যাকশন</th>
                               </tr>
                             </thead>
-                            <tbody className="divide-y divide-white/5 font-mono">
+                            <tbody className={`divide-y ${isDark ? "divide-white/5" : "divide-slate-200"} font-mono`}>
                               {monthlyAnalytics.map((ma) => (
-                                <tr key={ma.month} className={`hover:bg-white/[0.02] transition-colors ${financeMonthFilter === ma.month ? "bg-cyan-500/10" : ""}`}>
-                                  <td className="p-3 font-bold text-white font-sans flex items-center gap-1.5">
-                                    <Calendar className="w-3.5 h-3.5 text-cyan-400" />
+                                <tr key={ma.month} className={`${isDark ? "hover:bg-white/[0.02]" : "hover:bg-slate-50"} transition-colors ${financeMonthFilter === ma.month ? (isDark ? "bg-cyan-500/10" : "bg-sky-50") : ""}`}>
+                                  <td className={`p-3 font-bold ${isDark ? "text-white" : "text-slate-900"} font-sans flex items-center gap-1.5`}>
+                                    <Calendar className={`w-3.5 h-3.5 ${isDark ? "text-cyan-400" : "text-sky-600"}`} />
                                     <span>{ma.month}</span>
                                     {financeMonthFilter === ma.month && (
-                                      <span className="px-1.5 py-0.5 rounded text-[9px] bg-cyan-500/20 text-cyan-300 font-bold">
+                                      <span className={`px-1.5 py-0.5 rounded text-[9px] ${isDark ? "bg-cyan-500/20 text-cyan-300" : "bg-sky-100 text-sky-800 font-bold"}`}>
                                         সক্রিয় ফিল্টার
                                       </span>
                                     )}
                                   </td>
-                                  <td className="p-3 text-emerald-400 font-bold">
+                                  <td className={`p-3 ${isDark ? "text-emerald-400" : "text-emerald-700"} font-bold`}>
                                     ৳ {ma.income.toLocaleString()}
                                   </td>
-                                  <td className="p-3 text-rose-400 font-bold">
+                                  <td className={`p-3 ${isDark ? "text-rose-400" : "text-rose-700"} font-bold`}>
                                     - ৳ {ma.expense.toLocaleString()}
                                   </td>
                                   <td className="p-3">
                                     {ma.isDeficit ? (
-                                      <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-rose-500/20 text-rose-300 border border-rose-500/30 flex items-center gap-1 w-fit">
-                                        <AlertTriangle className="w-3 h-3 text-rose-400" />
+                                      <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${isDark ? "bg-rose-500/20 text-rose-300 border-rose-500/30" : "bg-rose-100 text-rose-800 border-rose-300"} border flex items-center gap-1 w-fit`}>
+                                        <AlertTriangle className="w-3 h-3 text-rose-500" />
                                         <span>ঘাটতি / ঋণ - ৳ {Math.abs(ma.net).toLocaleString()}</span>
                                       </span>
                                     ) : (
-                                      <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 flex items-center gap-1 w-fit">
-                                        <CheckCircle2 className="w-3 h-3 text-emerald-400" />
+                                      <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${isDark ? "bg-emerald-500/20 text-emerald-300 border-emerald-500/30" : "bg-emerald-100 text-emerald-800 border-emerald-300"} border flex items-center gap-1 w-fit`}>
+                                        <CheckCircle2 className="w-3 h-3 text-emerald-600" />
                                         <span>উদ্বৃত্ত + ৳ {ma.net.toLocaleString()}</span>
                                       </span>
                                     )}
                                   </td>
-                                  <td className="p-3 text-slate-300">
+                                  <td className={`p-3 ${isDark ? "text-slate-300" : "text-slate-700"}`}>
                                     {ma.margin}%
                                   </td>
                                   <td className="p-3 text-right">
                                     <button
                                       type="button"
                                       onClick={() => setFinanceMonthFilter(financeMonthFilter === ma.month ? "all" : ma.month)}
-                                      className="px-2.5 py-1 rounded-lg bg-cyan-500/10 hover:bg-cyan-500/20 text-cyan-400 border border-cyan-500/30 text-[10px] font-sans font-semibold transition-colors"
+                                      className={`px-2.5 py-1 rounded-lg ${isDark ? "bg-cyan-500/10 hover:bg-cyan-500/20 text-cyan-400 border-cyan-500/30" : "bg-sky-50 hover:bg-sky-100 text-sky-700 border-sky-200"} border text-[10px] font-sans font-semibold transition-colors`}
                                     >
                                       {financeMonthFilter === ma.month ? "রিসেট ফিল্টার" : "এই মাসের হিসাব"}
                                     </button>
@@ -6796,8 +6936,8 @@ export default function AdminControlPanel() {
                       <div className="flex items-center justify-between">
                         <h2 className={`text-sm font-bold uppercase tracking-wider ${isDark ? "text-slate-300" : "text-slate-700"} flex items-center gap-2`}>
                           <span>1. Select Management Theme Preset</span>
-                          <span className="px-2 py-0.5 rounded-full bg-white/10 text-[10px] font-mono text-cyan-300">
-                            10 Available
+                          <span className={`px-2 py-0.5 rounded-full ${isDark ? "bg-white/10 text-cyan-300" : "bg-sky-100 text-sky-800"} text-[10px] font-mono font-bold`}>
+                            {MANAGEMENT_THEMES.length} Themes (9 Dark + 3 Light)
                           </span>
                         </h2>
                         <span className="text-xs text-slate-400">এক ক্লিকেই পুরো ম্যানেজমেন্ট সিস্টেম পরিবর্তন হবে</span>

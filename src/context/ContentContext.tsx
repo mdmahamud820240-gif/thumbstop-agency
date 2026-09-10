@@ -110,59 +110,61 @@ export function ContentProvider({ children }: { children: React.ReactNode }) {
   const [salaries, setSalaries] = useState<SalaryRecord[]>(defaultSalaries);
   const [activityLogs, setActivityLogs] = useState<ActivityLog[]>(defaultActivityLogs);
 
-  // Load from localStorage on client mount
+  // Load from localStorage on client mount (deferred via microtask to prevent cascading renders)
   useEffect(() => {
-    try {
-      const savedConfig = localStorage.getItem(STORAGE_KEY_CONFIG);
-      if (savedConfig) setSiteConfig(JSON.parse(savedConfig));
+    queueMicrotask(() => {
+      try {
+        const savedConfig = localStorage.getItem(STORAGE_KEY_CONFIG);
+        if (savedConfig) setSiteConfig(JSON.parse(savedConfig));
 
-      const savedServices = localStorage.getItem(STORAGE_KEY_SERVICES);
-      if (savedServices) setServices(JSON.parse(savedServices));
+        const savedServices = localStorage.getItem(STORAGE_KEY_SERVICES);
+        if (savedServices) setServices(JSON.parse(savedServices));
 
-      const savedAccent = localStorage.getItem(STORAGE_KEY_ACCENT);
-      if (savedAccent) setAccentColorState(savedAccent);
+        const savedAccent = localStorage.getItem(STORAGE_KEY_ACCENT);
+        if (savedAccent) setAccentColorState(savedAccent);
 
-      const savedLocale = localStorage.getItem(STORAGE_KEY_LOCALE) as "en" | "bn" | null;
-      if (savedLocale === "en" || savedLocale === "bn") setLocaleState(savedLocale);
+        const savedLocale = localStorage.getItem(STORAGE_KEY_LOCALE) as "en" | "bn" | null;
+        if (savedLocale === "en" || savedLocale === "bn") setLocaleState(savedLocale);
 
-      const savedClients = localStorage.getItem(STORAGE_KEY_CLIENTS);
-      if (savedClients) setClients(JSON.parse(savedClients));
+        const savedClients = localStorage.getItem(STORAGE_KEY_CLIENTS);
+        if (savedClients) setClients(JSON.parse(savedClients));
 
-      const savedTasks = localStorage.getItem(STORAGE_KEY_TASKS);
-      if (savedTasks) setTasks(JSON.parse(savedTasks));
+        const savedTasks = localStorage.getItem(STORAGE_KEY_TASKS);
+        if (savedTasks) setTasks(JSON.parse(savedTasks));
 
-      const savedEmployees = localStorage.getItem(STORAGE_KEY_EMPLOYEES);
-      if (savedEmployees) {
-        try {
-          const parsed = JSON.parse(savedEmployees);
-          const merged = parsed.map((emp: EmployeeRecord) => {
-            const def = defaultEmployees.find((d) => d.id === emp.id);
-            return {
-              ...emp,
-              username: emp.username || def?.username || emp.name.toLowerCase().replace(/[^a-z0-9]/g, "_"),
-              password: emp.password || def?.password || "staff2026",
-            };
-          });
-          setEmployees(merged);
-        } catch (e) {
-          setEmployees(defaultEmployees);
+        const savedEmployees = localStorage.getItem(STORAGE_KEY_EMPLOYEES);
+        if (savedEmployees) {
+          try {
+            const parsed = JSON.parse(savedEmployees);
+            const merged = parsed.map((emp: EmployeeRecord) => {
+              const def = defaultEmployees.find((d) => d.id === emp.id);
+              return {
+                ...emp,
+                username: emp.username || def?.username || emp.name.toLowerCase().replace(/[^a-z0-9]/g, "_"),
+                password: emp.password || def?.password || "staff2026",
+              };
+            });
+            setEmployees(merged);
+          } catch {
+            setEmployees(defaultEmployees);
+          }
         }
+
+        const savedPayments = localStorage.getItem(STORAGE_KEY_PAYMENTS);
+        if (savedPayments) setPayments(JSON.parse(savedPayments));
+
+        const savedExpenses = localStorage.getItem(STORAGE_KEY_EXPENSES);
+        if (savedExpenses) setExpenses(JSON.parse(savedExpenses));
+
+        const savedSalaries = localStorage.getItem(STORAGE_KEY_SALARIES);
+        if (savedSalaries) setSalaries(JSON.parse(savedSalaries));
+
+        const savedLogs = localStorage.getItem(STORAGE_KEY_LOGS);
+        if (savedLogs) setActivityLogs(JSON.parse(savedLogs));
+      } catch (err) {
+        console.warn("Could not load stored content from localStorage", err);
       }
-
-      const savedPayments = localStorage.getItem(STORAGE_KEY_PAYMENTS);
-      if (savedPayments) setPayments(JSON.parse(savedPayments));
-
-      const savedExpenses = localStorage.getItem(STORAGE_KEY_EXPENSES);
-      if (savedExpenses) setExpenses(JSON.parse(savedExpenses));
-
-      const savedSalaries = localStorage.getItem(STORAGE_KEY_SALARIES);
-      if (savedSalaries) setSalaries(JSON.parse(savedSalaries));
-
-      const savedLogs = localStorage.getItem(STORAGE_KEY_LOGS);
-      if (savedLogs) setActivityLogs(JSON.parse(savedLogs));
-    } catch (e) {
-      console.warn("Could not load stored content from localStorage", e);
-    }
+    });
   }, []);
 
   const setLocale = (newLocale: "en" | "bn") => {

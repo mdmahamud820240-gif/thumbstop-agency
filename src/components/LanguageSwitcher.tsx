@@ -2,7 +2,6 @@
 
 import React from "react";
 import { useContent } from "@/context/ContentContext";
-import { Globe } from "lucide-react";
 
 export function LanguageSwitcher({ className = "" }: { className?: string }) {
   const { locale, setLocale } = useContent();

@@ -7,7 +7,7 @@ import { navigationLinks, services } from "@/data/content";
 import { useContent } from "@/context/ContentContext";
 import { LanguageSwitcher } from "./LanguageSwitcher";
 import { ServiceIcon } from "./ServiceIcon";
-import { Menu, X, ArrowUpRight, MessageCircle, Lock, ChevronDown, Sparkles } from "lucide-react";
+import { Menu, X, ArrowUpRight, MessageCircle, Lock, ChevronDown } from "lucide-react";
 
 export function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
@@ -30,9 +30,11 @@ export function Navbar() {
 
   // Close menus on route change
   useEffect(() => {
-    setIsOpen(false);
-    setServicesDropdownOpen(false);
-    setMobileServicesOpen(false);
+    queueMicrotask(() => {
+      setIsOpen(false);
+      setServicesDropdownOpen(false);
+      setMobileServicesOpen(false);
+    });
   }, [pathname]);
 
   // Click outside to close dropdown

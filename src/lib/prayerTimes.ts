@@ -143,8 +143,10 @@ export function getDhakaNow(): Date {
 /**
  * Calculates Bangladesh prayer times for any given date
  */
-export function calculateBangladeshPrayerTimes(targetDate: Date = getDhakaNow()): PrayerSchedule {
-  // Dhaka coordinates
+/**
+ * Calculates raw 5 prayer times for any given date in Bangladesh (Dhaka)
+ */
+export function calculateDailyPrayers(targetDate: Date): PrayerItem[] {
   const LATITUDE = 23.8103;
   const LONGITUDE = 90.4125;
   const TIMEZONE_OFFSET = 6.0; // UTC+6
@@ -153,7 +155,6 @@ export function calculateBangladeshPrayerTimes(targetDate: Date = getDhakaNow())
   const { declination, equationOfTime } = getSunPosition(dayOfYear);
 
   // Solar noon in local hours
-  // Solar Noon = 12 + (Timezone * 15 - Longitude) / 15 - EqTime / 60
   const solarNoonHours = 12 + (TIMEZONE_OFFSET * 15 - LONGITUDE) / 15 - equationOfTime / 60;
 
   // Fajr: Sun is 18° below horizon (-18°)
@@ -167,7 +168,7 @@ export function calculateBangladeshPrayerTimes(targetDate: Date = getDhakaNow())
   const asrHA = getAsrHourAngle(LATITUDE, declination, 2);
   const asrHours = solarNoonHours + asrHA / 15 + (2 / 60);
 
-  // Maghrib: Sun is 0.833° below horizon (accounting for refraction and sun diameter) + 2 min
+  // Maghrib: Sun is 0.833° below horizon + 2 min buffer
   const maghribHA = getHourAngle(LATITUDE, declination, -0.833, false);
   const maghribHours = solarNoonHours + maghribHA / 15 + (2 / 60);
 
@@ -201,13 +202,20 @@ export function calculateBangladeshPrayerTimes(targetDate: Date = getDhakaNow())
     };
   }
 
-  const prayers: PrayerItem[] = [
+  return [
     makePrayer("fajr", "ফজর", "Fajr", "الفجر", fajrHours),
     makePrayer("dhuhr", "জোহর", "Dhuhr", "الظهر", dhuhrHours),
     makePrayer("asr", "আসর", "Asr", "العصر", asrHours),
     makePrayer("maghrib", "মাগরিব", "Maghrib", "المغرب", maghribHours),
     makePrayer("isha", "এশা", "Isha", "العشاء", ishaHours),
   ];
+}
+
+/**
+ * Calculates Bangladesh prayer times for any given date
+ */
+export function calculateBangladeshPrayerTimes(targetDate: Date = getDhakaNow()): PrayerSchedule {
+  const prayers = calculateDailyPrayers(targetDate);
 
   // Determine current and next prayer
   const nowMs = targetDate.getTime();
@@ -218,15 +226,18 @@ export function calculateBangladeshPrayerTimes(targetDate: Date = getDhakaNow())
     const p = prayers[i];
     if (nowMs >= p.timestamp) {
       currentPrayer = p;
-      // Next prayer is the one following this, or tomorrow's Fajr
       if (i < prayers.length - 1) {
         nextPrayer = prayers[i + 1];
       } else {
-        // Next is tomorrow's Fajr
+        // Next prayer is tomorrow's Fajr (non-recursive calculation)
         const tomorrow = new Date(targetDate);
         tomorrow.setDate(tomorrow.getDate() + 1);
-        const tomorrowSchedule = calculateBangladeshPrayerTimes(tomorrow);
-        nextPrayer = tomorrowSchedule.prayers[0];
+        tomorrow.setHours(0, 0, 0, 0);
+        const tomorrowPrayers = calculateDailyPrayers(tomorrow);
+        nextPrayer = {
+          ...tomorrowPrayers[0],
+          isPassed: false,
+        };
       }
     } else {
       nextPrayer = p;

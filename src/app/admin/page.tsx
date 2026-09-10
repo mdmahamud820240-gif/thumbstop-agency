@@ -52,9 +52,6 @@ import {
   Film,
   CheckCircle2,
   Palette,
-  Video,
-  Link2,
-  Play,
   Edit3,
   Images,
   UploadCloud,
@@ -67,7 +64,6 @@ import {
   Coins,
   Clapperboard,
   Calendar,
-  MapPin,
   Bell,
   Send,
   CheckCheck,
@@ -77,7 +73,6 @@ import {
   User,
   Volume2,
   VolumeX,
-  BellOff,
   ChevronDown,
 } from "lucide-react";
 import {
@@ -587,7 +582,6 @@ export default function AdminControlPanel() {
     addTask,
     updateTask,
     deleteTask,
-    toggleTaskStage,
     addEmployee,
     updateEmployee,
     deleteEmployee,
@@ -603,7 +597,6 @@ export default function AdminControlPanel() {
 
   // Authentication State (Dual Support: Super Admin Master Passcode & Staff Credentials)
   const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [passcode, setPasscode] = useState("");
   const [loginUsername, setLoginUsername] = useState("");
   const [loginPassword, setLoginPassword] = useState("");
   const [showLoginPassword, setShowLoginPassword] = useState(false);
@@ -827,25 +820,13 @@ export default function AdminControlPanel() {
     }
   };
 
-  const handleRoleChange = (r: "super_admin" | "editor" | "uploader" | "designer" | "developer") => {
-    const found = MANAGEMENT_PROFILES.find((p) => p.role === r);
-    if (found) {
-      setActiveProfileId(found.id);
-      if (found.role !== "super_admin") {
-        if (["finance", "payments", "expenses", "salary", "reports"].includes(activePage)) {
-          setActivePage("dashboard");
-        }
-      }
-    }
-  };
-
   // 🔔 Management Team Inter-Profile Notifications System State
   const [notifications, setNotifications] = useState<TeamNotification[]>(() => {
     if (typeof window !== "undefined") {
       try {
         const saved = localStorage.getItem("thumbstop_team_notifications");
         if (saved) return JSON.parse(saved);
-      } catch (e) {}
+      } catch {}
     }
     return DEFAULT_NOTIFICATIONS;
   });
@@ -854,7 +835,7 @@ export default function AdminControlPanel() {
     if (typeof window !== "undefined") {
       try {
         localStorage.setItem("thumbstop_team_notifications", JSON.stringify(notifications));
-      } catch (e) {}
+      } catch {}
     }
   }, [notifications]);
 
@@ -1004,7 +985,6 @@ export default function AdminControlPanel() {
   >("client_meeting");
   const [formClientName, setFormClientName] = useState("");
   const [formScheduledTime, setFormScheduledTime] = useState("");
-  const [formLocation, setFormLocation] = useState("Savar Office (Delta Mor)");
 
   // Client Boosting & Social inputs
   const [formIsBoosting, setFormIsBoosting] = useState(false);
@@ -1026,6 +1006,10 @@ export default function AdminControlPanel() {
 
   // Dynamic Live Date string (e.g. 04 Sep 2026)
   const [liveDateFormatted, setLiveDateFormatted] = useState("04 Sep 2026");
+  const statementId = useMemo(
+    () => `STMT-${(payments.length + expenses.length + 1001).toString().slice(-4)}`,
+    [payments.length, expenses.length]
+  );
 
   useEffect(() => {
     const updateDate = () => {
@@ -1789,7 +1773,6 @@ export default function AdminControlPanel() {
     setFormDesc("");
     setFormClientName("");
     setFormScheduledTime("");
-    setFormLocation("ThumbStop Studio");
     setFormIsBoosting(false);
     setFormFacebookPageName("");
     setFormFacebookPageUrl("");
@@ -2607,7 +2590,6 @@ export default function AdminControlPanel() {
                   setIsAuthenticated(false);
                   setLoggedInStaff(null);
                   setLoginPassword("");
-                  setPasscode("");
                   showToast("সফলভাবে লগআউট সম্পন্ন হয়েছে।");
                 }}
                 title="লগআউট করুন (Logout)"
@@ -7025,7 +7007,6 @@ export default function AdminControlPanel() {
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                       {services.map((svc) => {
                         const accent = svc.themeColor || "#1FA8CB";
-                        const hasDemo = Boolean(svc.demoUrl);
                         const hasVideo = Boolean(svc.demoVideoUrl);
 
                         return (
@@ -8001,7 +7982,7 @@ export default function AdminControlPanel() {
                                 } else {
                                   showToast("ত্রুটি: অবৈধ JSON ব্যাকআপ ফরম্যাট!");
                                 }
-                              } catch (err) {
+                              } catch {
                                 showToast("ব্যাকআপ ফাইল রিড করতে সমস্যা হয়েছে!");
                               }
                             };
@@ -8887,7 +8868,7 @@ export default function AdminControlPanel() {
                 <div className="text-left sm:text-right shrink-0 space-y-1 font-mono text-xs">
                   <div className="text-slate-300 print:text-slate-700">
                     <span className="text-slate-500">স্টেটমেন্ট আইডি:</span>{" "}
-                    <span className="font-bold text-white print:text-black">STMT-{Date.now().toString().slice(-6)}</span>
+                    <span className="font-bold text-white print:text-black">{statementId}</span>
                   </div>
                   <div className="text-slate-300 print:text-slate-700">
                     <span className="text-slate-500">অডিটের তারিখ:</span>{" "}

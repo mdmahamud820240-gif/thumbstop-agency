@@ -69,6 +69,13 @@ export default function RootLayout({
       lang="en"
       className={`${jakarta.variable} ${playfair.variable} ${hindSiliguri.variable} scroll-smooth`}
     >
+      <head>
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        <meta name="theme-color" content="#070A12" />
+        <meta name="apple-mobile-web-app-capable" content="yes" />
+        <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+      </head>
       <body className="bg-[#070A12] text-slate-100 min-h-screen flex flex-col font-sans selection:bg-[#1FA8CB]/30 selection:text-white antialiased">
         <ContentProvider>
           <AppShell>{children}</AppShell>

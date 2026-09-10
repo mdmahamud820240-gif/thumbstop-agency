@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { ServicePackage, siteConfig } from "@/data/content";
+import { ServicePackage } from "@/data/content";
 import { useContent } from "@/context/ContentContext";
 import { Check, Sparkles, ArrowRight, MessageCircle } from "lucide-react";
 

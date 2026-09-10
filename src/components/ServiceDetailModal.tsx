@@ -35,13 +35,11 @@ export function ServiceDetailModal({ service, onClose }: ServiceDetailModalProps
   const [isZoomed, setIsZoomed] = useState(false);
   const [zoomImg, setZoomImg] = useState<string | null>(null);
 
-  if (!service) return null;
-
   // Derive screenshot slides (at least 1 slide guaranteed)
   const slides =
-    service.portfolioSamples && service.portfolioSamples.length > 0
+    service?.portfolioSamples && service.portfolioSamples.length > 0
       ? service.portfolioSamples
-      : service.imageUrl
+      : service?.imageUrl
       ? [
           {
             title: service.titleEn,
@@ -53,12 +51,14 @@ export function ServiceDetailModal({ service, onClose }: ServiceDetailModalProps
 
   // Continuous auto-swiping to the right (loops automatically)
   useEffect(() => {
-    if (slides.length <= 1 || isPaused) return;
+    if (!service || slides.length <= 1 || isPaused) return;
     const interval = setInterval(() => {
       setActiveSlide((prev) => (prev + 1) % slides.length);
     }, 3500);
     return () => clearInterval(interval);
-  }, [slides.length, isPaused]);
+  }, [slides.length, isPaused, service]);
+
+  if (!service) return null;
 
   const cleanWhatsApp = siteConfig.whatsappNumber.replace(/[^0-9]/g, "");
   const whatsappUrl = `https://wa.me/${cleanWhatsApp}?text=Hello%20ThumbStop%2C%20I%20am%20interested%20in%20your%20service%3A%20${encodeURIComponent(

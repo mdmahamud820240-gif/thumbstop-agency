@@ -13,7 +13,6 @@ import {
   MessageCircle,
   ShieldCheck,
   Check,
-  ExternalLink,
   Play,
   Images,
 } from "lucide-react";

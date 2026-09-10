@@ -30,8 +30,22 @@ function InvoiceContent() {
 
   // Invoice Meta
   const [invNo, setInvNo] = useState("INV-2026-00001");
-  const [invDate, setInvDate] = useState("");
-  const [invDue, setInvDue] = useState("");
+  const [invDate, setInvDate] = useState(() => {
+    return new Date().toLocaleDateString("en-GB", {
+      day: "2-digit",
+      month: "long",
+      year: "numeric",
+    });
+  });
+  const [invDue, setInvDue] = useState(() => {
+    const dueDate = new Date();
+    dueDate.setDate(dueDate.getDate() + 7);
+    return dueDate.toLocaleDateString("en-GB", {
+      day: "2-digit",
+      month: "long",
+      year: "numeric",
+    });
+  });
 
   // Company details
   const [coAddr1, setCoAddr1] = useState("9/15, Junayed Complex, Uttar Rajashon ( Delta Mor ),");
@@ -48,7 +62,20 @@ function InvoiceContent() {
   // Project Details
   const [projName, setProjName] = useState("Digital Growth Campaign");
   const [projRef, setProjRef] = useState("Online Madrasa Solution");
-  const [projTime, setProjTime] = useState("");
+  const [projTime, setProjTime] = useState(() => {
+    const now = new Date();
+    const formattedDate = now.toLocaleDateString("en-GB", {
+      day: "2-digit",
+      month: "long",
+      year: "numeric",
+    });
+    const formattedTime = now.toLocaleTimeString("en-US", {
+      hour: "2-digit",
+      minute: "2-digit",
+      hour12: true,
+    });
+    return `${formattedDate}, ${formattedTime}`;
+  });
 
   // Payment Details
   const [bankName, setBankName] = useState("United Commercial Bank PLC");
@@ -79,45 +106,10 @@ function InvoiceContent() {
   const [showSearchDropdown, setShowSearchDropdown] = useState(false);
   const [statusMsg, setStatusMsg] = useState("");
 
-  // Initialize dates
-  useEffect(() => {
-    const now = new Date();
-    const formattedDate = now.toLocaleDateString("en-GB", {
-      day: "2-digit",
-      month: "long",
-      year: "numeric",
-    });
-    const formattedTime = now.toLocaleTimeString("en-US", {
-      hour: "2-digit",
-      minute: "2-digit",
-      hour12: true,
-    });
-
-    setInvDate(formattedDate);
-    setProjTime(`${formattedDate}, ${formattedTime}`);
-
-    const dueDate = new Date();
-    dueDate.setDate(dueDate.getDate() + 7);
-    setInvDue(
-      dueDate.toLocaleDateString("en-GB", {
-        day: "2-digit",
-        month: "long",
-        year: "numeric",
-      })
-    );
-  }, []);
-
-  // Pre-load if clientIdParam exists
-  useEffect(() => {
-    if (clientIdParam && clients.length > 0) {
-      const match = clients.find(
-        (c) => c.id === clientIdParam || c.clientCode === clientIdParam
-      );
-      if (match) {
-        selectClient(match);
-      }
-    }
-  }, [clientIdParam, clients]);
+  const flashStatus = (msg: string) => {
+    setStatusMsg(msg);
+    setTimeout(() => setStatusMsg(""), 2000);
+  };
 
   const selectClient = (c: ClientRecord) => {
     setClientCode(c.clientCode || `TS-CL-${c.id.replace(/[^0-9]/g, "").padStart(3, "0")}`);
@@ -132,7 +124,7 @@ function InvoiceContent() {
     // Prepopulate line item from their service
     setLineItems([
       {
-        id: Date.now(),
+        id: 1,
         desc: c.serviceName,
         qty: 1,
         rate: c.totalAmount || 10000,
@@ -147,10 +139,19 @@ function InvoiceContent() {
     flashStatus(`Loaded: ${c.name}`);
   };
 
-  const flashStatus = (msg: string) => {
-    setStatusMsg(msg);
-    setTimeout(() => setStatusMsg(""), 2000);
-  };
+  // Pre-load if clientIdParam exists
+  useEffect(() => {
+    if (clientIdParam && clients.length > 0) {
+      const match = clients.find(
+        (c) => c.id === clientIdParam || c.clientCode === clientIdParam
+      );
+      if (match) {
+        queueMicrotask(() => {
+          selectClient(match);
+        });
+      }
+    }
+  }, [clientIdParam, clients]);
 
   // Calculations
   const subtotal = lineItems.reduce((sum, item) => sum + (item.amount || 0), 0);

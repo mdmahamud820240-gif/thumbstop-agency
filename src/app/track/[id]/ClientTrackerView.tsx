@@ -5,7 +5,6 @@ import Link from "next/link";
 import { useContent } from "@/context/ContentContext";
 import {
   CheckCircle2,
-  Clock,
   ExternalLink,
   MessageCircle,
   ShieldCheck,

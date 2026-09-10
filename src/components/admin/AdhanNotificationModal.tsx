@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState } from "react";
 import { Clock, Calendar as CalendarIcon, Volume2, VolumeX, ShieldCheck, Sparkles } from "lucide-react";
 import { PrayerItem } from "@/lib/prayerTimes";
 
@@ -23,7 +23,6 @@ export const AdhanNotificationModal: React.FC<AdhanNotificationModalProps> = ({
 }) => {
   const [secondsLeft, setSecondsLeft] = useState<number>(10);
   const [progressPercent, setProgressPercent] = useState<number>(100);
-  const audioRef = useRef<HTMLAudioElement | null>(null);
 
   // Play gentle harmonic Islamic tone chime via Web Audio API synth if audio files are unavailable or blocked
   const playHarmonicTone = () => {
@@ -58,8 +57,10 @@ export const AdhanNotificationModal: React.FC<AdhanNotificationModalProps> = ({
 
   useEffect(() => {
     if (!isOpen || !prayer) {
-      setSecondsLeft(10);
-      setProgressPercent(100);
+      queueMicrotask(() => {
+        setSecondsLeft(10);
+        setProgressPercent(100);
+      });
       return;
     }
 

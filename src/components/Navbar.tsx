@@ -7,7 +7,8 @@ import { navigationLinks, services } from "@/data/content";
 import { useContent } from "@/context/ContentContext";
 import { LanguageSwitcher } from "./LanguageSwitcher";
 import { ServiceIcon } from "./ServiceIcon";
-import { Menu, X, ArrowUpRight, MessageCircle, Lock, ChevronDown } from "lucide-react";
+import { Menu, X, ArrowUpRight, MessageCircle, Lock, ChevronDown, Smartphone } from "lucide-react";
+import { triggerPwaInstall } from "./PwaInstallPrompt";
 
 export function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
@@ -348,6 +349,20 @@ export function Navbar() {
                 </span>
                 <ArrowUpRight className="w-4 h-4" />
               </Link>
+              <button
+                type="button"
+                onClick={() => {
+                  setIsOpen(false);
+                  triggerPwaInstall();
+                }}
+                className="flex items-center justify-center gap-2 py-3 rounded-xl font-semibold text-sm text-cyan-300 bg-cyan-500/10 border border-cyan-500/30 hover:bg-cyan-500/20 transition-all shadow-sm active:scale-95"
+              >
+                <Smartphone className="w-4 h-4 text-cyan-400" />
+                <span className={isBn ? "font-bangla" : ""}>
+                  {isBn ? "📱 মোবাইল অ্যাপ ডাউনলোড / ইনস্টল" : "📱 Install Mobile App"}
+                </span>
+              </button>
+
               <div className="pt-2 text-center">
                 <Link
                   href="/admin"

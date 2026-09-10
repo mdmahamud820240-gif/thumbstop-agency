@@ -6,6 +6,8 @@ import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { useContent } from "@/context/ContentContext";
 
+import { PwaInstallPrompt } from "@/components/PwaInstallPrompt";
+
 export function AppShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const { siteConfig, accentColor } = useContent();
@@ -24,7 +26,12 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   const isStandalone = pathname?.startsWith("/admin") || pathname?.startsWith("/track");
 
   if (isStandalone) {
-    return <main className="min-h-screen w-full">{children}</main>;
+    return (
+      <>
+        <main className="min-h-screen w-full">{children}</main>
+        <PwaInstallPrompt />
+      </>
+    );
   }
 
   return (
@@ -32,6 +39,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
       <Navbar />
       <main className="flex-grow">{children}</main>
       <Footer />
+      <PwaInstallPrompt />
     </>
   );
 }

@@ -4,6 +4,7 @@ import "./globals.css";
 import { siteConfig } from "@/data/content";
 import { ContentProvider } from "@/context/ContentContext";
 import { AppShell } from "@/components/AppShell";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 
 const jakarta = Plus_Jakarta_Sans({
   subsets: ["latin"],
@@ -100,6 +101,7 @@ export default function RootLayout({
         <ContentProvider>
           <AppShell>{children}</AppShell>
         </ContentProvider>
+        <SpeedInsights />
       </body>
     </html>
   );
